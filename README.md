@@ -10,6 +10,7 @@
 index.html                      메인 (공개용 작업 현황)
 kcce/lab-workspace-public.html  같은 내용 (kcce 경로용)
 _headers                        캐시 끄기 — 갱신 즉시 반영
+img/og/og-main.jpg              카톡·SNS 공유 썸네일 (1200×630)
 ```
 
 ## 갱신 방법
