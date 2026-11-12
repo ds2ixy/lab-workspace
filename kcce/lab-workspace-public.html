@@ -118,9 +118,11 @@ html{background:#e7e9e4}
 .logs .ty{font-size:11px;font-weight:600;margin-right:6px}
 .empty{color:var(--ink3);font-size:13px;padding:8px 0}
 .linkList{list-style:none;margin:0;padding:0}
-.linkList li{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #f0f1ee}
+.linkList li{display:flex;align-items:center;gap:8px;padding:5px 0}
 .linkList li:last-child{border-bottom:0}
-.linkList a{flex:1;text-decoration:none;font-weight:500}
+.linkList a{flex:1;text-decoration:none;font-weight:700;font-size:14.5px;color:#16202b;background:#f2f5f9;border:1px solid #dbe3ec;border-radius:9px;padding:10px 14px;display:flex;align-items:center;gap:8px;transition:background .15s,border-color .15s}
+.linkList a:hover{background:#e6edf6;border-color:#b9c9de;text-decoration:none!important}
+.linkList a::before{content:'';width:6px;height:6px;border-radius:50%;background:#3b6fb6;flex:none}
 .linkList a:hover{text-decoration:underline}
 .linkList .note{font-size:12px;color:var(--ink3)}
 .memo{width:100%;min-height:90px;border:1px solid var(--line);border-radius:7px;padding:9px;resize:vertical;background:#fff}
@@ -741,7 +743,7 @@ function kpi(l,v,u){ return '<div class="card kpi"><div class="l">'+l+'</div><di
 function projectHTML(p){
   var pc = pct(p);
   var h = '<div class="phead"><div><div class="grp">'+esc(p.group)+'</div><h1>'+esc(p.name)+'</h1><div class="desc">'+esc(p.desc)+'</div></div>'+
-    '<div class="links'+(p.id==="lunchboard"?' lbLinks">'+lbLedgerBtn():'">')+(p.id==="lunchboard"?[]:p.links.slice(0,2)).map(function(k){ return '<a class="btn'+(k===p.links[0]?' pri':'')+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+' ↗</a>'; }).join("")+'</div></div>';
+    '<div class="links'+(p.id==="lunchboard"?' lbLinks">'+lbLedgerBtn():'">')+([]).map(function(k){ return '<a class="btn'+(k===p.links[0]?' pri':'')+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+' ↗</a>'; }).join("")+'</div></div>';
   if(p.id==="lunchboard") h += lunchBoardHTML();
   h += '<div class="fields">'+
     '<div class="field"><label>상태</label><div style="height:34px;display:flex;align-items:center">'+badge(p.status)+'</div></div>'+
