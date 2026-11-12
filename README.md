@@ -11,6 +11,8 @@ index.html                      메인 (공개용 작업 현황)
 kcce/lab-workspace-public.html  같은 내용 (kcce 경로용)
 _headers                        캐시 끄기 — 갱신 즉시 반영
 img/og/og-main.jpg              카톡·SNS 공유 썸네일 (1200×630)
+tbp/p0~p6.json                  규정집·학사편람 원문 표 이미지 묶음 (질의응답 화면에서 사용)
+files/handbook*.pdf             학사편람 본문·부록 다운로드용 PDF
 ```
 
 ## 갱신 방법
