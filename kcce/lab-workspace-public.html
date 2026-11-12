@@ -187,6 +187,8 @@ mark{background:#fff176;color:inherit;padding:0 1px;border-radius:2px;box-shadow
 .lbAt{font-size:12px;color:var(--ink2)}
 .lbRo{font-size:11.5px;background:#eceee9;border-radius:6px;padding:2px 8px;color:var(--ink2)}
 .lbRight{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.phead .lbLinks{align-self:flex-end;margin-bottom:2px}
+.lbLedger{padding:8px 16px 8px 13px!important;font-size:14px!important}
 .lbLedger{display:inline-flex;align-items:center;gap:7px;text-decoration:none;font-size:13px;font-weight:600;color:#0E6B57;background:#DDEFE8;border:1px solid #bfe0d4;border-radius:20px;padding:5px 12px 5px 10px;transition:background .15s}
 .lbLedger:hover{background:#cde8de}
 .lbLedger .ic{font-size:13px}
@@ -564,7 +566,7 @@ function lunchBoardHTML() {
   var tabs = [["dash", "한눈에 보기"], ["daily", "일별 내역"], ["summary", "개인별 정산"], ["year", "월별 통계"]];
   var h = '<div class="card lb">' +
     '<div class="lbHead"><div class="lbTitle"><span class="lbName">중식비 현황</span><span class="lbDot"></span><span class="lbAt">' + esc(svTxt) + '</span><span class="lbRo">보기 전용</span></div>' +
-    '<div class="lbRight">' + lbLedgerBtn() + '<div class="lbMonth"><button class="lbArrow" data-act="lbM" data-n="-1" aria-label="이전 달">‹</button><span class="lbYm num">' + lbYmLabel(ym) + '</span><button class="lbArrow" data-act="lbM" data-n="1" aria-label="다음 달">›</button></div></div></div>' +
+    '<div class="lbRight"><div class="lbMonth"><button class="lbArrow" data-act="lbM" data-n="-1" aria-label="이전 달">‹</button><span class="lbYm num">' + lbYmLabel(ym) + '</span><button class="lbArrow" data-act="lbM" data-n="1" aria-label="다음 달">›</button></div></div></div>' +
     '<div class="lbTabs">' + tabs.map(function (t) { return '<button class="lbTab' + (LB.tab === t[0] ? " on" : "") + '" data-act="lbTab" data-t="' + t[0] + '">' + t[1] + '</button>'; }).join("") + '</div>' +
     '<div class="lbTeams"><span class="lbTl">팀</span>' + ["all"].concat(LB_TEAMS).map(function (t) { return '<button class="lbChip' + (LB.team === t ? " on" : "") + '" data-act="lbTeam" data-t="' + t + '">' + (t === "all" ? "전체" : t) + ' <b>' + cnt[t] + '</b></button>'; }).join("") + '</div>' +
     '<div class="lbBody">' + (LB.tab === "dash" ? lbDash() : LB.tab === "daily" ? lbDaily() : LB.tab === "year" ? lbYear() : lbSummary()) + '</div></div>';
@@ -640,8 +642,7 @@ function lbYear() {
     '</tbody><tfoot><tr><th class="l">합계</th>' + yms.map(function (ym) { return '<td>' + lbWon(mt[ym] || 0) + '</td>'; }).join("") + '<td>' + lbWon(gt) + '</td></tr></tfoot></table></div>';
 }
 function lbLedgerBtn() {
-  var p = P("lunchboard"), l = p && p.links.filter(function (k) { return /장부/.test(k.label); })[0];
-  if (!l) return "";
+  var l = { url: "https://claude.ai/artifact/GUf4SysrcxthzhgvK188Aa" };
   return '<a class="lbLedger" href="' + esc(l.url) + '" target="_blank" rel="noopener"><span class="ic">📒</span>중식비 장부<span class="tag">관리자</span><span class="ar">↗</span></a>';
 }
 function lbRefresh() { var el = document.querySelector(".lb"); if (!el) return; var w = document.createElement("div"); w.innerHTML = lunchBoardHTML(); el.replaceWith(w.firstChild); }
@@ -739,7 +740,7 @@ function kpi(l,v,u){ return '<div class="card kpi"><div class="l">'+l+'</div><di
 function projectHTML(p){
   var pc = pct(p);
   var h = '<div class="phead"><div><div class="grp">'+esc(p.group)+'</div><h1>'+esc(p.name)+'</h1><div class="desc">'+esc(p.desc)+'</div></div>'+
-    '<div class="links">'+(p.id==="lunchboard"?[]:p.links.slice(0,2)).map(function(k){ return '<a class="btn'+(k===p.links[0]?' pri':'')+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+' ↗</a>'; }).join("")+'</div></div>';
+    '<div class="links'+(p.id==="lunchboard"?' lbLinks">'+lbLedgerBtn():'">')+(p.id==="lunchboard"?[]:p.links.slice(0,2)).map(function(k){ return '<a class="btn'+(k===p.links[0]?' pri':'')+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+' ↗</a>'; }).join("")+'</div></div>';
   if(p.id==="lunchboard") h += lunchBoardHTML();
   h += '<div class="fields">'+
     '<div class="field"><label>상태</label><div style="height:34px;display:flex;align-items:center">'+badge(p.status)+'</div></div>'+
