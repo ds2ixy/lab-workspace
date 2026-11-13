@@ -49,10 +49,11 @@ html{background:#e7e9e4}
 .nav .lbl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .nav .pct{font-size:11px;color:var(--sideInk2)}
 .nav a.on .pct{color:#d8e0e8}
-.sidefoot{padding:14px 20px;border-top:1px solid #263342;font-size:12px;color:var(--sideInk2)}
-.sidefoot .save{display:flex;align-items:center;gap:6px}
-.sidefoot .save i{width:7px;height:7px;border-radius:50%;background:var(--mute);display:inline-block}
-.sidefoot .save.ok i{background:#4fbf7f}.sidefoot .save.busy i{background:var(--accent)}.sidefoot .save.ro i{background:#d06b5c}
+.sideinfo{padding:12px 20px 14px;font-size:12px;color:var(--sideInk2)}
+.sidefoot{padding:12px 20px 16px;border-top:1px solid #263342;font-size:10.5px;letter-spacing:.06em;color:#5f6d7b}
+.sideinfo .save{display:flex;align-items:center;gap:6px}
+.sideinfo .save i{width:7px;height:7px;border-radius:50%;background:var(--mute);display:inline-block}
+.sideinfo .save.ok i{background:#4fbf7f}.sideinfo .save.busy i{background:var(--accent)}.sideinfo .save.ro i{background:#d06b5c}
 .btn.menuBtn{display:none}
 .main{min-width:0}.cols>*,.stack>*{min-width:0}.addrow select{flex:none}
 /* main */
@@ -697,7 +698,7 @@ function render(){
   nav += '<div class="sec">규정</div>';
   Object.keys(REGDOCS).forEach(function(k){ var D=REGDOCS[k]; nav += '<a href="#'+k+'" class="'+(v===k?"on":"")+'"><span class="reg-ico" style="background:'+D.color+'"></span><span class="lbl">'+esc(D.name)+'</span><span class="pct">Q&amp;A</span></a>'; });
   var html = '<div class="shell"><aside class="side'+(navOpen?" open":"")+'" id="side"><div class="brand"><div class="k">KCCE · HVER</div><div class="t">Workspace Page</div></div><nav class="nav">'+nav+'</nav>'+
-    '<div class="sidefoot"><div class="save ok"><i></i>공개용 · 읽기 전용</div><div style="margin-top:4px">기준일 '+esc(state.snapshot||"")+'</div></div></aside>'+
+    '<div class="sideinfo"><div class="save ok"><i></i>공개용 · 읽기 전용</div><div style="margin-top:4px">기준일 '+esc(state.snapshot||"")+'</div></div><div class="sidefoot">© DS2IXY. ALL RIGHTS RESERVED</div></aside>'+
     '<main class="main"><button class="btn menuBtn" data-act="nav">☰ 메뉴</button>'+(v==="home"?homeHTML():(REGDOCS[v]?regHTML(v):projectHTML(P(v))))+'</main></div>'+
     '<div class="modal" id="modal"><div class="box"><div class="row"><b>진행 보고서</b><div style="display:flex;gap:8px"><select id="rptRange" class="btn sm"><option value="7">최근 7일</option><option value="14">최근 14일</option><option value="30">최근 30일</option><option value="all">전체</option></select><button class="btn sm pri" data-act="copyRpt">복사</button><button class="btn sm" data-act="closeRpt">닫기</button></div></div><textarea id="rptText"></textarea></div></div>'+
     '<div class="toast" id="toast"></div>';
