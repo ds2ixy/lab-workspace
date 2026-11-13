@@ -749,7 +749,7 @@ function projectHTML(p){
   var pc = pct(p);
   var h = '<div class="phead"><div><div class="grp">'+esc(p.group)+'</div><h1>'+esc(p.name)+'</h1><div class="desc">'+esc(p.desc)+'</div></div>'+
     '<div class="links'+(p.id==="lunchboard"?' lbLinks">'+lbLedgerBtn():'">')+([]).map(function(k){ return '<a class="btn'+(k===p.links[0]?' pri':'')+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(k.label)+' ↗</a>'; }).join("")+'</div></div>';
-  if(p.id==="lunchboard") h += lbBanner() + lunchBoardHTML();
+  if(p.id==="lunchboard") return h + lbBanner() + lunchBoardHTML();
   h += '<div class="fields">'+
     '<div class="field"><label>상태</label><div style="height:34px;display:flex;align-items:center">'+badge(p.status)+'</div></div>'+
     '<div class="field"><label>마감일</label><div class="num" style="height:34px;display:flex;align-items:center">'+(p.due?esc(p.due)+' · '+dday(p.due):'—')+'</div></div>'+
