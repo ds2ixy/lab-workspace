@@ -1,4 +1,4 @@
-# 연구소 작업 현황 (공개용)
+# hver-workspace · Workspace Page (공개용)
 
 한국고등직업교육연구소(KCCE HVER) 작업 진행 현황을 공개하는 읽기 전용 페이지입니다.
 
