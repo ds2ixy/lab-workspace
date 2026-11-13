@@ -177,8 +177,8 @@ mark{background:#fff176;color:inherit;padding:0 1px;border-radius:2px;box-shadow
 .rImgs{display:flex;flex-direction:column;gap:10px;margin:2px 0 10px}
 .rImgs figure{margin:0;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff;overflow:auto;max-height:520px}
 .rImgs figure.zoom{max-height:none}
-.rImgs img{display:block;max-width:100%;height:auto;cursor:zoom-in;margin:0 auto}
-.rImgs figure.zoom img{max-width:none;cursor:zoom-out}
+.rImgs img{display:block;max-width:100%;height:auto;cursor:zoom-in;margin:0}
+.rImgs figure.zoom img{max-width:none;width:auto!important;cursor:zoom-out}
 .rImgs figcaption{font-size:11.5px;color:var(--ink3);margin-top:6px;text-align:right}
 .regMore summary{cursor:pointer;color:var(--ink2);font-size:13px;margin:8px 2px 10px}
 /* 런치보드 현황판 */
@@ -487,7 +487,7 @@ function regFillImgs(root) {
   (root || document).querySelectorAll("img[data-img]:not([src])").forEach(function (im) {
     var f = im.getAttribute("data-img"), pi = REGPACK[f];
     if (pi == null) return;
-    regPack(pi).then(function (pk) { if (pk[f]) im.src = pk[f]; }).catch(function () { im.alt = "표 이미지를 불러오지 못했어요"; });
+    regPack(pi).then(function (pk) { if (pk[f]) { im.onload = function () { im.style.width = Math.round(im.naturalWidth * 0.62) + "px"; }; im.src = pk[f]; } }).catch(function () { im.alt = "표 이미지를 불러오지 못했어요"; });
   });
 }
 async function regDownload(btn) {
