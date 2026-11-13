@@ -66,6 +66,9 @@ rep("""<h3>진행·결과 기록</h3><form class="addrow" data-form="log" style=
 rep("""links += '</ul><form class="addrow" data-form="link"><input name="l" placeholder="이름" style="flex:.8"><input name="u" placeholder="https://…" style="flex:1.2"><button class="btn">추가</button></form></div>';""","""links += '</ul></div>';""")
 rep("""'</div><div class="stack">'+links+memo+'</div></div>';""","""'</div><div class="stack">'+links+'</div></div>';""")
 rep("(p.owner?'<span>담당 '+esc(p.owner)+'</span>':'')","''")
+rep("""var nav = '<div class="sec">작업 현황</div><a href="#home" class="'+(v==="home"?"on":"")+'"><span class="dot" style="background:#e0a43a"></span><span class="lbl">전체 현황</span></a>';""","""var nav = '';""")
+rep('if(h && (h==="home"||P(h)||REGDOCS[h])) return h;','if(h && (P(h)||REGDOCS[h])) return h;')
+rep('if(s&&(s==="home"||P(s)||REGDOCS[s])) return s; }catch(e){} return "home"; }','if(s&&(P(s)||REGDOCS[s])) return s; }catch(e){} return state.projects[0].id; }')
 s=s.replace(' (공개용)','')
 d='한국고등직업교육연구소(KCCE HVER)의 통계·출판·연구소 작업 진행 현황과 학사편람·규정 질의응답을 한눈에 보는 공개 페이지'
 import base64; fav=base64.b64encode(open(os.path.join(REPO,'favicon-32x32.png'),'rb').read()).decode()
