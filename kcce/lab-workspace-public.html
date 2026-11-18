@@ -309,6 +309,27 @@ mark{background:#fff176;color:inherit;padding:0 1px;border-radius:2px;box-shadow
   .lbx{margin-left:-16px;margin-right:-16px;border-radius:0;border-left:0;border-right:0}
   .modal .box{width:calc(100% - 24px)!important;max-height:86vh}
 }
+
+/* ===== 모바일 상단 메뉴 ===== */
+.mhead,.mnav{display:none}
+@media (max-width:760px){
+  .tabbar{display:none!important}
+  .main{padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))!important}
+  .mhead{display:block;position:sticky;top:0;z-index:30;margin:0 -16px 16px;background:var(--side);box-shadow:0 2px 12px rgba(0,0,0,.14)}
+  .mhead .mbar{position:static;margin:0;box-shadow:none}
+  .mnav{display:block}
+  .mtabs{display:flex;padding:0 6px}
+  .mtab{flex:1;text-align:center;padding:12px 0 11px;color:#9fb0c0;font-size:15px;font-weight:700;text-decoration:none;position:relative;letter-spacing:-.01em}
+  .mtab.on{color:#fff}
+  .mtab.on::after{content:"";position:absolute;left:22%;right:22%;bottom:0;height:3px;border-radius:3px 3px 0 0;background:var(--accent)}
+  .msub{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;background:#fff;padding:0 10px;border-bottom:1px solid #e6e8e3;-webkit-overflow-scrolling:touch}
+  .msub::-webkit-scrollbar{display:none}
+  .msi{flex:none;display:flex;align-items:center;gap:6px;padding:12px 10px 11px;color:#6d756f;font-size:14px;font-weight:600;text-decoration:none;white-space:nowrap;position:relative}
+  .msi .dot{width:7px;height:7px;border-radius:50%}
+  .msi .mm{font-size:11px;color:#a3aaa4;font-weight:600}
+  .msi.on{color:#17201c}
+  .msi.on::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:2.5px;border-radius:2px;background:#17201c}
+}
 </style>
 </head>
 <body>
@@ -809,6 +830,25 @@ document.addEventListener("click", function(e){
   if(e.target.hasAttribute && e.target.hasAttribute("data-sheetbg")) e.target.classList.remove("open");
 }, true);
 window.addEventListener("hashchange", function(){ var sh=document.getElementById("sheet"); if(sh) sh.classList.remove("open"); });
+
+// ---------- 모바일 상단 메뉴 (그룹 탭 + 하위 항목, 밑줄 표시) ----------
+function mnavHTML(v){
+  var cur = viewGroup(v), groups = [];
+  if (typeof homeHTML === "function" && MNAV_HOME) groups.push({k:"home", label:"홈", first:"home"});
+  ["통계","출판","연구소","규정"].forEach(function(g){ var it=groupItems(g); if(it.length) groups.push({k:g, label:g, first:it[0].id, items:it}); });
+  var h = '<div class="mtabs" role="tablist">' + groups.map(function(g){
+    return '<a role="tab" class="mtab'+(cur===g.k?' on':'')+'" href="#'+g.first+'">'+esc(g.label)+'</a>';
+  }).join("") + '</div>';
+  var cg = groups.filter(function(g){ return g.k===cur; })[0];
+  if (cg && cg.items && cg.items.length > 1) {
+    h += '<div class="msub" id="msub">' + cg.items.map(function(x){
+      return '<a class="msi'+(v===x.id?' on':'')+'" href="#'+x.id+'"><span class="dot" style="background:'+x.color+'"></span>'+esc(x.name)+'<span class="mm num">'+esc(x.meta)+'</span></a>';
+    }).join("") + '</div>';
+  }
+  setTimeout(function(){ var a=document.querySelector(".msub .msi.on"); if(a && a.scrollIntoView) a.scrollIntoView({block:"nearest", inline:"center"}); }, 0);
+  return '<nav class="mnav">'+h+'</nav>';
+}
+var MNAV_HOME = false;
 function render(){
   var v = view();
   var nav = '';
@@ -823,9 +863,9 @@ function render(){
   Object.keys(REGDOCS).forEach(function(k){ var D=REGDOCS[k]; nav += '<a href="#'+k+'" class="'+(v===k?"on":"")+'"><span class="reg-ico" style="background:'+D.color+'"></span><span class="lbl">'+esc(D.name)+'</span><span class="pct">Q&amp;A</span></a>'; });
   var html = '<div class="shell"><aside class="side'+(navOpen?" open":"")+'" id="side"><div class="brand"><div class="k">KCCE · HVER</div><div class="t">Workspace Page</div></div><nav class="nav">'+nav+'</nav>'+
     '<div class="sideinfo"><div class="save ok"><i></i>공개용 · 읽기 전용</div><div style="margin-top:4px">기준일 '+esc(state.snapshot||"")+'</div></div><div class="sidefoot">© DS2IXY. ALL RIGHTS RESERVED</div></aside>'+
-    '<main class="main"><div class="mbar"><div class="brand"><div class="k">KCCE · HVER</div><div class="t">Workspace Page</div></div>'+mbarRight()+'</div><button class="btn menuBtn" data-act="nav">☰ 메뉴</button>'+(v==="home"?homeHTML():(REGDOCS[v]?regHTML(v):projectHTML(P(v))))+'</main></div>'+
+    '<main class="main"><div class="mhead"><div class="mbar"><div class="brand"><div class="k">KCCE · HVER</div><div class="t">Workspace Page</div></div>'+mbarRight()+'</div>'+mnavHTML(v)+'</div><button class="btn menuBtn" data-act="nav">☰ 메뉴</button>'+(v==="home"?homeHTML():(REGDOCS[v]?regHTML(v):projectHTML(P(v))))+'</main></div>'+
     '<div class="modal" id="modal"><div class="box"><div class="row"><b>진행 보고서</b><div style="display:flex;gap:8px"><select id="rptRange" class="btn sm"><option value="7">최근 7일</option><option value="14">최근 14일</option><option value="30">최근 30일</option><option value="all">전체</option></select><button class="btn sm pri" data-act="copyRpt">복사</button><button class="btn sm" data-act="closeRpt">닫기</button></div></div><textarea id="rptText"></textarea></div></div>'+
-    tabbarHTML(v)+'<div class="sheet" id="sheet" data-sheetbg="1"><div class="sheetBox" id="sheetBox"></div></div>'+'<div class="toast" id="toast"></div>';
+    '<div class="sheet" id="sheet" data-sheetbg="1"><div class="sheetBox" id="sheetBox"></div></div>'+'<div class="toast" id="toast"></div>';
   var app = document.getElementById("app");
   var y = window.scrollY;
   app.innerHTML = html;
