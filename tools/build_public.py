@@ -43,8 +43,8 @@ def rep(a,b):
     global s
     assert a in s, a[:70]
     s=s.replace(a,b)
-rep('<title>연구소 작업공간</title>','<title>hver-workspace</title>')
-rep('<div class="t">연구소 작업공간</div>','<div class="t">Workspace Page</div>')
+rep('<title>연구소 작업공간</title>','<title>hver_Workspace</title>')
+rep('<div class="t">연구소 작업공간</div>','<div class="t">hver_Workspace</div>')
 rep('function changed(){','function changed(){ render(); return;')
 rep('function loadLocal(){','function loadLocal(){ return;')
 rep("(function connect(){","(function connect(){ return;")
@@ -70,11 +70,11 @@ s=s.replace(' (공개용)','')
 d='한국고등직업교육연구소(KCCE HVER)의 통계·출판·연구소 작업 진행 현황과 학사편람·규정 질의응답을 한눈에 보는 공개 페이지'
 import base64; fav=base64.b64encode(open(os.path.join(REPO,'favicon-32x32.png'),'rb').read()).decode()
 u='https://lab-workspace-public.pages.dev/'; img=u+'img/og/og-main.jpg'
-meta=f'''<title>hver-workspace</title>
+meta=f'''<title>hver_Workspace</title>
 <meta name="description" content="{d}">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="hver Workspace · 한국고등직업교육연구소">
-<meta property="og:title" content="hver-workspace | Workspace Page">
+<meta property="og:title" content="hver_Workspace">
 <meta property="og:description" content="{d}">
 <meta property="og:url" content="{u}">
 <meta property="og:image" content="{img}">
@@ -82,7 +82,7 @@ meta=f'''<title>hver-workspace</title>
 <meta property="og:image:height" content="630">
 <meta property="og:locale" content="ko_KR">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="hver-workspace | Workspace Page">
+<meta name="twitter:title" content="hver_Workspace">
 <meta name="twitter:description" content="{d}">
 <meta name="twitter:image" content="{img}">
 <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,{fav}">
@@ -90,9 +90,9 @@ meta=f'''<title>hver-workspace</title>
 <link rel="manifest" href="/manifest.webmanifest">
 <meta name="theme-color" content="#172e5f">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="hver">
+<meta name="apple-mobile-web-app-title" content="hver_Workspace">
 <script>if('serviceWorker' in navigator && /(\.pages\.dev|^localhost)$/.test(location.hostname)) window.addEventListener('load',function(){{navigator.serviceWorker.register('/sw.js').catch(function(){{}});}});</script>'''
-s=s.replace('<title>hver-workspace</title>',meta,1)
+s=s.replace('<title>hver_Workspace</title>',meta,1)
 open(os.path.join(REPO,'index.html'),'w').write(s)
 open(os.path.join(REPO,'kcce/lab-workspace-public.html'),'w').write(s.replace('<head>\n','<head>\n<base href="/">\n',1))
 print('pub built', 'margin:0 auto' in s)
