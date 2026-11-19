@@ -265,7 +265,7 @@ mark{background:#fff176;color:inherit;padding:0 1px;border-radius:2px;box-shadow
   .main{padding:18px 16px 50px}
   .feed li{grid-template-columns:70px 1fr}.feed li .pn{grid-column:2}
 }
-.lbx{border-radius:14px;overflow:hidden;border:1px solid #dfe3dc;background:#F2F4F1;margin-bottom:0}.lbFrame{display:block;width:100%;height:900px;border:0}
+.lbx{border-radius:14px;overflow:hidden;border:1px solid #dfe3dc;background:#F2F4F1;margin-bottom:16px}.lbFrame{display:block;width:100%;height:900px;border:0}
 
 /* ===== 모바일 앱 화면 ===== */
 .mbar,.tabbar,.sheet{display:none}
@@ -757,7 +757,7 @@ function lbFrameFill() {
   f.setAttribute("data-on", "1");
   lunchHtmlText().then(function (t) {
     f.addEventListener("load", function () {
-      var fit = function () { try { if (!f.isConnected) return; if (window.innerWidth > 760) { var hh = Math.max(360, Math.floor(window.innerHeight - f.getBoundingClientRect().top - window.scrollY - 64)); if (Math.abs(hh - f.offsetHeight) > 4) f.style.height = hh + "px"; return; } var d = f.contentDocument; if (!d) return; var h = Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0); if (h && Math.abs(h - f.offsetHeight) > 4) f.style.height = h + "px"; } catch (e) {} };
+      var fit = function () { try { if (!f.isConnected) return; var d = f.contentDocument; if (!d) return; var h = Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0); if (h && Math.abs(h - f.offsetHeight) > 4) f.style.height = h + "px"; } catch (e) {} };
       fit(); var iv = setInterval(function () { if (!f.isConnected) return clearInterval(iv); fit(); }, 600);
     });
     f.srcdoc = t.replace(/<html([^>]*)>/i, '<html$1 data-theme="light" style="color-scheme:light">');
@@ -766,7 +766,7 @@ function lbFrameFill() {
 function lunchFrameHTML() {
   if (!LUNCHHTML || typeof DecompressionStream === "undefined") return lunchBoardHTML();
   setTimeout(lbFrameFill, 0);
-  return '<div class="lbx"><iframe class="lbFrame" title="중식비 현황" scrolling="'+(window.innerWidth > 760 ? "auto" : "no")+'"></iframe></div>';
+  return '<div class="lbx"><iframe class="lbFrame" title="중식비 현황" scrolling="no"></iframe></div>';
 }
 function lunchBoardHTML() {
   if (!LBD) return '<div class="card lb"><div class="empty">현황판 데이터가 없습니다.</div></div>';
