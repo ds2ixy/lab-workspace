@@ -434,6 +434,9 @@ a.chip2.lk{text-decoration:none;font-weight:600}a.chip2.lk:hover{background:#e6e
   .volRow{grid-template-columns:56px 52px 1fr auto;padding:7px 2px;font-size:13.5px;gap:8px}
   .volRow:nth-child(2){border-top:0}
 }
+.pubBtn{display:flex;flex-direction:column;gap:2px;margin:auto 14px 10px;padding:10px 14px;border-radius:10px;background:#1f3556;border:1px solid #33507c;color:#fff!important;font-size:13.5px;font-weight:700;text-decoration:none}
+.pubBtn small{font-size:11px;font-weight:500;color:#a9b8cf}
+.pubBtn:hover{background:#27426b}
 </style>
 </head>
 <body>
@@ -981,7 +984,7 @@ function homeHTML(){
     var open=0; ps.forEach(function(p){ p.tasks.forEach(function(t){ if(!t.done) open++; }); });
     var dues = ps.filter(function(p){return p.due && p.due>=today();}).map(function(p){return p.due;}).sort();
     h += '<section class="hero"><div><h1>연구소 작업공간</h1><p>'+lines(["업무별 진행 상황과 결과물을 한눈에 봐요.","항목을 누르면 요약과 작업 현황이 열려요."])+'</p>'+
-      '<button class="btn pri" data-act="report" style="margin-top:14px">진행 보고서 만들기</button></div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px"><button class="btn pri" data-act="report">진행 보고서 만들기</button><a class="btn" href="https://lab-workspace-public.pages.dev/" target="_blank" rel="noopener">공개용 화면 보기 ↗</a></div></div>'+
       '<div class="heroStats"><div><b>'+avg+'%</b><span>평균 진행률</span></div><div><b>'+open+'건</b><span>남은 할 일</span></div><div><b>'+(dues.length?dday(dues[0]):'—')+'</b><span>가까운 마감</span></div></div></section>';
   }
   ["통계","출판"].forEach(function(g){
@@ -1019,7 +1022,7 @@ function sumHTML(p){
     '<span class="sumK" style="color:'+c+'">'+esc(S.kicker||p.group)+'</span>'+
     '<div class="sumRow"><h1>'+esc(p.name)+'</h1><div class="sumBtns">'+
       (p.id==="lunchboard"?lbLedgerBtn():'')+
-      (k?'<a class="goBtn" style="background:'+c+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(S.btn||"바로가기")+' ↗</a>':'')+
+      (k && !(IS_PUBLIC && p.id==="lunchboard")?'<a class="goBtn" style="background:'+c+'" href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(S.btn||"바로가기")+' ↗</a>':'')+
     '</div></div><p class="sumP">'+lines(S.lines)+'</p></section>';
   var bl = (S.blocks||[]).map(function(b){
     var inner = '';
@@ -1047,7 +1050,7 @@ function render(){
   nav += '<div class="sec">규정</div>';
   Object.keys(REGDOCS).forEach(function(k){ var D=REGDOCS[k]; nav += '<a href="#'+k+'" class="'+(v===k?"on":"")+'"><span class="reg-ico" style="background:'+D.color+'"></span><span class="lbl">'+esc(D.name)+'</span><span class="pct">Q&amp;A</span></a>'; });
   var html = '<div class="shell"><aside class="side'+(navOpen?" open":"")+'" id="side"><div class="brand"><div class="k">HVER</div><div class="t">hver_Workspace</div></div><nav class="nav">'+nav+'</nav>'+
-    '<div class="sideinfo"><div class="save ok"><i></i>공개용 · 읽기 전용</div><div style="margin-top:4px">기준일 '+esc(state.snapshot||"")+'</div></div><div class="sidefoot">© DS2IXY. ALL RIGHTS RESERVED</div></aside>'+
+    (IS_PUBLIC?'':'<a class="pubBtn" href="https://lab-workspace-public.pages.dev/" target="_blank" rel="noopener">공개용 화면 보기 ↗<small>hver_Workspace</small></a>')+'<div class="sideinfo"><div class="save ok"><i></i>공개용 · 읽기 전용</div><div style="margin-top:4px">기준일 '+esc(state.snapshot||"")+'</div></div><div class="sidefoot">© DS2IXY. ALL RIGHTS RESERVED</div></aside>'+
     '<main class="main"><div class="mhead"><div class="mbar"><div class="brand"><div class="k">HVER</div><div class="t">hver_Workspace</div></div>'+mbarRight()+'</div>'+mnavHTML(v)+'</div><button class="btn menuBtn" data-act="nav">☰ 메뉴</button>'+(v==="home"?homeHTML():(REGDOCS[v]?regHTML(v):projectHTML(P(v))))+'</main></div>'+
     '<div class="modal" id="modal"><div class="box"><div class="row"><b>진행 보고서</b><div style="display:flex;gap:8px"><select id="rptRange" class="btn sm"><option value="7">최근 7일</option><option value="14">최근 14일</option><option value="30">최근 30일</option><option value="all">전체</option></select><button class="btn sm pri" data-act="copyRpt">복사</button><button class="btn sm" data-act="closeRpt">닫기</button></div></div><textarea id="rptText"></textarea></div></div>'+
     '<div class="sheet" id="sheet" data-sheetbg="1"><div class="sheetBox" id="sheetBox"></div></div>'+'<div class="toast" id="toast"></div>';
