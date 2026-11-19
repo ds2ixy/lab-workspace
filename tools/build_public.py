@@ -49,7 +49,6 @@ rep('function changed(){','function changed(){ render(); return;')
 rep('function loadLocal(){','function loadLocal(){ return;')
 rep("(function connect(){","(function connect(){ return;")
 rep("'<div class=\"sideinfo\">'+saveHTML()+'<div style=\"margin-top:4px\">'+(state.savedAt?\"최근 수정 \"+esc(state.savedAt.slice(0,10)):\"\")+'</div></div>","'<div class=\"sideinfo\"><div class=\"save ok\"><i></i>공개용 · 읽기 전용</div><div style=\"margin-top:4px\">기준일 '+esc(state.snapshot||\"\")+'</div></div>")
-rep("개 작업의 진행 상황과 최근 기록</div>","개 작업의 진행 상황과 최근 기록 · 기준일 '+esc(state.snapshot||\"\")+'</div>")
 rep("""    '<div class="field"><label>상태</label><select data-f="status">'+Object.keys(STATUS).map(function(s){return '<option'+(s===p.status?' selected':'')+'>'+s+'</option>';}).join("")+'</select></div>'+
     '<div class="field"><label>마감일 '+(p.due?'<span class="num">· '+dday(p.due)+'</span>':'')+'</label><input type="date" data-f="due" value="'+esc(p.due)+'"></div>'+
     '<div class="field"><label>담당</label><input data-f="owner" value="'+esc(p.owner)+'" placeholder="담당자"></div>'+""",
@@ -65,13 +64,8 @@ rep("""tasks += '</ul><form class="addrow" data-form="task"><input name="t" plac
 rep("""<h3>진행·결과 기록</h3><form class="addrow" data-form="log" style="margin:0 0 8px"><select name="ty">'+Object.keys(LOGTYPE).map(function(k){return '<option>'+k+'</option>';}).join("")+'</select><input name="t" placeholder="무엇이 진행됐나요?" autocomplete="off"><input name="d" type="date" value="'+today()+'" style="flex:none;width:140px"><button class="btn">기록</button></form><ul class="logs">""","""<h3>진행·결과 기록</h3><ul class="logs">""")
 rep("""links += '</ul><form class="addrow" data-form="link"><input name="l" placeholder="이름" style="flex:.8"><input name="u" placeholder="https://…" style="flex:1.2"><button class="btn">추가</button></form></div>';""","""links += '</ul></div>';""")
 rep("""'</div><div class="stack">'+links+memo+'</div></div>';""","""'</div><div class="stack">'+links+'</div></div>';""")
-rep("(p.owner?'<span>담당 '+esc(p.owner)+'</span>':'')","''")
-rep("""var nav = '<div class="sec">작업 현황</div><a href="#home" class="'+(v==="home"?"on":"")+'"><span class="dot" style="background:#e0a43a"></span><span class="lbl">전체 현황</span></a>';""","""var nav = '';""")
-rep('if(h && (h==="home"||P(h)||REGDOCS[h])) return h;','if(h && (P(h)||REGDOCS[h])) return h;')
-rep('if(s&&(s==="home"||P(s)||REGDOCS[s])) return s; }catch(e){} return "home"; }','if(s&&(P(s)||REGDOCS[s])) return s; }catch(e){} return state.projects[0].id; }')
-rep('tabs.push({k:"home", label:"홈", href:"#home"});','')
-rep('var MNAV_HOME = true;','var MNAV_HOME = false;')
 rep("function mbarRight(){ return '<div class=\"mbarR\">'+saveHTML()+'</div>'; }","function mbarRight(){ return '<div class=\"mbarR\"><div class=\"save ok\"><i></i>읽기 전용</div></div>'; }")
+rep('var IS_PUBLIC = false;','var IS_PUBLIC = true;')
 s=s.replace(' (공개용)','')
 d='한국고등직업교육연구소(KCCE HVER)의 통계·출판·연구소 작업 진행 현황과 학사편람·규정 질의응답을 한눈에 보는 공개 페이지'
 import base64; fav=base64.b64encode(open(os.path.join(REPO,'favicon-32x32.png'),'rb').read()).decode()
@@ -98,9 +92,6 @@ meta=f'''<title>hver-workspace</title>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="hver">
 <script>if('serviceWorker' in navigator && /(\.pages\.dev|^localhost)$/.test(location.hostname)) window.addEventListener('load',function(){{navigator.serviceWorker.register('/sw.js').catch(function(){{}});}});</script>'''
-a='if(p.id==="lunchboard") h += lunchFrameHTML();'
-assert s.count(a)==1
-s=s.replace(a,'if(p.id==="lunchboard") return h + lunchFrameHTML();',1)
 s=s.replace('<title>hver-workspace</title>',meta,1)
 open(os.path.join(REPO,'index.html'),'w').write(s)
 open(os.path.join(REPO,'kcce/lab-workspace-public.html'),'w').write(s.replace('<head>\n','<head>\n<base href="/">\n',1))
