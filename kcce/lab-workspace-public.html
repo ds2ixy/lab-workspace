@@ -1107,7 +1107,12 @@ function botMount(){
     '<button class="botBtn" id="botBtn" data-bot="toggle" aria-label="KCCE 도우미 열기"><canvas id="botCv"></canvas><img class="botFb" alt="" src="'+BOTIMG+'"></button>';
   document.body.appendChild(w);
   botGreet();
-  document.getElementById("botForm").addEventListener("submit", function(e){ e.preventDefault(); var i=document.getElementById("botQ"); var q=i.value.trim(); if(!q) return; i.value=""; botAsk(q); });
+  var botQ=document.getElementById("botQ"), botComp=false, botPend=false;
+  function botSend(){ var q=botQ.value.trim(); if(!q) return; botQ.blur(); botQ.value=""; setTimeout(function(){ botQ.value=""; if(window.innerWidth>760) botQ.focus(); },60); botAsk(q); }
+  botQ.addEventListener("compositionstart", function(){ botComp=true; });
+  botQ.addEventListener("compositionend", function(){ botComp=false; if(botPend){ botPend=false; setTimeout(botSend,0); } });
+  botQ.addEventListener("keydown", function(e){ e.stopPropagation(); if(e.key==="Enter"){ e.preventDefault(); if(e.isComposing||botComp||e.keyCode===229){ botPend=true; return; } botSend(); } });
+  document.getElementById("botForm").addEventListener("submit", function(e){ e.preventDefault(); e.stopPropagation(); if(botComp){ botPend=true; return; } botSend(); });
   w.addEventListener("click", function(e){
     var t = e.target.closest("[data-bot]"); if(!t) return;
     var a = t.getAttribute("data-bot");
