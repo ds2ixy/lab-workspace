@@ -1134,6 +1134,9 @@ function botMount(){
     else if(a==="reg"){ var v=t.getAttribute("data-v"), q=t.getAttribute("data-q"); location.hash = v; setTimeout(function(){ var ta=document.querySelector('form[data-form="reg"] textarea'); if(ta) ta.value=q; var cb=document.querySelector('form[data-form="reg"] input[name="all"]'); if(cb) cb.checked=true; if(typeof regRun==="function") regRun(v,q,true); }, 250); if(window.innerWidth<=760) botToggle(false); }
   });
   setTimeout(function(){ var t=document.getElementById("botTip"); if(t) t.classList.add("off"); }, 7000);
+  var bb=document.getElementById("botBtn"), tip=document.getElementById("botTip");
+  bb.addEventListener("pointerenter", function(){ if(!bot.open) tip.classList.remove("off"); });
+  bb.addEventListener("pointerleave", function(){ tip.classList.add("off"); });
   botThree();
 }
 function botToggle(on){
