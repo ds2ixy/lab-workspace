@@ -427,7 +427,7 @@ async function saveFile(name, text, mime){
   const blob = new Blob([text], {type: mime+";charset=utf-8"});
   if (DL){ try { await DL.save({filename:name, data:blob}); toast("저장 요청을 보냈습니다"); return; } catch(e){ if (e && e.code==="declined"){ toast("저장이 취소되었습니다"); return; } } }
   try { const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); toast("파일을 내려받습니다"); }
-  catch(e){ toast("이 화면에서는 저장할 수 없습니다. 복사 기능을 이용하세요"); }
+  catch(e){ toast("이 화면에서는 저장할 수 없습니다"); }
 }
 async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast("클립보드에 복사했습니다"); }catch(e){ toast("복사가 차단되었습니다"); } }
 function csvOf(rows){ return "﻿"+rows.map(r=>r.map(c=>{ const s=String(c??""); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; }).join(",")).join("\r\n"); }
@@ -727,8 +727,8 @@ function vReport(){
     <div class="chk" style="margin-bottom:8px"><label><input type="checkbox" id="rp-charts" ${RP.charts?"checked":""}>그림 포함</label><label><input type="checkbox" id="rp-chg" ${RP.chg?"checked":""}>증감 열</label><label><input type="checkbox" id="rp-top" ${RP.top?"checked":""}>상위 학교 표</label></div>
     <div class="row2"><div class="fg"><label>상위 표 지표</label><select id="rp-topid">${indOptions(RP.topId,x=>x.t!=="growth"&&x.src!=="C")}</select></div><div class="fg" style="max-width:80px"><label>개수</label><input type="number" id="rp-topn" min="5" max="50" value="${RP.topN}"></div></div>
     <div class="fg"><label>포함할 지표 <button class="lnk" id="rp-def">기본값</button> · <button class="lnk" id="rp-none">해제</button></label><div class="seclist">${list}</div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="rp-html">HTML 저장 (인쇄·PDF용)</button><button class="btn" id="rp-doc">Word(.docx) 저장</button><button class="btn ghost" id="rp-copy">본문 텍스트 복사</button><button class="btn ghost" id="rp-reset">문장 초기화</button></div>
-    <p class="note">연도·학급·권역·단위·집계 방식은 왼쪽 필터를 따릅니다. 미리보기의 제목·요약·설명 문장·Remark는 바로 고쳐 쓸 수 있고, 저장 시 고친 내용이 반영됩니다(설정을 바꾸면 자동 문장으로 다시 작성됩니다. Remark는 유지).</p></div>
+    <div class="ctrl rpbar" style="margin-top:12px"><button class="btn ghost" id="rp-html">HTML 저장</button><button class="btn ghost" id="rp-print">인쇄 / PDF</button><button class="btn" id="rp-doc">Word(.docx) 저장</button></div>
+    <p class="note" style="margin:8px 0 0;background:none;border:0;padding:0;font-size:12px;color:#6b7280;line-height:1.6">인쇄 / PDF를 누르면 보고서만 새 창에 열려 A4로 인쇄됩니다(프린터: 'PDF로 저장'). 창이 막히면 HTML 파일로 저장되니 브라우저로 열어 Ctrl+P 하세요. 미리보기의 문장과 Remark는 바로 고쳐 쓸 수 있고 저장·인쇄·Word에 그대로 반영됩니다. 연도·학급·권역·단위·집계 방식은 왼쪽 필터를 따르며, 설정을 바꾸면 자동 문장으로 다시 작성됩니다(Remark는 유지).</p></div>
    <div class="rep-wrap"><div id="report">${buildBrief()}</div></div></div>`;
   el.querySelector(".seclist").scrollTop=keep;
   const rb=(id,k,num)=>$(id).onchange=e=>{ RP[k]=num?+e.target.value:e.target.value; vReport(); };
@@ -738,12 +738,12 @@ function vReport(){
   el.querySelectorAll("[data-ri]").forEach(c=>c.onchange=()=>{ c.checked?RP.inds.add(c.dataset.ri):RP.inds.delete(c.dataset.ri); vReport(); });
   $("#rp-def").onclick=()=>{ RP.inds=new Set(RP_DEFAULT); vReport(); }; $("#rp-none").onclick=()=>{ RP.inds=new Set(); vReport(); };
   $("#rp-remark").oninput=e=>{ RP.remark=e.target.innerHTML; };
-  $("#rp-reset").onclick=()=>{ RP.remark=null; vReport(); };
   const fname=()=>("결산분석_"+($("#report h1").innerText||"보고서")).replace(/[\\/:*?"<>|]/g,"").slice(0,80);
   $("#rp-html").onclick=()=>saveFile(fname()+".html", reportDoc(false), "text/html");
   $("#rp-doc").onclick=async()=>{ const b=$("#rp-doc"); b.disabled=true; b.textContent="Word 파일 만드는 중…"; try{ const blob=await DOCX.build($("#report"), fname(), {grp1:true}); await saveFile(fname()+".docx", blob, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); }catch(e){ console.error(e); toast("Word 파일을 만들지 못했습니다: "+(e.message||e)); } finally{ b.disabled=false; b.textContent="Word(.docx) 저장"; } };
-  $("#rp-copy").onclick=()=>copyText($("#report").innerText);
+  $("#rp-print").onclick=()=>rpPrint(reportDoc(false),()=>$("#rp-html").onclick());
 }
+function rpPrint(doc,fallback){let w=null;try{w=window.open('','_blank')}catch(e){}if(!w){try{fallback()}catch(e){}toast('인쇄 창이 막혀 HTML로 저장했습니다. 파일을 열어 Ctrl+P → PDF로 저장');return}w.document.write(doc);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},800)}
 function reportCss(){ const css=document.querySelector("style").textContent; return css.split("\n").filter(l=>/^#report|^@page|^:root/.test(l)).join("\n"); }
 function reportDoc(){
   const inner=$("#report").cloneNode(true); inner.querySelectorAll("[contenteditable]").forEach(e=>e.removeAttribute("contenteditable")); inner.querySelectorAll("[data-tip]").forEach(e=>e.removeAttribute("data-tip"));

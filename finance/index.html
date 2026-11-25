@@ -306,7 +306,7 @@ let DL = null;
 const IN_ARTIFACT = !!(window.claude && window.claude.use);
 async function saveFile(name, data, mime){
   if (DL){ try{ await DL.save({filename:name, data}); toast("저장했습니다: "+name); }catch(e){ toast(e && e.code==="declined" ? "저장을 취소했습니다" : "이 화면에서 저장할 수 없습니다 ("+(e&&e.code||"오류")+")"); } return; }
-  if (IN_ARTIFACT){ toast("이 화면에서는 다운로드를 쓸 수 없습니다. '복사'를 이용하세요."); return; }
+  if (IN_ARTIFACT){ toast("이 화면에서는 다운로드를 쓸 수 없습니다. 오른쪽 위 메뉴에서 새 창으로 연 뒤 다시 시도하세요."); return; }
   const b = new Blob([data],{type:mime}); const a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); a.remove();
 }
 async function copyText(t){ try{ await navigator.clipboard.writeText(t); toast("클립보드에 복사했습니다"); }catch(e){ toast("복사가 차단되었습니다"); } }
@@ -876,13 +876,8 @@ function vBrief(){
     <div class="fg" style="margin-top:8px"><label>전년 대비 증감 기준 항목</label><select id="r-yoy">${dimOptions(RS.yoyDim)}</select></div>
     <div class="ctrl" style="margin-top:6px"><div class="fg" style="flex:1"><label>추이 시작 연도</label><select id="r-tfrom">${DICT.y.map((y,j)=>`<option value="${j}" ${j===RS.tFrom?"selected":""}>${y}</option>`).join("")}</select></div>
       <div class="fg" style="flex:1"><label>추이 구분 항목</label><select id="r-tdim">${["mg","pt","pp","tg","hj","sg","reg","mnow","loc"].map(f=>`<option value="${f}" ${f===RS.tDim?"selected":""}>${f==="mg"?"부처구분(표시 방식 따름)":LABEL[f]}</option>`).join("")}</select></div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
-      <button class="btn" id="r-dl">HTML 저장 (인쇄·PDF용)</button>
-      <button class="btn" id="r-docx">Word(.docx) 저장</button>
-      <button class="btn ghost" id="r-print" ${IN_ARTIFACT?'style="display:none"':""}>인쇄 / PDF</button>
-      <button class="btn ghost" id="r-copy">본문 텍스트 복사</button>
-    </div>
-    <p class="note" style="margin-top:8px">${IN_ARTIFACT?"저장한 HTML 파일을 브라우저로 열고 인쇄(Ctrl+P) → 'PDF로 저장'하면 A4 보고서가 됩니다. Remark 상자는 미리보기에서 바로 고쳐 쓸 수 있습니다.":"인쇄 시 보고서 영역만 A4로 출력됩니다. Remark 상자는 미리보기에서 바로 고쳐 쓸 수 있습니다."}</p>
+    <div class="ctrl rpbar" style="margin-top:12px"><button class="btn ghost" id="r-dl">HTML 저장</button><button class="btn ghost" id="r-print">인쇄 / PDF</button><button class="btn" id="r-docx">Word(.docx) 저장</button></div>
+    <p class="note" style="margin:8px 0 0;background:none;border:0;padding:0;font-size:12px;color:#6b7280;line-height:1.6">인쇄 / PDF를 누르면 보고서만 새 창에 열려 A4로 인쇄됩니다(프린터: 'PDF로 저장'). 창이 막히면 HTML 파일로 저장되니 브라우저로 열어 Ctrl+P 하세요. 미리보기의 문장과 Remark는 바로 고쳐 쓸 수 있고 저장·인쇄·Word에 그대로 반영됩니다.</p>
    </div>
    <div class="rep-wrap"><div id="report">${withEx(buildReport)}</div></div></div>`;
   $("#r-src").value=RS.src; $("#r-unit").value=RS.unit;
@@ -897,9 +892,8 @@ function vBrief(){
   $("#r-cadd").onclick=()=>{ const r=$("#r-cr").value,c=$("#r-cc").value; if(r===c) return toast("서로 다른 항목을 고르세요"); RS.custom.push([r,c]); vReport(); };
   el.querySelectorAll("[data-crm]").forEach(b=>b.onclick=()=>{ RS.custom.splice(+b.dataset.crm,1); vReport(); });
   $("#r-dl").onclick=()=>saveFile(`${RS.series}_${RS.title}_${DICT.y[RS.year]}.html`.replace(/[\\/:*?"<>|]/g,""), reportDoc(), "text/html");
-  $("#r-print").onclick=()=>{ try{ const w=window.open("","_blank"); w.document.write(reportDoc()); w.document.close(); setTimeout(()=>w.print(),800); }catch(e){ toast("인쇄가 차단되었습니다. HTML 저장 후 인쇄하세요"); } };
+  $("#r-print").onclick=()=>rpPrint(reportDoc(),()=>$("#r-dl").onclick());
   $("#r-docx").onclick=()=>saveDocx(`${RS.series}_${RS.title}_${DICT.y[RS.year]}`);
-  $("#r-copy").onclick=()=>copyText($("#report").innerText);
 }
 function reportMask(year, srcOverride){
   const saveY=S.f.y, saveR=S.f.r;
@@ -1396,13 +1390,8 @@ function vResearch(){
     <p class="note" style="margin:6px 0">분석 범위: 학제는 일반대·전문대·기능대 3개(대학원대학 제외), 재원은 중앙·지자체 모두 사용합니다. 왼쪽 필터 중 <b>설립구분·지원부처·사업목적 등</b>은 그대로 적용되고 연도·학제·소재지·재원 필터는 위 설정이 우선합니다.</p>
     <div class="seclist">${secHTML}</div>
     <div class="fg" style="margin-top:8px"><label>참고문헌 (줄바꿈으로 구분)</label><textarea id="rr-refs" rows="3" style="width:100%;font-size:12px">${esc(RR.refs)}</textarea></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
-      <button class="btn" id="r-dl">HTML 저장 (인쇄·PDF용)</button>
-      <button class="btn" id="r-docx">Word(.docx) 저장</button>
-      <button class="btn ghost" id="r-print" ${IN_ARTIFACT?'style="display:none"':""}>인쇄 / PDF</button>
-      <button class="btn ghost" id="r-copy">본문 텍스트 복사</button>
-    </div>
-    <p class="note" style="margin-top:8px">연구요약·서론·결론 문장은 자동 작성 초안이며 미리보기에서 바로 고쳐 쓸 수 있습니다. Ⅲ장은 지역 수만큼 길어지므로 필요한 지역만 고르면 빠릅니다.</p>
+    <div class="ctrl rpbar" style="margin-top:12px"><button class="btn ghost" id="r-dl">HTML 저장</button><button class="btn ghost" id="r-print">인쇄 / PDF</button><button class="btn" id="r-docx">Word(.docx) 저장</button></div>
+    <p class="note" style="margin:8px 0 0;background:none;border:0;padding:0;font-size:12px;color:#6b7280;line-height:1.6">인쇄 / PDF를 누르면 보고서만 새 창에 열려 A4로 인쇄됩니다(프린터: 'PDF로 저장'). 창이 막히면 HTML 파일로 저장되니 브라우저로 열어 Ctrl+P 하세요. 미리보기의 문장과 Remark는 바로 고쳐 쓸 수 있고 저장·인쇄·Word에 그대로 반영됩니다. 연구요약·서론·결론 문장은 자동 작성 초안입니다. Ⅲ장은 지역 수만큼 길어지므로 필요한 지역만 고르면 빠릅니다.</p>
    </div>
    <div class="rep-wrap"><div id="report" class="research">${withEx(buildResearch)}</div></div></div>`;
   el.querySelector(".rset").scrollTop=keepScroll; fixTables($("#report")); bindFmt(el); $("#r-knua").onchange=e=>{ RS.exKnua=e.target.checked; vReport(); };
@@ -1414,11 +1403,11 @@ function vResearch(){
   el.querySelectorAll("[data-rg]").forEach(c=>c.onchange=()=>{ RR.regions=[...el.querySelectorAll("[data-rg]:checked")].map(x=>+x.dataset.rg); if(!RR.regions.length) RR.regions=[-1]; vReport(); });
   $("#rr-rall").onclick=()=>{ RR.regions=null; vReport(); }; $("#rr-rnone").onclick=()=>{ RR.regions=[-1]; vReport(); };
   $("#r-dl").onclick=()=>{ const t=RR.title||`중앙정부 및 지방자치단체 대학재정지원 현황 분석(${DICT.y[RS.year]})`; saveFile(`연구보고서_${t}.html`.replace(/[\\/:*?"<>|]/g,""), reportDoc(t), "text/html"); };
-  $("#r-print").onclick=()=>{ try{ const w=window.open("","_blank"); w.document.write(reportDoc()); w.document.close(); setTimeout(()=>w.print(),800); }catch(e){ toast("인쇄가 차단되었습니다. HTML 저장 후 인쇄하세요"); } };
+  $("#r-print").onclick=()=>rpPrint(reportDoc(),()=>$("#r-dl").onclick());
   $("#r-docx").onclick=()=>saveDocx("연구보고서_"+(RR.title||`중앙정부 및 지방자치단체 대학재정지원 현황 분석(${DICT.y[RS.year]})`));
-  $("#r-copy").onclick=()=>copyText($("#report").innerText);
 }
 
+function rpPrint(doc,fallback){let w=null;try{w=window.open('','_blank')}catch(e){}if(!w){try{fallback()}catch(e){}toast('인쇄 창이 막혀 HTML로 저장했습니다. 파일을 열어 Ctrl+P → PDF로 저장');return}w.document.write(doc);w.document.close();setTimeout(()=>{try{w.focus();w.print()}catch(e){}},800)}
 function fixTables(root){ root.querySelectorAll("table").forEach(t=>{ if(t.tHead) return; const rows=[...t.rows]; const hd=[]; for(const r of rows){ if([...r.cells].every(c=>c.tagName==="TH")) hd.push(r); else break; } if(!hd.length||hd.length===rows.length) return; const th=t.createTHead(); hd.forEach(r=>th.appendChild(r)); }); }
 /* ================= DOCX EXPORT (보고서 → Word) ================= */
 const DOCX = (()=>{
