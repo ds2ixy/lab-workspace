@@ -1179,12 +1179,12 @@ var bot = { open:false, talking:0, mounted:false, hist:[] };
 function botMount(){
   if(bot.mounted) return; bot.mounted = true;
   var w = document.createElement("div"); w.id = "botWrap";
-  w.innerHTML = '<div class="botPanel" id="botPanel" role="dialog" aria-label="KCCE 도우미">'+
-    '<div class="botHd"><img alt="" src="'+BOTIMG+'"><div><b>KCCE 도우미</b><small>'+(IS_PUBLIC?'결과물·규정을 찾아드려요':'작업공간·규정을 찾아드려요')+'</small></div><button class="botX botNew" data-bot="reset" aria-label="대화 지우기" title="대화 지우기">↺</button><button class="botX" data-bot="close" aria-label="닫기" title="닫으면 대화가 지워져요">✕</button></div>'+
+  w.innerHTML = '<div class="botPanel" id="botPanel" role="dialog" aria-label="지니">'+
+    '<div class="botHd"><img alt="" src="'+BOTIMG+'"><div><b>지니</b><small>'+(IS_PUBLIC?'결과물·규정을 찾아드려요':'작업공간·규정을 찾아드려요')+'</small></div><button class="botX botNew" data-bot="reset" aria-label="대화 지우기" title="대화 지우기">↺</button><button class="botX" data-bot="close" aria-label="닫기" title="닫으면 대화가 지워져요">✕</button></div>'+
     '<div class="botMsgs" id="botMsgs"></div>'+
     '<form class="botIn" id="botForm"><span class="botQw"><input id="botQ" autocomplete="off" placeholder="궁금한 내용을 물어보세요"><button type="button" id="botClr" data-bot="clr" aria-label="입력 지우기">✕</button></span><button aria-label="보내기">➤</button></form></div>'+
     '<div class="botTip" id="botTip">무엇을 도와드릴까요?</div>'+
-    '<button class="botBtn" id="botBtn" data-bot="toggle" aria-label="KCCE 도우미 열기"><canvas id="botCv"></canvas><img class="botFb" alt="" src="'+BOTIMG+'"></button>';
+    '<button class="botBtn" id="botBtn" data-bot="toggle" aria-label="지니 열기"><canvas id="botCv"></canvas><img class="botFb" alt="" src="'+BOTIMG+'"></button>';
   document.body.appendChild(w);
   botGreet();
   var botQ=document.getElementById("botQ"), botComp=false, botPend=false;
@@ -1222,7 +1222,7 @@ function botMsg(who, html){
 function botGreet(){
   var chips = ["재정분석에서 볼 수 있는 것","휴학은 최대 몇 년까지 가능한가요?","The Issue 최신호","결산분석 보고서"];
   if(!IS_PUBLIC) chips.push("남은 할 일 알려줘");
-  botMsg("bot", '<p>안녕하세요, KCCE 도우미예요.</p><p>'+(IS_PUBLIC?'연구소 결과물이나 학사편람·규정집 내용을':'작업공간 항목이나 학사편람·규정집 내용을')+'<br>물어보시면 찾아드릴게요.</p><div class="bChips">'+chips.map(function(c){return '<button data-bot="ask" data-q="'+esc(c)+'">'+esc(c)+'</button>';}).join("")+'</div>');
+  botMsg("bot", '<p>안녕하세요, 저는 지니입니다.</p><p>무엇을 도와드릴까요?</p><div class="bChips">'+chips.map(function(c){return '<button data-bot="ask" data-q="'+esc(c)+'">'+esc(c)+'</button>';}).join("")+'</div>');
 }
 function botProjText(p){ var S=SUM[p.id]||{}; return [p.name,p.group,p.desc,JSON.stringify(S)].join(" "); }
 function botMatch(q){
@@ -1286,7 +1286,7 @@ async function botAsk(q){
     if(smp){
       var ctx=[]; pm.slice(0,2).forEach(function(x){ ctx.push("[항목] "+x.p.name+": "+botProjText(x.p).slice(0,1200)); });
       regHits.forEach(function(x,i){ ctx.push("[규정"+(i+1)+"] "+regLabel(x.c)+" (p."+x.c.page+")\n"+x.c.text.slice(0,1100)); });
-      var prompt="너는 한국고등직업교육연구소(KCCE HVER) "+(IS_PUBLIC?"공개 결과물 페이지":"작업공간")+"의 안내 도우미다. 아래 [자료]만 근거로 [질문]에 대한 답을 2~3문장으로 요약하라. 결론을 첫 문장에 쓰고, 규정을 근거로 하면 문장 끝에 [규정1]처럼 표기. 자료에 없으면 '자료에서 확인되지 않아요'라고 말하라. 마크다운·목록·제목 없이 한국어 존댓말(~요).\n\n[질문] "+q+"\n\n[자료]\n"+ctx.join("\n\n");
+      var prompt="너는 한국고등직업교육연구소(KCCE HVER) "+(IS_PUBLIC?"공개 결과물 페이지":"작업공간")+"의 안내 도우미 \"지니\"다. 아래 [자료]만 근거로 [질문]에 대한 답을 2~3문장으로 요약하라. 결론을 첫 문장에 쓰고, 규정을 근거로 하면 문장 끝에 [규정1]처럼 표기. 자료에 없으면 '자료에서 확인되지 않아요'라고 말하라. 마크다운·목록·제목 없이 한국어 존댓말(~요).\n\n[질문] "+q+"\n\n[자료]\n"+ctx.join("\n\n");
       try{
         var r2 = await smp(prompt,{onText:function(u){ sumBox.innerHTML=esc(u.text).replace(/\n/g,"<br>"); var b=document.getElementById("botMsgs"); b.scrollTop=b.scrollHeight; }});
         sumBox.innerHTML=esc(r2.text).replace(/\n/g,"<br>");
