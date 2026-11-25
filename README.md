@@ -15,6 +15,8 @@ tbp/p0~p6.json                  규정집·학사편람 원문 표 이미지 묶
 files/handbook*.pdf             학사편람 본문·부록 다운로드용 PDF
 hedx/                           고등교육 공시자료 대시보드(외부 공개용: index.html, data.json, si.json)
 finance/  fin-statements/            재정지원·결산분석 대시보드(claude.ai 공개용 아티팩트 사본)
+the-issue/                      THE ISSUE 2026 웹 이북 (ds2ixy/KCCE 사본, hver-theissue.pages.dev와 같은 내용)
+report-ebook/                   2026 연구소 성과자료집 이북 (assets/theissue/theissue.html = THE ISSUE 합본)
 ```
 
 ## 갱신 방법

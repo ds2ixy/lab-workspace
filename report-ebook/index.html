@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2026 한국고등직업교육연구소 성과자료집</title>
+<style>
+:root{
+  --navy:#16244f; --ink:#1f2937; --muted:#6b7280; --paper:#faf7f2;
+  --c-about:#2f5bb7; --c-issue:#6b3fb8; --c-report:#0f7a7a; --c-pub:#2f8a4f;
+  --wood1:#8a5a33; --wood2:#6b4224; --wood3:#4a2c17;
+  --font:"Pretendard","Apple SD Gothic Neo","Malgun Gothic","맑은 고딕","Noto Sans KR","Noto Sans CJK KR",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#0d1020;color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;cursor:pointer;border:0;background:none;color:inherit}
+a{color:inherit}
+.view{position:fixed;inset:0;opacity:0;visibility:hidden;transition:opacity .5s ease,visibility .5s}
+.view.on{opacity:1;visibility:visible}
+
+/* ───────── INTRO ───────── */
+#intro{background:#05070f;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#intro .bgblur{position:absolute;inset:-40px;background:center/cover no-repeat;filter:blur(30px) brightness(.45);transform:scale(1.1)}
+#stage{position:relative;width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+#stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.hot{position:absolute;border-radius:1.2vmin;opacity:0;pointer-events:none;transition:opacity .6s, transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;outline:none}
+#stage.ready .hot{opacity:1;pointer-events:auto}
+.hot::after{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 2px rgba(255,255,255,.0);transition:box-shadow .35s}
+.hot:hover,.hot:focus-visible{transform:translateY(-1.2%) scale(1.03)}
+.hot:hover::after,.hot:focus-visible::after{box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 40px 8px rgba(255,236,170,.55)}
+.hot .lbl{position:absolute;left:50%;bottom:-13%;transform:translateX(-50%);white-space:nowrap;background:rgba(15,20,40,.85);color:#fff;font-weight:700;font-size:clamp(10px,1.05vw,16px);padding:.45em 1em;border-radius:99px;opacity:0;transition:opacity .3s}
+.hot:hover .lbl,.hot:focus-visible .lbl{opacity:1}
+#stage.ready .hot{animation:pulse 2.4s ease-in-out 1}
+@keyframes pulse{0%,100%{box-shadow:none}50%{box-shadow:0 0 0 3px rgba(255,255,255,.7),0 0 30px rgba(255,240,190,.6)}}
+.intro-top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:2.2% 2.6%;pointer-events:none}
+.intro-top>*{pointer-events:auto}
+.hint{opacity:0;transition:opacity .8s;background:rgba(10,14,30,.72);color:#fff;border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(6px);padding:.6em 1.3em;border-radius:99px;font-size:clamp(11px,1.15vw,17px);font-weight:600}
+#stage.ready .hint{opacity:1}
+.ibtns{display:flex;gap:.5em}
+.ibtn{background:rgba(10,14,30,.6);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:.5em 1.1em;font-size:clamp(11px,1vw,15px);backdrop-filter:blur(6px)}
+.ibtn:hover{background:rgba(255,255,255,.2)}
+#btnSkip{position:absolute;right:2.6%;bottom:4%}
+#stage.ready #btnSkip{display:none}
+#btnReplay,#btnEnter{display:none}
+#stage.ready #btnReplay,#stage.ready #btnEnter{display:inline-block}
+
+/* ───────── LIBRARY ───────── */
+#library{background:
+  radial-gradient(1200px 500px at 50% -10%,rgba(255,236,200,.18),transparent 60%),
+  linear-gradient(180deg,#2a1d14 0%,#3a2819 40%,#2b1c11 100%);color:#fff;overflow:auto}
+.lib-head{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:18px;padding:14px 28px;background:rgba(22,15,10,.82);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand img{width:30px;height:36px;color:#fff;filter:drop-shadow(0 1px 2px rgba(0,0,0,.5))}
+.brand .t1{font-size:11px;opacity:.7;letter-spacing:.3px}
+.brand .t2{font-size:16px;font-weight:800;letter-spacing:-.3px}
+.tabs{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap}
+.tab{padding:9px 16px;border-radius:99px;font-weight:700;font-size:14px;color:rgba(255,255,255,.75);border:1px solid rgba(255,255,255,.14)}
+.tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.tab.on{color:#fff;background:var(--tc);border-color:transparent;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.homebtn{padding:9px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.2);font-size:14px}
+.homebtn:hover{background:rgba(255,255,255,.1)}
+.lib-hero{max-width:1240px;margin:0 auto;padding:46px 28px 10px;display:flex;align-items:flex-end;gap:24px;justify-content:space-between;flex-wrap:wrap}
+.lib-hero .kicker{font-size:13px;letter-spacing:3px;font-weight:800;color:var(--tc2,#ffd9a0)}
+.lib-hero h1{font-size:clamp(28px,4vw,44px);font-weight:900;letter-spacing:-1px;margin-top:6px}
+.lib-hero p{color:rgba(255,255,255,.72);margin-top:8px;font-size:15px;line-height:1.6;max-width:620px;word-break:keep-all}
+.lib-hero .count{font-size:14px;color:rgba(255,255,255,.6)}
+.shelves{max-width:1240px;margin:0 auto;padding:20px 28px 90px}
+.unit{display:flex;gap:26px;align-items:stretch;margin-bottom:64px}
+.unit-main{flex:1;min-width:0}
+.unit-main{--col:clamp(250px,24vw,310px);--gap:clamp(28px,4vw,64px)}
+.shelf{position:relative;display:grid;grid-template-columns:repeat(var(--n),var(--col));justify-content:center;align-items:end;column-gap:var(--gap);padding:64px 40px 0;min-height:380px}
+.shelf::before{content:"";position:absolute;left:0;right:0;top:0;bottom:22px;background:linear-gradient(180deg,rgba(0,0,0,.38),rgba(0,0,0,.14) 30%,rgba(0,0,0,.06));border-left:14px solid var(--wood3);border-right:14px solid var(--wood3);border-top:10px solid var(--wood3);border-radius:4px 4px 0 0;z-index:0}
+.shelf::after{content:"";position:absolute;left:-10px;right:-10px;bottom:0;height:26px;border-radius:3px;
+  background:linear-gradient(180deg,#b07a4a 0%,var(--wood1) 25%,var(--wood2) 70%,var(--wood3) 100%);
+  box-shadow:0 14px 24px rgba(0,0,0,.55),inset 0 2px 0 rgba(255,255,255,.18);z-index:2}
+.book{position:relative;z-index:3;justify-self:center;width:clamp(150px,15vw,196px);margin-bottom:48px;cursor:pointer;outline:none;animation:rise .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+.book .cv{position:relative;aspect-ratio:1/1.414;border-radius:2px 5px 5px 2px;overflow:hidden;background:#ccc;
+  box-shadow:0 16px 22px -8px rgba(0,0,0,.85),4px 4px 14px rgba(0,0,0,.35);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
+.book .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.book .cv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5%;background:linear-gradient(90deg,rgba(0,0,0,.28),rgba(255,255,255,.12) 60%,transparent);z-index:1}
+.book:hover .cv,.book:focus-visible .cv{transform:translateY(-12px);box-shadow:0 28px 36px -12px rgba(0,0,0,.9),0 0 0 3px rgba(255,226,160,.8)}
+.book::after{content:"";position:absolute;left:8%;right:8%;bottom:-22px;height:10px;border-radius:50%;background:rgba(0,0,0,.45);filter:blur(6px);z-index:-1}
+.titles{display:grid;grid-template-columns:repeat(var(--n),var(--col));justify-content:center;column-gap:var(--gap);padding:24px 40px 0}
+.tcard{width:100%;background:#fbf6ec;color:#1f2937;border-radius:10px;padding:12px 12px 11px;text-align:center;box-shadow:0 8px 18px rgba(0,0,0,.35);cursor:pointer}
+.tcard:hover{background:#fff}
+.tcard .ttl{font-size:14.5px;min-height:2.84em;display:flex;align-items:center;justify-content:center;font-weight:800;line-height:1.42;letter-spacing:-.3px;word-break:keep-all;color:#111827}
+.badge{display:inline-block;margin-top:8px;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:99px;background:#e5e7eb;color:#374151}
+.badge.ready{background:#0f7a7a;color:#fff}
+/* 정책연구 유형 라벨 */
+.plaque{flex:0 0 168px;position:relative;border-radius:18px;padding:26px 16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#fff;
+  background:linear-gradient(160deg,var(--p1),var(--p2));box-shadow:0 16px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.35);overflow:hidden}
+.plaque::before{content:"";position:absolute;inset:8px;border:1.5px dashed rgba(255,255,255,.45);border-radius:12px}
+.plaque::after{content:"";position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.12);right:-70px;top:-70px}
+.plaque .ico{width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.95);display:grid;place-items:center;box-shadow:0 8px 18px rgba(0,0,0,.25);position:relative;z-index:1}
+.plaque .ico svg{width:42px;height:42px}
+.plaque .k{font-size:26px;font-weight:900;margin-top:16px;letter-spacing:-.5px;position:relative;z-index:1}
+.plaque .e{font-size:11px;letter-spacing:2px;font-weight:700;opacity:.85;margin-top:4px;position:relative;z-index:1}
+.plaque .d{font-size:12.5px;line-height:1.5;opacity:.92;margin-top:10px;word-break:keep-all;position:relative;z-index:1}
+.plaque .n{position:relative;z-index:1;margin-top:12px;font-size:12px;font-weight:800;background:rgba(0,0,0,.22);padding:4px 12px;border-radius:99px}
+#htmlFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#e6e5e2;display:none}
+#reader.html-mode #htmlFrame{display:block}
+#reader.html-mode .nav,#reader.html-mode .r-foot,#reader.html-mode .thumbs,#reader.html-mode #btnThumbs,#reader.html-mode #rToc{display:none!important}
+#reader.html-mode .r-body{padding:0}
+.loading{position:absolute;inset:0;display:grid;place-items:center;color:#cbd5e1;font-size:14px}
+.rtoc{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 14px;font:inherit;font-size:13.5px}
+.rtoc option{color:#111}
+
+/* ───────── READER ───────── */
+#reader{background:radial-gradient(1000px 600px at 50% 40%,#2b3350,#0b0f1d 70%);color:#fff;display:flex;flex-direction:column;z-index:20}
+.r-head{display:flex;align-items:center;gap:14px;padding:12px 20px;background:rgba(0,0,0,.3);border-bottom:1px solid rgba(255,255,255,.08)}
+.r-head .ttl{font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r-head .sub{font-size:12px;opacity:.6}
+.rbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.2);font-size:13.5px;white-space:nowrap;text-decoration:none}
+.rbtn:hover{background:rgba(255,255,255,.12)}
+.r-head .sp{flex:1}
+.r-body{flex:1;position:relative;display:flex;align-items:center;justify-content:center;min-height:0;padding:18px 70px}
+#flipWrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+#flipWrap .fb{margin:0 auto}
+.pg{background:#fff;overflow:hidden}
+.pg img{width:100%;height:100%;object-fit:contain;display:block;background:#fff;user-select:none;-webkit-user-drag:none}
+.pg.hard{background:#1b2440}
+.pg .ph{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:12%;color:#334155;background:linear-gradient(180deg,#fbfaf7,#f1ede4)}
+.ph .ic{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--tc,#0f7a7a);color:#fff;font-size:28px;margin-bottom:18px}
+.ph h3{font-size:clamp(14px,1.6vw,22px);color:#0f172a;line-height:1.4;word-break:keep-all}
+.ph p{font-size:clamp(11px,1.1vw,14px);margin-top:10px;line-height:1.7;color:#64748b;word-break:keep-all}
+.ph .chip{margin-top:16px;font-size:12px;font-weight:700;padding:5px 12px;border-radius:99px;background:#e2e8f0;color:#334155}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:22px;display:grid;place-items:center}
+.nav:hover{background:rgba(255,255,255,.22)}
+.nav.prev{left:14px}.nav.next{right:14px}
+.r-foot{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px 16px 14px}
+.r-foot .pno{font-variant-numeric:tabular-nums;font-size:14px;opacity:.85;min-width:90px;text-align:center}
+.thumbs{display:flex;gap:8px;overflow-x:auto;padding:8px 16px 14px;scrollbar-width:thin;max-height:0;transition:max-height .35s,padding .35s;padding-top:0;padding-bottom:0}
+.thumbs.on{max-height:120px;padding-top:6px;padding-bottom:14px}
+.thumbs img{height:86px;border-radius:3px;opacity:.6;cursor:pointer;border:2px solid transparent;flex:0 0 auto}
+.thumbs img:hover{opacity:1}
+.thumbs img.cur{opacity:1;border-color:#ffd166}
+/* link panel (THE ISSUE) */
+
+.lp-note{font-size:12.5px;opacity:.55;margin-top:14px}
+
+@media (max-width:760px){
+  .lib-head{flex-wrap:wrap;padding:10px 14px}
+  .tabs{margin-left:0;width:100%;overflow-x:auto;flex-wrap:nowrap}
+  .tab{font-size:13px;padding:7px 12px;white-space:nowrap}
+  .r-body{padding:10px 8px}
+  .nav{display:none}
+  .r-head .sub,.hide-m{display:none}
+  .unit-main{--col:44vw;--gap:12px}
+  .shelf{padding:44px 10px 0;min-height:260px}
+  .titles{padding:18px 10px 0}
+  .book{width:36vw;max-width:160px;margin-bottom:40px}
+  .tcard .ttl{font-size:13px}
+  .unit{flex-direction:column;gap:14px}
+  .plaque{flex:none;flex-direction:row;gap:12px;padding:14px 18px;justify-content:flex-start;text-align:left}
+  .plaque .ico{width:48px;height:48px}.plaque .ico svg{width:28px;height:28px}
+  .plaque .k{margin-top:0;font-size:20px}.plaque .d,.plaque .n{display:none}
+  .lib-head{position:sticky}
+  .homebtn{position:absolute;right:12px;top:10px;padding:6px 10px;font-size:12px}
+}
+</style>
+</head>
+<body>
+
+<!-- INTRO -->
+<section id="intro" class="view on" aria-label="인트로">
+  <div class="bgblur" id="introBg"></div>
+  <div id="stage">
+    <video id="introVideo" muted playsinline preload="auto"></video>
+    <div class="intro-top">
+      <span class="hint">📖 보고 싶은 자료를 선택하세요</span>
+      <span class="ibtns">
+        <button class="ibtn" id="btnReplay" title="인트로 다시 보기">↺ 다시 보기</button>
+        <button class="ibtn" id="btnEnter" title="책꽂이 전체 보기">책꽂이 보기 ›</button>
+      </span>
+    </div>
+    <button class="hot" data-cat="about"   style="left:11.1%;top:23.6%;width:19.1%;height:42.2%" aria-label="연구소 소개"><span class="lbl">연구소 소개 열기</span></button>
+    <button class="hot" data-cat="issue"   style="left:31.8%;top:23.6%;width:17.3%;height:42.2%" aria-label="THE ISSUE"><span class="lbl">THE ISSUE 열기</span></button>
+    <button class="hot" data-cat="report"  style="left:51.3%;top:23.6%;width:17.9%;height:42.2%" aria-label="정책연구보고서"><span class="lbl">정책연구보고서 열기</span></button>
+    <button class="hot" data-cat="pub"     style="left:70.8%;top:23.6%;width:19.3%;height:42.2%" aria-label="발간자료"><span class="lbl">발간자료 열기</span></button>
+    <button class="ibtn" id="btnSkip">건너뛰기 ›</button>
+  </div>
+</section>
+
+<!-- LIBRARY (책꽂이) -->
+<section id="library" class="view" aria-label="책꽂이">
+  <header class="lib-head">
+    <div class="brand" id="brandHome" title="처음으로">
+      <img id="brandEmblem" alt="KCCE">
+      <div><div class="t1">한국전문대학교육협의회 부설 한국고등직업교육연구소</div><div class="t2">2026 성과자료집</div></div>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+    <button class="homebtn" id="btnHome" title="인트로 화면으로">⌂ 처음으로</button>
+  </header>
+  <div class="lib-hero">
+    <div><div class="kicker" id="catKicker"></div><h1 id="catTitle"></h1><p id="catDesc"></p></div>
+    <div class="count" id="catCount"></div>
+  </div>
+  <div class="shelves" id="shelves"></div>
+</section>
+
+<!-- READER -->
+<section id="reader" class="view" aria-label="이북 뷰어">
+  <header class="r-head">
+    <button class="rbtn" id="btnBack">‹ 책꽂이</button>
+    <div style="min-width:0"><div class="ttl" id="rTitle"></div><div class="sub" id="rSub"></div></div>
+    <span class="sp"></span>
+    <select class="rtoc" id="rToc" aria-label="바로가기"></select>
+    <button class="rbtn hide-m" id="btnThumbs">▦ 페이지 목록</button>
+    <button class="rbtn" id="btnFull">⛶ 전체화면</button>
+  </header>
+  <div class="r-body" id="rBody">
+    <div id="flipWrap"></div>
+    <iframe id="htmlFrame" title="이북"></iframe>
+    <button class="nav prev" id="btnPrev" aria-label="이전 페이지">‹</button>
+    <button class="nav next" id="btnNext" aria-label="다음 페이지">›</button>
+  </div>
+  <div class="r-foot" id="rFoot">
+    <button class="rbtn" id="btnFirst">⏮</button>
+    <span class="pno" id="pno"></span>
+    <button class="rbtn" id="btnLast">⏭</button>
+  </div>
+  <div class="thumbs" id="thumbs"></div>
+</section>
+
+<script src="assets/page-flip.js"></script>
+<script>
+/* ════════════════════════════════════════════════════════════════
+   📚 자료 구성 (CONFIG) — 자료를 추가/교체할 때 여기만 수정하세요
+   ────────────────────────────────────────────────────────────────
+   type: "flip"  → dir 폴더의 p01.webp, p02.webp … (count쪽)를 이북으로 표시
+                   (여러 묶음이면 parts:[{label, dir, count}] 사용 → 바로가기 목록 자동 생성)
+         "cover" → 표지만 있는 자료 (본문은 '자료 준비중' 안내)
+         "html"  → 이미 완성된 이북(HTML 한 파일)을 그대로 표시 (THE ISSUE 합본)
+   direct:true  → 첫 화면에서 책을 누르면 책꽂이 없이 이북을 바로 엽니다
+   본문 추가: PDF를 쪽 이미지(p01.webp~)로 변환해 assets/<폴더>/ 에 넣고
+             type:"flip", dir, count 를 지정하면 됩니다.
+   ════════════════════════════════════════════════════════════════ */
+const CATS = [
+  { id:"about", name:"연구소 소개", direct:true, color:"#2f5bb7",
+    books:[ {id:"about", title:"한국고등직업교육연구소 소개", type:"flip", dir:"assets/about", count:6, note:"연구소 개요 · 역할 · 2026 성과"} ] },
+  { id:"issue", name:"THE ISSUE", direct:true, color:"#6b3fb8",
+    books:[ {id:"theissue", title:"THE ISSUE 2026 합본", type:"html", src:"assets/theissue/theissue.html", cover:"assets/covers/theissue.webp", note:"월간 뉴스레터 통합본"} ] },
+  { id:"report", name:"정책연구보고서", kicker:"POLICY RESEARCH", color:"#0f7a7a", color2:"#7fe0d0",
+    desc:"2026년 수행한 수탁·위탁·자체 정책연구 6건의 결과보고서입니다.",
+    groups:[
+      {key:"수탁", en:"COMMISSIONED", d:"외부 기관의 의뢰를 받아 수행한 연구", p1:"#f4b740", p2:"#d9822b", icon:"hand"},
+      {key:"위탁", en:"ENTRUSTED", d:"외부 전문기관에 위탁한 연구", p1:"#2bb5a0", p2:"#0f7a7a", icon:"doc"},
+      {key:"자체", en:"IN-HOUSE", d:"연구소가 자체 기획한 정책 연구", p1:"#5b8def", p2:"#2f5bb7", icon:"bulb"} ],
+    books:[
+      {id:"r1", tag:"수탁", title:"RISE 수행대학 현장 의견 청취를 통한 정책 개선 방향 도출", type:"cover", cover:"assets/covers/report1.webp"},
+      {id:"r2", tag:"수탁", title:"한국농수산대학교 전문기술석사과정 설치를 위한 연구용역", type:"cover", cover:"assets/covers/report2.webp"},
+      {id:"r3", tag:"위탁", title:"직업교육법 시행령 제정방향 및 관련 법령 정비방안", type:"cover", cover:"assets/covers/report3.webp"},
+      {id:"r4", tag:"위탁", title:"고등직업교육 발전 모델에 따른 인증체계 구축 방안", type:"cover", cover:"assets/covers/report4.webp"},
+      {id:"r5", tag:"자체", title:"전문대학 인재의 산업인력 역할과 양성체계 개선방안 연구", type:"cover", cover:"assets/covers/report5.webp"},
+      {id:"r6", tag:"자체", title:"전문대학 연계 글로벌 테크니션 양성 경로 개발", type:"cover", cover:"assets/covers/report6.webp"},
+    ] },
+  { id:"pub", name:"발간자료", kicker:"PUBLICATIONS", color:"#2f8a4f", color2:"#d9f99d",
+    desc:"정책백서, 이슈브리프, 전략과제 등 연구소가 발간한 정책 자료입니다.",
+    books:[
+      {id:"whitepaper", title:"2026 고등직업교육 정책백서", type:"cover", cover:"assets/covers/whitepaper.webp"},
+      {id:"brief", title:"이슈브리프 제14호", type:"flip", dir:"assets/brief", count:12, note:"미래 고등직업교육 발전 모델과 직업교육법령 정비방안 외"},
+      {id:"strategy", title:"2026 전문대학 전략과제", type:"flip", dir:"assets/strategy", count:26, note:"AI를 다루는 기술, K-Skill Up!"},
+    ] },
+];
+const ICONS = {
+  hand:'<svg viewBox="0 0 48 48" fill="none" stroke="#b45309" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 24l8-8 8 4 6-4 14 10"/><path d="M14 16l-8 8 12 12a3 3 0 004-4l2 2a3 3 0 004-4l2 2a3 3 0 004-4l2 1a3 3 0 002-5L28 16"/></svg>',
+  doc:'<svg viewBox="0 0 48 48" fill="none" stroke="#0f766e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6h17l9 9v27H12z"/><path d="M29 6v9h9"/><path d="M18 24h14M18 30h14M18 36h9"/><circle cx="36" cy="38" r="0.5"/></svg>',
+  bulb:'<svg viewBox="0 0 48 48" fill="none" stroke="#1d4ed8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M24 6a12 12 0 00-7 21.7c1.3 1 2 2.4 2 3.9V34h10v-2.4c0-1.5.7-2.9 2-3.9A12 12 0 0024 6z"/><path d="M19 40h10M21 44h6"/><path d="M24 14v6l3 3"/></svg>'
+};
+/* ═══════════════════════ 이하 동작 코드 ═══════════════════════ */
+
+const A = p => (window.ASSET_MAP && window.ASSET_MAP[p]) || p;   // 단일 HTML 빌드 시 내장 자원 사용
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,"0");
+const seq = (dir,n) => Array.from({length:n},(_,i)=>`${dir}/p${pad(i+1)}.webp`);
+function pagesOf(b){
+  if(b.type!=="flip") return [];
+  const out = [], toc = [];
+  if(b.parts){
+    if(b.cover){ out.push(b.cover); toc.push({label:"표지", page:0}); }
+    b.parts.forEach(pt=>{ toc.push({label:pt.label, page:out.length}); out.push(...seq(pt.dir, pt.count)); });
+  } else out.push(...seq(b.dir, b.count));
+  b._toc = toc; return out;
+}
+const coverOf = b => b.cover || (b.type==="flip" ? pagesOf(b)[0] : "");
+const catOf = id => CATS.find(c=>c.id===id);
+
+function show(id){ document.querySelectorAll(".view").forEach(v=>v.classList.toggle("on", v.id===id)); }
+
+/* ── intro ── */
+const vid = $("#introVideo"), stage = $("#stage");
+vid.src = A("assets/intro.mp4");
+vid.poster = A("assets/intro_last.webp");
+$("#introBg").style.backgroundImage = `url("${A("assets/intro_last.webp")}")`;
+$("#brandEmblem").src = A("assets/emblem.svg");
+function introReady(){ stage.classList.add("ready"); }
+function playIntro(){
+  stage.classList.remove("ready");
+  try{ vid.currentTime = 0; }catch(e){}
+  const p = vid.play(); if(p && p.catch) p.catch(()=>{ introReady(); });
+}
+vid.addEventListener("ended", introReady);
+vid.addEventListener("error", introReady);
+$("#btnSkip").onclick = ()=>{ try{ vid.pause(); vid.currentTime = Math.max(0,(vid.duration||5)-0.05);}catch(e){} introReady(); };
+$("#btnReplay").onclick = playIntro;
+$("#btnEnter").onclick = ()=> go("report");
+document.querySelectorAll(".hot").forEach(h=> h.onclick = ()=> go(h.dataset.cat));
+function goHome(){ setHash(""); closeReader(); show("intro"); introReady(); }
+$("#btnHome").onclick = $("#brandHome").onclick = goHome;
+
+/* 분류 열기: direct 분류는 이북을 바로, 나머지는 책꽂이 */
+let fromIntro = true;
+function go(id){
+  const c = catOf(id); if(!c) return;
+  fromIntro = !$("#library").classList.contains("on");
+  if(c.direct) openBook(c, c.books[0]); else openShelf(id);
+}
+
+/* ── library ── */
+let curCat = null;
+const tabs = $("#tabs");
+CATS.forEach(c=>{
+  const b = document.createElement("button");
+  b.className="tab"; b.textContent=c.name; b.dataset.cat=c.id; b.style.setProperty("--tc", c.color);
+  b.onclick = ()=> go(c.id); tabs.appendChild(b);
+});
+function bookEls(c, list){
+  const shelf = document.createElement("div"); shelf.className="shelf";
+  const titles = document.createElement("div"); titles.className="titles";
+  list.forEach((b,k)=>{
+    const el = document.createElement("div"); el.className="book"; el.tabIndex=0; el.style.animationDelay=(k*80)+"ms";
+    el.innerHTML = `<div class="cv"><img alt=""></div>`; el.querySelector("img").src = A(coverOf(b));
+    el.title = b.title;
+    const open = ()=> openBook(c, b);
+    el.onclick = open; el.onkeydown = e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); open(); } };
+    shelf.appendChild(el);
+    const t = document.createElement("div"); t.className="tcard"; t.onclick = open;
+    const badge = b.type==="flip" ? `<span class="badge ready">이북 · ${pagesOf(b).length}쪽</span>` : `<span class="badge">표지 · 본문 준비중</span>`;
+    t.innerHTML = `<div class="ttl">${b.title}</div>${badge}`;
+    titles.appendChild(t);
+  });
+  const main = document.createElement("div"); main.className="unit-main"; main.style.setProperty("--n", list.length); main.append(shelf, titles);
+  return main;
+}
+function renderShelf(){
+  const c = catOf(curCat); if(!c) return;
+  $("#catKicker").textContent = c.kicker; $("#catKicker").style.color = c.color2;
+  $("#catTitle").textContent = c.name; $("#catDesc").textContent = c.desc;
+  $("#catCount").textContent = `총 ${c.books.length}권`;
+  tabs.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on", t.dataset.cat===c.id));
+  const wrap = $("#shelves"); wrap.innerHTML="";
+  const units = c.groups
+    ? c.groups.map(g=>({g, list:c.books.filter(b=>b.tag===g.key)}))
+    : [{g:null, list:c.books}];
+  units.forEach(({g,list})=>{
+    const unit = document.createElement("div"); unit.className="unit";
+    if(g){
+      const p = document.createElement("div"); p.className="plaque"; p.style.setProperty("--p1",g.p1); p.style.setProperty("--p2",g.p2);
+      p.innerHTML = `<div class="ico">${ICONS[g.icon]}</div><div><div class="k">${g.key}연구</div><div class="e">${g.en}</div><div class="d">${g.d}</div><div class="n">${list.length}건</div></div>`;
+      unit.appendChild(p);
+    }
+    unit.appendChild(bookEls(c, list));
+    wrap.appendChild(unit);
+  });
+}
+function openShelf(id){ curCat=id; renderShelf(); closeReader(); show("library"); $("#library").scrollTop=0; setHash(id); }
+
+/* ── reader ── */
+let pf=null, curBook=null, curCatObj=null;
+function phPage(html){ const d=document.createElement("div"); d.className="pg"; d.innerHTML=`<div class="ph">${html}</div>`; return d; }
+function imgPage(src){ const d=document.createElement("div"); d.className="pg"; const im=new Image(); im.src=A(src); im.alt=""; im.draggable=false; im.decoding="async"; d.appendChild(im); return d; }
+function closeReader(){ const R=$("#reader"); if(R) R.classList.remove("html-mode"); if(pf){ try{pf.destroy();}catch(e){} pf=null; } $("#flipWrap").innerHTML=""; }
+function buildFlip(b, c, startAt=0){
+  const wrap = $("#flipWrap");
+  closeReader();
+  const box = document.createElement("div"); box.className="fb"; wrap.appendChild(box);
+  let nodes, srcs;
+  if(b.type==="flip"){ srcs = pagesOf(b); nodes = srcs.map(p=> imgPage(p)); }
+  else {
+    srcs = [b.cover];
+    nodes = [ imgPage(b.cover),
+      phPage(`<div class="ic" style="background:${c.color}">✎</div><h3>${b.title}</h3><p>${c.name}${b.tag?` · ${b.tag}연구`:""}<br>한국고등직업교육연구소 · 2026</p>`),
+      phPage(`<div class="ic" style="background:${c.color}">⏳</div><h3>본문 자료 준비중</h3><p>보고서 본문은 최종 발간 후 이 이북에 추가될 예정입니다.</p><span class="chip">COMING SOON</span>`),
+      phPage(`<img src="${A("assets/emblem.svg")}" style="width:56px;height:68px;object-fit:contain;background:none"><p style="margin-top:14px"><b>한국전문대학교육협의회 부설<br>한국고등직업교육연구소</b></p>`) ];
+  }
+  const body = $("#rBody").getBoundingClientRect();
+  const single = window.innerWidth < 760;
+  const availH = body.height - 36, availW = body.width - (single?16:140);
+  let h = availH, w = h/1.4142;
+  if((single? w : w*2) > availW){ w = single? availW : availW/2; h = w*1.4142; }
+  box.style.width = (single? w : w*2)+"px"; box.style.height = h+"px";
+  pf = new St.PageFlip(box, { width:Math.floor(w), height:Math.floor(h), size:"fixed", showCover:true, usePortrait:single,
+    maxShadowOpacity:.45, mobileScrollSupport:false, flippingTime:700, startPage:startAt, autoSize:false, drawShadow:true });
+  pf.loadFromHTML(nodes);
+  const total = nodes.length, toc = b._toc || [];
+  const sel = $("#rToc");
+  sel.style.display = toc.length ? "" : "none";
+  if(toc.length){ sel.innerHTML = `<option value="">바로가기</option>` + toc.map(t=>`<option value="${t.page}">${t.label}</option>`).join("");
+    sel.onchange = ()=>{ if(sel.value!=="") pf.flip(+sel.value); }; }
+  const upd = ()=>{ const i = pf.getCurrentPageIndex();
+    const isSpread = !single && i>0 && i<total-1;
+    $("#pno").textContent = isSpread ? `${i+1}–${Math.min(i+2,total)} / ${total}` : `${i+1} / ${total}`;
+    if(toc.length){ let cur=""; toc.forEach(t=>{ if(t.page<=i+(isSpread?1:0)) cur=String(t.page); }); sel.value=cur; }
+    const th = $("#thumbs").children; for(let k=0;k<th.length;k++) th[k].classList.toggle("cur", k===i || (isSpread && k===i+1));
+    const cur = $("#thumbs .cur"); if(cur && $("#thumbs").classList.contains("on")) cur.scrollIntoView({block:"nearest",inline:"center"}); };
+  const th = $("#thumbs"); th.innerHTML="";
+  srcs.forEach((p,k)=>{ const t=new Image(); t.src=A(p); t.loading="lazy"; t.onclick=()=>pf.flip(k); th.appendChild(t); });
+  pf.on("flip", upd); upd();
+}
+function openBook(c, b){
+  curBook=b; curCatObj=c;
+  $("#rTitle").textContent = b.title;
+  $("#rSub").textContent = c.name + (b.note?` · ${b.note}`:"");
+  $("#btnBack").textContent = c.direct ? "‹ 처음으로" : "‹ 책꽂이";
+  $("#btnThumbs").style.display = b.type==="cover" ? "none" : "";
+  $("#thumbs").classList.remove("on");
+  show("reader"); setHash(b.id);
+  const R = $("#reader"), F = $("#htmlFrame");
+  if(b.type==="html"){
+    closeReader(); R.classList.add("html-mode");
+    $("#flipWrap").innerHTML = `<div class="loading">이북을 불러오는 중…</div>`;
+    loadHtmlBook(b).then(r=>{ if(F.dataset.key===b.id) return; F.dataset.key=b.id;
+        if(r.html!=null){ F.removeAttribute("src"); F.srcdoc = r.html; } else { F.removeAttribute("srcdoc"); F.src = r.url; } })
+      .catch(()=>{ $("#flipWrap").innerHTML=`<div class="loading">이북을 불러오지 못했습니다.</div>`; });
+    return;
+  }
+  R.classList.remove("html-mode");
+  requestAnimationFrame(()=> buildFlip(b, c, 0));
+}
+/* 완성된 HTML 이북 불러오기: 단일 HTML(내장) → 분할 파일(링크판) → 일반 파일 경로 순 */
+function loadHtmlBook(b){
+  if(window.HTML_BOOKS && window.HTML_BOOKS[b.src]) return Promise.resolve({html:window.HTML_BOOKS[b.src]});
+  if(window.HTML_CHUNKS && window.HTML_CHUNKS[b.src]){
+    const parts = window.HTML_CHUNKS[b.src];
+    return Promise.all(parts.map(p=> new Promise((res,rej)=>{ const sc=document.createElement("script"); sc.src=p; sc.onload=res; sc.onerror=rej; document.head.appendChild(sc); })))
+      .then(()=> ({html: parts.map((p,i)=> window.__CHUNK[b.src+"#"+i]).join("")}));
+  }
+  return Promise.resolve({url:b.src});
+}
+$("#btnBack").onclick = ()=>{ if(curCatObj && curCatObj.direct) goHome(); else openShelf(curCatObj ? curCatObj.id : "report"); };
+$("#btnPrev").onclick = ()=> pf && pf.flipPrev();
+$("#btnNext").onclick = ()=> pf && pf.flipNext();
+$("#btnFirst").onclick = ()=> pf && pf.flip(0);
+$("#btnLast").onclick = ()=> pf && pf.flip(pf.getPageCount()-1);
+$("#btnThumbs").onclick = ()=> $("#thumbs").classList.toggle("on");
+$("#btnFull").onclick = ()=>{ try{ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }catch(e){} };
+let rT;
+function relayout(){ if($("#library").classList.contains("on")) renderShelf(); if(pf && curBook && $("#reader").classList.contains("on")) buildFlip(curBook, curCatObj, pf.getCurrentPageIndex()); }
+window.addEventListener("resize", ()=>{ clearTimeout(rT); rT=setTimeout(relayout,200); });
+document.addEventListener("fullscreenchange", ()=> setTimeout(relayout,250));
+document.addEventListener("keydown", e=>{
+  if($("#reader").classList.contains("on")){
+    if(e.target && e.target.tagName==="SELECT") return;
+    if(e.key==="ArrowRight") pf && pf.flipNext();
+    else if(e.key==="ArrowLeft") pf && pf.flipPrev();
+    else if(e.key==="Escape" && !document.fullscreenElement) $("#btnBack").click();
+  } else if($("#library").classList.contains("on") && e.key==="Escape"){ goHome(); }
+});
+
+/* ── hash routing (#report, #pub, #about, #theissue, #brief …) ── */
+function setHash(h){ try{ history.replaceState(null,"", h?("#"+h):location.pathname+location.search); }catch(e){} }
+function route(){
+  const h = (location.hash||"").slice(1);
+  if(!h) return false;
+  if(catOf(h)){ go(h); return true; }
+  for(const cc of CATS){ const b = cc.books.find(x=>x.id===h); if(b){ openBook(cc,b); return true; } }
+  return false;
+}
+if(!route()) playIntro(); else { introReady(); }
+
+/* EXE 실행 시 로컬 서버 유지 신호 */
+if(location.hostname==="127.0.0.1"){ const ping=()=>fetch("/__ping").catch(()=>{}); ping(); setInterval(ping, 4000); }
+</script>
+</body>
+</html>

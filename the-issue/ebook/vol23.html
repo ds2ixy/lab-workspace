@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>THE ISSUE Vol.23</title>
+<meta name="description" content="전문대학 지원 예산 약 1조 69억 원 시대 — 한국고등직업교육연구소 THE ISSUE 웹 이북">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="THE ISSUE · 한국고등직업교육연구소">
+<meta property="og:title" content="THE ISSUE Vol.23 · 9월호">
+<meta property="og:description" content="전문대학 지원 예산 약 1조 69억 원 시대 — 한국고등직업교육연구소 THE ISSUE 웹 이북">
+<meta property="og:url" content="https://hver-theissue.pages.dev/ebook/vol23.html">
+<meta property="og:image" content="https://hver-theissue.pages.dev/img/og/og-vol23.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="THE ISSUE Vol.23 · 9월호">
+<meta name="twitter:description" content="전문대학 지원 예산 약 1조 69억 원 시대 — 한국고등직업교육연구소 THE ISSUE 웹 이북">
+<meta name="twitter:image" content="https://hver-theissue.pages.dev/img/og/og-vol23.jpg">
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: 독서대(reading desk) 위에 펼쳐진 한 권. 상단 고정 툴바 + 화면 높이에 맞춘 책 + 하단 페이지 슬라이더 */
+:root{
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);box-sizing:border-box;color-scheme:light;
+  --desk:#dbdbdc; --desk-2:#cbcacc;
+  --bar:#fbfaf8; --bar-line:#d8d4cd;
+  --ink:#24272e; --ink-2:#5b5f68; --ink-3:#8b8f97;
+  --paper:#ffffff; --paper-line:#e6e2db;
+  --accent:#293770; --accent-ink:#ffffff;
+  --navy:#1d2649;
+  --btn:#efece7; --btn-on:#293770; --btn-on-ink:#ffffff;
+  --cover:#1d2649; --cover-hi:#aeb3c9; --cover-line:#505b8a; --cover-mute:#b7bac5;
+  --shadow:0 18px 50px rgba(30,28,25,.22);
+  --page-dim:1;
+  --f-display:"Noto Serif KR","Nanum Myeongjo",Georgia,serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  height:100%;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --desk:#171a24; --desk-2:#1e2230; --bar:#1f2228; --bar-line:#33373f;
+  --ink:#ecebe8; --ink-2:#b2b4ba; --ink-3:#80848c; --paper:#2a2d33; --paper-line:#3a3e46;
+  --accent:#aeb3c9; --btn:#2b2f36; --btn-on:#aeb3c9; --btn-on-ink:#16181c;
+  --shadow:0 18px 60px rgba(0,0,0,.6); --page-dim:.88; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --desk:#171a24; --desk-2:#1e2230; --bar:#1f2228; --bar-line:#33373f;
+  --ink:#ecebe8; --ink-2:#b2b4ba; --ink-3:#80848c; --paper:#2a2d33; --paper-line:#3a3e46;
+  --accent:#aeb3c9; --btn:#2b2f36; --btn-on:#aeb3c9; --btn-on-ink:#16181c;
+  --shadow:0 18px 60px rgba(0,0,0,.6); --page-dim:.88; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;word-break:keep-all;background:radial-gradient(120% 90% at 50% 40%,var(--desk-2),var(--desk));color:var(--ink);font-family:var(--f-body);
+  display:flex;flex-direction:column;overflow:hidden;transition:background .3s}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bar)}
+button,select,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* ── Toolbar ── */
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bar);border-bottom:1px solid var(--bar-line);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:10px;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{display:flex;align-items:baseline;gap:10px;min-width:0;margin-right:auto}
+.brand b{font-family:var(--f-display);font-weight:900;font-size:19px;letter-spacing:.02em}
+.brand span{font-size:13px;color:var(--ink-2);white-space:nowrap}
+.brand i{font-style:normal;color:var(--accent);font-weight:600}
+.ctrls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sel{height:36px;border-radius:8px;border:1px solid var(--bar-line);background:var(--btn);padding:0 10px;max-width:260px;font-size:13.5px;cursor:pointer}
+.seg{display:inline-flex;background:var(--btn);border:1px solid var(--bar-line);border-radius:9px;padding:2px}
+.seg button{border:0;background:transparent;height:30px;padding:0 11px;border-radius:7px;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--btn-on);color:var(--btn-on-ink);font-weight:600}
+.seg button:disabled{opacity:.4;cursor:not-allowed}
+.ib{height:36px;min-width:36px;border:1px solid var(--bar-line);background:var(--btn);border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:0 10px;font-size:13px}
+a.ib{text-decoration:none;color:inherit}
+.ib svg,.seg svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── Stage ── */
+.stage{flex:1;min-height:0;position:relative;display:flex;align-items:center;justify-content:center;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:18px}
+#book{word-break:keep-all}
+.stf__item.page{box-shadow:0 10px 30px rgba(20,18,15,.18)}
+.nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:0;border-radius:10px;background:color-mix(in srgb,var(--bar) 70%,transparent);
+  color:var(--ink);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:3;backdrop-filter:blur(6px)}
+.nav svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2}
+.nav.prev{left:max(10px,env(safe-area-inset-left,0px))}.nav.next{right:max(10px,env(safe-area-inset-right,0px))}
+.nav:disabled{opacity:0;pointer-events:none}
+
+/* ── Footer slider ── */
+.foot{background:var(--bar);border-top:1px solid var(--bar-line);padding-block:8px calc(8px + env(safe-area-inset-bottom,0px));
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:14px}
+.foot input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.folio{font-size:13px;color:var(--ink-2);font-variant-numeric:tabular-nums;white-space:nowrap;min-width:92px;text-align:right}
+.hint{font-size:12px;color:var(--ink-3);white-space:nowrap}
+
+/* ── Pages ── */
+.page{background:var(--paper);overflow:hidden}
+.page img{display:block;width:100%;height:100%;object-fit:contain;filter:brightness(var(--page-dim));user-select:none;-webkit-user-drag:none}
+.page .ph{position:absolute;inset:0;background:#fff center/100% 100% no-repeat;filter:brightness(var(--page-dim))}
+.page img.full{position:absolute;inset:0;opacity:0;transition:opacity .2s;background:#fff}
+.page img.full.on{opacity:1}
+.back .logo img{position:static;opacity:1}
+.page.hard{background:var(--navy)}
+.frame{width:620px;height:877px;transform-origin:0 0;transform:scale(var(--s,1));position:relative}
+
+/* Cover */
+.cover{color:#f4f1ec;background:var(--cover);height:100%;display:flex;flex-direction:column}
+.cover .photo{height:var(--photo-h,400px);background:#111 url(banner.jpg) 70% center/cover;position:relative}
+.cover .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,color-mix(in srgb,var(--cover) 25%,transparent),var(--cover) 96%)}
+.cover .mast{position:absolute;left:44px;right:44px;top:36px;z-index:1;display:flex;justify-content:space-between;align-items:flex-start;font-size:14px;letter-spacing:.12em;color:#d9d5ce}
+.cover .mast b{font-family:var(--f-display);font-size:58px;letter-spacing:0;line-height:1;color:#fff;font-weight:700}
+.cover h1{position:absolute;left:44px;bottom:30px;z-index:1;margin:0;font-family:var(--f-display);font-weight:900;font-size:86px;letter-spacing:.02em;line-height:.95}
+.cover .tag{padding:0 44px;font-size:16px;color:var(--cover-mute);margin-top:4px}
+.cover ol{list-style:none;margin:30px 44px 0;padding:0;display:grid;gap:16px}
+.cover li{display:grid;grid-template-columns:120px 1fr;gap:14px;align-items:baseline;border-top:1px solid var(--cover-line);padding-top:14px}
+.cover li em{font-style:normal;font-size:13px;color:var(--cover-hi);font-weight:600;letter-spacing:.04em}
+.cover li span{font-family:var(--f-display);font-size:18px;line-height:1.4;font-weight:700;text-wrap:balance}
+.cover .pub{margin-top:auto;padding:0 44px 34px;font-size:13.5px;color:var(--cover-mute);display:flex;justify-content:space-between;align-items:flex-end}
+.cover .pub strong{color:#e9e6e0;font-weight:600;font-size:15px;display:block;margin-top:3px}
+
+/* TOC page */
+.toc{height:100%;padding:46px 50px 32px;display:flex;flex-direction:column;color:var(--ink);background:var(--paper)}
+.toc .eb{font-size:13px;letter-spacing:.18em;color:var(--accent);font-weight:600}
+.toc h2{font-family:var(--f-display);font-size:38px;font-weight:900;margin:8px 0 4px}
+.toc .lead{font-size:14.5px;line-height:1.7;color:var(--ink-2);margin:0 0 16px;max-width:32em}
+.toc a.row{display:grid;grid-template-columns:1fr auto;gap:4px 18px;text-decoration:none;color:inherit;padding:13px 0;border-top:1px solid var(--paper-line);cursor:pointer}
+.toc a.row:last-of-type{border-bottom:1px solid var(--paper-line)}
+.toc .sec{font-size:13px;font-weight:600;color:var(--accent);letter-spacing:.03em}
+.toc .ttl{font-family:var(--f-display);font-size:17.5px;font-weight:700;line-height:1.42;text-wrap:balance;grid-column:1}
+.toc .sum{font-size:13px;color:var(--ink-2);line-height:1.6;grid-column:1}
+.toc .pg{grid-column:2;grid-row:1/4;align-self:center;font-family:var(--f-display);font-size:30px;font-weight:700;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.toc a.row:hover .pg{color:var(--accent)}
+.toc .note{margin-top:auto;font-size:12.5px;color:var(--ink-3);line-height:1.6}
+
+/* End leaf */
+.endleaf{height:100%;background:var(--paper);display:flex;align-items:flex-end;justify-content:center;padding-bottom:60px}
+.endleaf span{font-family:var(--f-display);font-size:14px;letter-spacing:.2em;color:var(--ink-3)}
+
+/* Back cover */
+.back{height:100%;background:var(--cover);color:#d8d4cd;padding:60px 48px 46px;display:flex;flex-direction:column}
+.back h3{font-family:var(--f-display);font-size:40px;font-weight:900;color:#fff;margin:0;letter-spacing:.02em}
+.back p.m{font-size:15.5px;line-height:1.8;color:var(--cover-mute);margin:18px 0 0;max-width:30em}
+.back .cg{margin-top:34px;font-size:13px;letter-spacing:.14em;color:var(--cover-hi);font-weight:600}
+.back dl.ct{margin-top:22px;padding-top:20px;border-top:1px solid var(--cover-line)}
+.back dl{margin:12px 0 0;display:grid;grid-template-columns:70px 1fr;gap:10px 14px;font-size:14.5px}
+.back dt{color:var(--cover-mute)}.back dd{margin:0;color:#e4e0da}
+.back .end{margin-top:auto;display:flex;flex-direction:column;gap:14px}
+.back .logo{background:#fff;border-radius:8px;padding:10px 14px;width:max-content}
+.back .logo img{display:block;height:48px;width:auto;filter:none}
+.back small{font-size:12px;color:var(--cover-mute);line-height:1.6}
+
+/* Zoom overlay */
+.zoom{position:fixed;inset:0;z-index:20;background:color-mix(in srgb,var(--desk) 94%,transparent);backdrop-filter:blur(4px);overflow:auto;
+  padding:calc(64px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.zoom .wrap{max-width:1000px;margin:0 auto;display:grid;gap:18px}
+.zoom img{width:100%;height:auto;display:block;box-shadow:var(--shadow);background:#fff;filter:brightness(var(--page-dim))}
+.zoom .close{position:fixed;top:calc(14px + env(safe-area-inset-top,0px));right:max(16px,env(safe-area-inset-right,0px));z-index:21}
+.zoom .msg{text-align:center;color:var(--ink-2);padding:40px 0}
+
+@media (max-width:760px){
+  .brand span.sub,.hint,.lbl{display:none}
+  .sel{max-width:124px}
+  .ctrls{gap:6px}
+  .seg button{padding:0 9px}
+  .nav{width:36px;height:52px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <a class="ib home" href="../index.html#vol23" title="월별 목록으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span class="lbl">목록</span></a>
+  <div class="brand"><b>THE ISSUE</b><span><i>Vol.23</i> · 2026. 9.</span><span class="sub">9월호</span></div>
+  <div class="ctrls">
+    <label for="jump" class="lbl" style="font-size:13px;color:var(--ink-2)">바로가기</label>
+    <select id="jump" class="sel" aria-label="기사로 바로가기"></select>
+    <div class="seg" role="group" aria-label="보기 방식">
+      <button id="v1" aria-pressed="false" title="한쪽 보기"><svg viewBox="0 0 24 24"><rect x="6" y="3" width="12" height="18" rx="1.5"/></svg><span class="lbl">한쪽</span></button>
+      <button id="v2" aria-pressed="true" title="두쪽 보기"><svg viewBox="0 0 24 24"><rect x="2.5" y="4" width="9" height="16" rx="1.2"/><rect x="12.5" y="4" width="9" height="16" rx="1.2"/></svg><span class="lbl">두쪽</span></button>
+    </div>
+    <div class="seg" role="group" aria-label="화면 밝기">
+      <button id="tl" aria-pressed="true" title="밝게"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span class="lbl">밝게</span></button>
+      <button id="td" aria-pressed="false" title="어둡게"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><span class="lbl">어둡게</span></button>
+    </div>
+    <button class="ib" id="zoomBtn" title="현재 쪽 크게 보기"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5M11 8v6M8 11h6"/></svg><span class="lbl">크게 보기</span></button>
+  </div>
+</header>
+
+<main class="stage" id="stage">
+  <button class="nav prev" id="prev" aria-label="이전 쪽"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div id="book"></div>
+  <button class="nav next" id="next" aria-label="다음 쪽"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+</main>
+
+<footer class="foot">
+  <span class="hint">모서리를 끌거나 ← → 키로 넘기세요</span>
+  <input type="range" id="slider" min="0" value="0" aria-label="쪽 이동">
+  <span class="folio" id="folio">표지</span>
+</footer>
+
+<div class="zoom" id="zoom" hidden>
+  <button class="ib close" id="zoomClose">닫기 ✕</button>
+  <div class="wrap" id="zoomWrap"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script>
+/* ───────── 호(號) 데이터: 다른 달 이북을 만들 때는 이 블록만 바꾸면 됩니다 ───────── */
+const ISSUE = {
+ "vol": "Vol.23",
+ "date": "2026. 9.",
+ "pubDate": "2026년 9월 (Vol.23)",
+ "pages": [
+  "vol23/p01.jpg?v=1",
+  "vol23/p02.jpg?v=1",
+  "vol23/p03.jpg?v=1",
+  "vol23/p04.jpg?v=1",
+  "vol23/p05.jpg?v=1",
+  "vol23/p06.jpg?v=1",
+  "vol23/p07.jpg?v=1",
+  "vol23/p08.jpg?v=1",
+  "vol23/p09.jpg?v=1",
+  "vol23/p10.jpg?v=1",
+  "vol23/p11.jpg?v=1",
+  "vol23/p12.jpg?v=1",
+  "vol23/p13.jpg?v=1"
+ ],
+ "articles": [
+  {
+   "id": "vol23-1",
+   "sec": "2027 예산안",
+   "start": 1,
+   "title": "2027년 전문대학 지원 예산 약 1조 69억 원…신규사업 중심으로 확대",
+   "sum": "직접지원 약 9,789억 원(+63.0%) · 첫경력 프로젝트·이공계 인프라·AI 재도약대학 신설"
+  },
+  {
+   "id": "vol23-2",
+   "sec": "전략과제 기획②",
+   "start": 4,
+   "title": "전문대학 역할 확대를 뒷받침할 법·재정·교육 연계 과제",
+   "sum": "직업교육법 제정 · 고등직업교육 전용계정 · 평생·직업교육·직업훈련 학습성과 연계"
+  },
+  {
+   "id": "vol23-3",
+   "sec": "대학정보공시",
+   "start": 7,
+   "title": "정원외 학생이 이끈 전문대학 재학생 증가와 교육여건 변화",
+   "sum": "재학생 +5.4%, 정원외 +17.9% · 전임교원 확보율 58.0% → 54.1%"
+  },
+  {
+   "id": "vol23-4",
+   "sec": "AI 윤리",
+   "start": 10,
+   "title": "「대학 AI 활용 윤리 가이드라인」, 수업별 기준부터 정보보호까지",
+   "sum": "5대 원칙·12개 세부 원칙 · 수업별 ‘금지 / 제한 / 허용’ 범위 설정"
+  },
+  {
+   "id": "vol23-news",
+   "sec": "연구소 소식",
+   "start": 13,
+   "news": true,
+   "title": "2027년 전문대학 지원 예산안 설명회 · 여자전문대학·한국여성정책연구원 업무협약",
+   "sum": "9월 4일 지역별 회장단 대상 설명회 · 9월 30일 한양여자대학교 협약식 및 정책간담회"
+  }
+ ]
+};
+/* 책 순서: [0]앞표지 [1]차례 [2..14]본문 1–13쪽 [15]뒤표지 */
+// 뒤표지가 항상 단독으로 닫히도록, 필요하면 뒤표지 앞에 빈 면(속표지)을 1장 넣음
+const FILL = (ISSUE.pages.length + 3) % 2, CONTENT0 = 2, TOTAL = ISSUE.pages.length + 3 + FILL;
+const bookIdx = n => CONTENT0 + n - 1;               // 본문 n쪽 → 책 인덱스
+const RATIO = 1242/1756;
+
+const $ = s => document.querySelector(s);
+const store = {get(k){try{return localStorage.getItem(k)}catch(e){return null}}, set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+function buildPages(){
+  const els=[];
+  const cover=document.createElement("div"); cover.className="page hard"; cover.dataset.density="hard";
+  cover.innerHTML=`<div class="frame"><div class="cover" style="--photo-h:${ISSUE.articles.filter(a=>!a.news).length>4?320:400}px">
+    <div class="photo"><div class="mast"><span>MONTHLY BRIEF<br>${ISSUE.date}</span><b>${ISSUE.vol}</b></div><h1>THE ISSUE</h1></div>
+    <div class="tag">전문대학 및 고등직업교육 동향과 현안에 관한 소식을 전합니다.</div>
+    <ol>${ISSUE.articles.filter(a=>!a.news).map(a=>`<li><em>${esc(a.sec.replace(/^2026 전문대학 /,""))}</em><span>${esc(a.title)}</span></li>`).join("")}</ol>
+    <div class="pub"><div>한국전문대학교육협의회 부설<strong>한국고등직업교육연구소</strong></div><div>KCCE</div></div>
+  </div></div>`;
+  els.push(cover);
+
+  const toc=document.createElement("div"); toc.className="page";
+  toc.innerHTML=`<div class="frame"><div class="toc">
+    <div class="eb">CONTENTS</div><h2>이번 호 차례</h2>
+    <p class="lead">THE ISSUE는 한국고등직업교육연구소가 매월 발간하는 정책 브리프입니다. 고등직업교육 정책의 흐름을 짚고, 전문대학 현장이 준비할 과제를 정리해 전합니다.</p>
+    ${ISSUE.articles.map((a,i)=>`<a class="row" data-go="${bookIdx(a.start)}" href="#${a.id}"><span class="sec">${esc(a.sec)}</span><span class="ttl">${esc(a.title)}</span><span class="sum">${esc(a.sum)}</span><span class="pg">${String(a.start).padStart(2,"0")}</span></a>`).join("")}
+    <div class="note">기사를 누르면 해당 쪽으로 이동합니다. 상단 ‘바로가기’에서도 기사를 고를 수 있습니다.</div>
+  </div></div>`;
+  els.push(toc);
+
+  ISSUE.pages.forEach((src,i)=>{
+    const p=document.createElement("div"); p.className="page";
+    p.innerHTML=`<div class="ph" style="background-image:url('${thumbOf(src)}')"></div><img class="full" data-n="${i}" alt="THE ISSUE ${ISSUE.vol} 본문 ${i+1}쪽" draggable="false">`;
+    els.push(p);
+  });
+
+  if(FILL){ const f=document.createElement("div"); f.className="page blank"; f.innerHTML=`<div class="frame"><div class="endleaf"><span>THE ISSUE ${ISSUE.vol}</span></div></div>`; els.push(f); }
+  const back=document.createElement("div"); back.className="page hard"; back.dataset.density="hard";
+  back.innerHTML=`<div class="frame"><div class="back">
+    <h3>THE ISSUE</h3>
+    <p class="m">고등교육정책 동향과 연구소 소식을 매월 전하는 한국고등직업교육연구소의 정기 간행물입니다.</p>
+    <div class="cg">THE ISSUE 편집위원회</div>
+    <dl><dt>위원장</dt><dd>이병규 (한국고등직업교육연구소장)</dd>
+        <dt>위원</dt><dd>백인철 (신성대학교 교수)<br>주홍석 (인덕대학교 교수)</dd>
+        <dt>간사</dt><dd>김유리 (한국고등직업교육연구소 선임전문관)</dd></dl>
+    <dl class="ct"><dt>발행</dt><dd>한국전문대학교육협의회 부설 한국고등직업교육연구소</dd>
+        <dt>발행일</dt><dd>${ISSUE.pubDate}</dd>
+        <dt>주소</dt><dd>서울특별시 중구 서소문로 38 6F</dd>
+        <dt>문의</dt><dd>hver@kcce.or.kr</dd></dl>
+    <div class="end"><div class="logo"><img src="logo.png" alt="한국전문대학교육협의회 부설 한국고등직업교육연구소"></div>
+      <small>COPYRIGHT © Korean Council For College University Education(KCCE). All rights reserved.</small></div>
+  </div></div>`;
+  els.push(back);
+  return els;
+}
+
+/* ───────── 상태 ───────── */
+let flip=null, cur=0, mode=store.get("ti-view")||"double";
+const narrow=()=>window.innerWidth<760;
+
+function folioOf(i){
+  if(i===0) return "표지"; if(i===1) return "차례"; if(i===TOTAL-1) return "뒤표지";
+  const n=i-CONTENT0+1; if(n>ISSUE.pages.length) return "속표지"; return `${n} / ${ISSUE.pages.length}쪽`;
+}
+function spreadOf(i){ // 두쪽 보기에서 함께 보이는 인덱스
+  if(!flip || flip.getOrientation()==="portrait" || i===0 || i===TOTAL-1) return [i];
+  const l = i%2===1 ? i : i-1; return [l,l+1].filter(x=>x>0&&x<TOTAL-1);
+}
+function articleAt(i){let a=null;ISSUE.articles.forEach(x=>{if(i>=bookIdx(x.start))a=x});return a}
+
+function sync(i){
+  cur=i; prioritize(i);
+  const sp=spreadOf(i);
+  $("#folio").textContent = sp.length>1 ? `${folioOf(sp[0]).replace(/ \/.*/,"")}–${folioOf(sp[1])}` : folioOf(i);
+  $("#slider").value=i;
+  $("#prev").disabled = i===0; $("#next").disabled = sp[sp.length-1]>=TOTAL-1;
+  const st=ISSUE.articles.find(x=>sp.includes(bookIdx(x.start))&&x.start>1); const a=st||articleAt(sp[0]); $("#jump").value = i===0?"cover": (sp[0]===1&&!st)?"toc": a?a.id:"toc";
+}
+
+function layout(){
+  const st=$("#stage"), cs=getComputedStyle(st);
+  const W=st.clientWidth-parseFloat(cs.paddingLeft)-parseFloat(cs.paddingRight)-(narrow()?0:110);
+  const H=st.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom);
+  const double = mode==="double" && !narrow();
+  let h=H, w=h*RATIO;
+  const cols=double?2:1;
+  if(w*cols>W){w=W/cols;h=w/RATIO}
+  return {w:Math.floor(w),h:Math.floor(h),double};
+}
+
+function init(startAt){
+  const host=$("#stage");
+  if(flip){try{flip.destroy()}catch(e){} flip=null}
+  host.querySelectorAll("#book").forEach(b=>b.remove());
+  const book=document.createElement("div"); book.id="book";
+  host.insertBefore(book,$("#next"));
+  const {w,h,double}=layout();
+  book.style.width=(double?w*2:w)+"px"; book.style.height=h+"px";
+  document.documentElement.style.setProperty("--s",(w/620).toFixed(4));
+  flip=new St.PageFlip(book,{
+    width:w,height:h,size:"fixed",showCover:true,usePortrait:!double,
+    maxShadowOpacity:.45,flippingTime:750,mobileScrollSupport:false,showPageCorners:true,
+    startPage:startAt||0,drawShadow:true,autoSize:false
+  });
+  flip.loadFromHTML(buildPages());
+  bindImgs(book);
+  flip.on("flip",e=>sync(e.data));
+  flip.on("changeOrientation",()=>sync(flip.getCurrentPageIndex()));
+  // 차례 링크
+  // 책 넘김 엔진이 누름을 '쪽 넘기기'로 가로채지 않도록 차례 항목에서는 누름 이벤트를 막고, 클릭으로 해당 쪽 이동
+  book.querySelectorAll("[data-go]").forEach(a=>{
+    ["mousedown","touchstart","pointerdown"].forEach(t=>a.addEventListener(t,ev=>ev.stopPropagation(),{passive:true}));
+    a.addEventListener("click",ev=>{ev.preventDefault();ev.stopPropagation();go(+a.dataset.go)});
+  });
+  sync(flip.getCurrentPageIndex());
+  setViewButtons();
+}
+
+/* ───────── 쪽 이미지 로딩: 미리보기(작은 이미지) 먼저, 지금 펼친 쪽부터 원본 순서대로 ───────── */
+const thumbOf = src => src.replace(/\/p(\d+)\.jpg/, "/s/p$1.jpg");
+const LOADED=new Set(); let IMGS=[], queue=[], active=0;
+function bindImgs(root){
+  IMGS=[]; root.querySelectorAll("img.full").forEach(im=>{const n=+im.dataset.n; IMGS[n]=im;
+    if(LOADED.has(n)){ im.src=ISSUE.pages[n]; im.classList.add("on"); }});
+}
+function pump(){
+  while(active<4 && queue.length){
+    const n=queue.shift(), im=IMGS[n]; if(!im||im.getAttribute("src")) continue;
+    active++; const done=()=>{active--; LOADED.add(n); im.classList.add("on"); pump();};
+    im.onload=done; im.onerror=()=>{active--; pump();}; im.src=ISSUE.pages[n];
+  }
+}
+function prioritize(bookI){
+  const n0=Math.max(0,Math.min(ISSUE.pages.length-1,bookI-CONTENT0)), order=[];
+  for(let d=0; d<ISSUE.pages.length; d++){ [n0+d,n0-d].forEach(x=>{ if(x>=0&&x<ISSUE.pages.length&&!order.includes(x)) order.push(x); }); }
+  queue=order; pump();
+}
+
+function go(i){ if(!flip) return; i=Math.max(0,Math.min(TOTAL-1,i));
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(spreadOf(cur).includes(i)) return;
+  if(reduce){ flip.turnToPage(i); sync(i); } else flip.flip(i);
+}
+
+/* ───────── 컨트롤 ───────── */
+function fillJump(){
+  const s=$("#jump");
+  s.innerHTML=`<option value="cover">표지</option><option value="toc">차례</option>`+
+    ISSUE.articles.map(a=>`<option value="${a.id}">${String(a.start).padStart(2,"0")}쪽 · ${esc(a.sec)}</option>`).join("");
+  s.addEventListener("change",()=>{const v=s.value; go(v==="cover"?0:v==="toc"?1:bookIdx(ISSUE.articles.find(a=>a.id===v).start))});
+}
+function setViewButtons(){
+  const n=narrow(); $("#v2").disabled=n; $("#v2").title=n?"화면이 좁아 한쪽 보기로 표시됩니다":"두쪽 보기";
+  const single = mode==="single"||n;
+  $("#v1").setAttribute("aria-pressed",single); $("#v2").setAttribute("aria-pressed",!single);
+}
+$("#v1").onclick=()=>{mode="single";store.set("ti-view",mode);init(cur)};
+$("#v2").onclick=()=>{mode="double";store.set("ti-view",mode);init(cur)};
+
+function applyTheme(t){
+  const sys=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";
+  const eff=t||document.documentElement.dataset.theme||sys;
+  if(t) document.documentElement.dataset.theme=t;
+  $("#tl").setAttribute("aria-pressed",eff==="light"); $("#td").setAttribute("aria-pressed",eff==="dark");
+}
+$("#tl").onclick=()=>{applyTheme("light");store.set("theissue-theme","light")};
+$("#td").onclick=()=>{applyTheme("dark");store.set("theissue-theme","dark")};
+
+$("#prev").onclick=()=>flip&&flip.flipPrev();
+$("#next").onclick=()=>flip&&flip.flipNext();
+const sl=$("#slider"); sl.max=TOTAL-1; sl.addEventListener("input",()=>{flip.turnToPage(+sl.value);sync(+sl.value)});
+document.addEventListener("keydown",e=>{
+  if(!$("#zoom").hidden){ if(e.key==="Escape") closeZoom(); return; }
+  if(e.target.matches("select,input")) return;
+  if(e.key==="ArrowRight"||e.key==="PageDown") flip.flipNext();
+  if(e.key==="ArrowLeft"||e.key==="PageUp") flip.flipPrev();
+  if(e.key==="Home") go(0); if(e.key==="End") go(TOTAL-1);
+});
+
+/* 크게 보기: 현재 펼친 쪽 원본 이미지를 세로 스크롤로 */
+function openZoom(){
+  const imgs=spreadOf(cur).filter(i=>i>=CONTENT0&&i<CONTENT0+ISSUE.pages.length);
+  const w=$("#zoomWrap");
+  w.innerHTML = imgs.length ? imgs.map(i=>`<img src="${ISSUE.pages[i-CONTENT0]}" alt="본문 ${i-CONTENT0+1}쪽">`).join("")
+    : `<div class="msg">표지·차례는 책 화면에서 바로 보실 수 있습니다. 본문 쪽에서 눌러 주세요.</div>`;
+  $("#zoom").hidden=false; $("#zoom").scrollTop=0; $("#zoomClose").focus();
+}
+function closeZoom(){$("#zoom").hidden=true;$("#zoomBtn").focus()}
+$("#zoomBtn").onclick=openZoom; $("#zoomClose").onclick=closeZoom;
+$("#zoom").addEventListener("click",e=>{if(e.target.id==="zoom")closeZoom()});
+
+let rt; let lastNarrow=narrow();
+addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(()=>{lastNarrow=narrow();init(cur)},180)});
+
+/* 시작 */
+fillJump();
+applyTheme(store.get("theissue-theme"));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>applyTheme());
+function startFromHash(){
+  const h=location.hash.slice(1);
+  const a=ISSUE.articles.find(x=>x.id===h); if(a) return bookIdx(a.start);
+  const m=h.match(/^p(\d+)$/); if(m) return bookIdx(Math.min(+m[1],ISSUE.pages.length));
+  if(h==="toc") return 1; return 0;
+}
+if(window.St) init(startFromHash());
+else $("#stage").innerHTML='<p style="color:var(--ink-2)">책 넘김 기능을 불러오지 못했습니다. 새로고침해 주세요.</p>';
+</script>
+</body>
+</html>
