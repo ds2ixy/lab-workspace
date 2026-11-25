@@ -3,3 +3,4 @@
 2. `python3 -I tools/build_public.py <내부용> <중식비현황> .`
 3. `python3 -I tools/changed.py <이전 index.html> index.html` → SAME이면 아무것도 게시하지 않고 종료.
 4. CHANGED이면 claude.ai 공개용 재게시 + git push (+ 중식비 화면이 바뀌었으면 internal-synced.html로 내부용 재게시).
+- 런치보드 오른쪽은 tools/lbmini.py가 개인별 청구액 요약 + 「자세히 보기」(hver-lunchboard.pages.dev)로 바꿔 넣는다(공개용만).

@@ -66,6 +66,7 @@ rep("""links += '</ul><form class="addrow" data-form="link"><input name="l" plac
 rep("""'</div><div class="stack">'+links+memo+'</div></div>';""","""'</div><div class="stack">'+links+'</div></div>';""")
 rep("function mbarRight(){ return '<div class=\"mbarR\">'+saveHTML()+'</div>'; }","function mbarRight(){ return '<div class=\"mbarR\"><div class=\"save ok\"><i></i>읽기 전용</div></div>'; }")
 rep('var IS_PUBLIC = false;','var IS_PUBLIC = true;')
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import lbmini; s=lbmini.apply(s)  # 런치보드: 개인별 청구액 요약 + 자세히 보기(현황판)
 s=s.replace(' (공개용)','')
 d='한국고등직업교육연구소(KCCE HVER)의 통계·출판·연구소 작업 진행 현황과 학사편람·규정 질의응답을 한눈에 보는 공개 페이지'
 import base64; fav=base64.b64encode(open(os.path.join(REPO,'favicon-32x32.png'),'rb').read()).decode()
