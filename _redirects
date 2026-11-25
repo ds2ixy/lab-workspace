@@ -1,0 +1,3 @@
+/settlement /fin-statements/ 301
+/settlement/ /fin-statements/ 301
+/settlement/* /fin-statements/:splat 301
