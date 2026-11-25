@@ -933,8 +933,8 @@ function vReport(){
     <div class="ctrl" style="margin-bottom:6px">${isF?`<button class="btn ghost sm" data-pre="stat">분석 항목만</button><button class="btn ghost sm" data-pre="all">${RP.month} 전체</button>`:`<button class="btn ghost sm" data-pre="key">대학주요정보 12</button><button class="btn ghost sm" data-pre="stat">분석 항목</button><button class="btn ghost sm" data-pre="keystat">주요+분석</button>`}<button class="btn ghost sm" data-pre="none">해제</button></div>
     <div class="pklist">${grouped}</div></div>
    
-   <div class="ctrl"><button class="btn ghost" id="rp-html">보고서 HTML 내려받기</button><button class="btn" id="rp-docx">Word(.docx) 저장</button><button class="btn ghost" id="rp-copy">HTML 복사</button></div>
-   
+   <div class="ctrl"><button class="btn ghost" id="rp-html">보고서 HTML 내려받기</button><button class="btn" id="rp-docx">Word(.docx) 저장</button><button class="btn ghost" id="rp-copy">HTML 복사</button><button class="btn ghost" id="rp-print" ${(window.claude&&claude.use)?'style="display:none"':''}>인쇄 / PDF</button></div>
+   <p class="note" style="margin-top:8px">${(window.claude&&claude.use)?"저장한 HTML 파일을 브라우저로 열고 인쇄(Ctrl+P) → 'PDF로 저장'하면 A4 보고서가 됩니다. Remark 상자는 미리보기에서 바로 고쳐 쓸 수 있습니다.":"인쇄 / PDF를 누르면 보고서만 새 창에 열려 A4로 인쇄됩니다(대상: 'PDF로 저장'). Remark 상자는 미리보기에서 바로 고쳐 쓸 수 있고, 저장·인쇄·Word에 그대로 반영됩니다."}</p>
   </div>
   <div class="rep-wrap"><div id="report">${isF?focusReport():annualReport()}</div></div></div>`;
   const re=()=>vReport();
@@ -950,6 +950,7 @@ function vReport(){
   const html=()=>{const css=[...document.styleSheets].flatMap(s=>{try{return [...s.cssRules]}catch(e){return []}}).map(r=>r.cssText).filter(t=>t.startsWith('#report')).join('\n');return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>${isF?'HEDX FOCUS '+RP.month:'대학정보공시 연간 보고서'}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap"><style>body{background:#eee;word-break:keep-all;overflow-wrap:break-word;font-family:'Noto Sans KR',sans-serif}${css}@page{size:A4;margin:8mm}</style></head><body><div id="report">${$('#report').innerHTML}</div></body></html>`};
   $('#rp-html').onclick=()=>saveFile(isF?`HEDX_FOCUS_2026_${RP.month}.html`:'대학정보공시_2026_연간보고서.html',html());
   $('#rp-copy').onclick=()=>copy(html(),'보고서 HTML을 복사했습니다');
+  {const pb=$('#rp-print');if(pb)pb.onclick=()=>{try{const w=window.open('','_blank');w.document.write(html());w.document.close();setTimeout(()=>w.print(),800)}catch(e){toast('인쇄 창이 차단되었습니다. HTML 내려받기 후 인쇄하세요')}}}
   $('#rp-docx').onclick=async()=>{const b=$('#rp-docx');b.disabled=true;b.textContent='Word 파일 만드는 중…';const nm=isF?`HEDX_FOCUS_2026_${RP.month}`:'대학정보공시_2026_연간보고서';try{const blob=await DOCX.build($('#report'),nm,{grp1:true});await saveFile(nm+'.docx',blob)}catch(e){console.error(e);toast('Word 파일을 만들지 못했습니다: '+(e.message||e))}finally{b.disabled=false;b.textContent='Word(.docx) 저장'}};
 }
 
