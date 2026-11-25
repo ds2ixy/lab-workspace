@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>고등교육기관 학교개황 및 공시 자료</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap">
+<style>
+/* VOICE: 내부 통계 대시보드 — 재정·결산 대시보드와 같은 HEDX 계열, 차분하고 촘촘하게
+   IDEA: 대교협 FOCUS 보고서와 학교개황 원장(元帳)을 한 화면에서 넘겨보는 데스크
+   PICTURE: 첫 화면은 연도별 기관 수 누적 막대 + 변동 타임라인
+   COLOUR and TYPE: HEDX 네이비 #14365f / 블루 #1f5a96 / 앰버 배지, Noto Sans KR
+   LAYOUT: 상단 바 · 탭 · 좌측 필터 · 우측 카드 그리드 (재정·결산 대시보드와 동일 골격) */
+:root{--bg:#f4f5f7;--panel:#fff;--ink:#14181f;--ink2:#4a5160;--muted:#737a8a;--line:#e2e5ea;--line2:#eef0f3;--brand:#14365f;--brand2:#1f5a96;--accent:#2a78d6;--ok:#11734f;--neg:#c0392b;
+--c1:#2a78d6;--c2:#eb6834;--c3:#1baf7a;--c4:#eda100;--c5:#e87ba4;--c6:#6250d6;--c7:#008300;--c8:#9aa1ad}
+:root[data-theme=dark]{--bg:#0f141b;--panel:#171e28;--ink:#e8ecf2;--ink2:#b5bdca;--muted:#8a93a3;--line:#2a3442;--line2:#222b37}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;word-break:keep-all;overflow-wrap:break-word;font-family:"Noto Sans KR",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:14px;line-height:1.5;overflow-x:clip}
+button,select,input{font:inherit;color:inherit}
+.top{background:var(--brand);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.top h1{font-size:19px;margin:0;font-weight:700}
+.top .sub{font-size:12px;opacity:.85}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px;background:#ffd88a;color:#5a3500;vertical-align:2px}
+.tabs{display:flex;gap:2px;background:#0f2a4a;padding:0 16px;overflow-x:auto}
+.tabs button{background:none;border:0;color:#c9d6e6;padding:11px 14px;cursor:pointer;font-weight:500;white-space:nowrap;border-bottom:3px solid transparent;min-height:44px}
+.tabs button.on{color:#fff;border-bottom-color:#ffd88a}
+.wrap{display:grid;grid-template-columns:262px minmax(0,1fr);gap:16px;padding:16px;align-items:start}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}.side{position:static!important;max-height:none!important}}
+.side{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}
+.side h3{font-size:13px;margin:0 0 8px;color:var(--brand2)}
+.fg{margin-bottom:11px}.fg>label{display:block;font-size:12px;color:var(--ink2);font-weight:500;margin-bottom:3px}
+select,input[type=search]{width:100%;padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.chk{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:13px}.chk label{display:flex;align-items:center;gap:4px;cursor:pointer;white-space:nowrap}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}.seg button{flex:1;border:0;background:var(--panel);padding:6px 0;cursor:pointer;font-size:12.5px}.seg button.on{background:var(--brand2);color:#fff}
+.btn{background:var(--brand2);color:#fff;border:0;border-radius:6px;padding:7px 12px;cursor:pointer;font-weight:500}
+.btn.ghost{background:var(--panel);color:var(--brand2);border:1px solid #c5d3e4}.btn.sm{padding:4px 9px;font-size:12px}
+.note{font-size:12px;color:var(--muted);margin:6px 0}
+.hide{display:none!important}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}.chip{background:#e8eef6;color:var(--brand);border-radius:12px;padding:2px 10px;font-size:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:14px}
+.card h2{font-size:15px;margin:0 0 10px;color:var(--brand2);display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.card h2 small{font-weight:400;color:var(--muted);font-size:12px}
+.lead{font-size:16px;font-weight:700;margin:0 0 12px;line-height:1.45}.lead .ln{display:block;padding-left:14px;position:relative;margin:2px 0}.lead .ln::before{content:"";position:absolute;left:2px;top:.65em;width:5px;height:5px;border-radius:50%;background:var(--c1,#1f5aa6)}
+.grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+@media(max-width:1100px){.grid2{grid-template-columns:1fr}}
+.kpis{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 13px}
+.kpi .l{font-size:12px;color:var(--ink2)}.kpi .v{font-size:clamp(18px,2vw,22px);font-weight:700;margin-top:2px}.kpi .v small{font-size:12px;font-weight:500;color:var(--muted);margin-left:2px}.kpi .d{font-size:12px}
+.up{color:var(--ok)}.dn{color:var(--neg)}.flat{color:var(--muted)}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;margin-bottom:10px}.ctrl .fg{margin:0;min-width:150px}
+.tw{overflow:auto;max-height:560px;border:1px solid var(--line);border-radius:8px}
+table.t{border-collapse:collapse;width:100%;font-size:12.5px}
+table.t th,table.t td{padding:5px 8px;border-bottom:1px solid var(--line2);white-space:nowrap}
+table.t th{background:#f0f3f7;position:sticky;top:0;z-index:1;font-weight:700;color:#4a5160;text-align:center}
+:root[data-theme=dark] table.t th{background:#1d2633;color:var(--ink2)}
+table.t td.n{text-align:right;font-variant-numeric:tabular-nums}table.t td.w{white-space:normal;min-width:180px}
+table.t tr.tot td{background:#eaf0f7;font-weight:700}:root[data-theme=dark] table.t tr.tot td{background:#1d2633}
+table.t th.s{cursor:pointer}
+.hb{display:inline-block;font-size:10.5px;font-weight:700;padding:0 6px;border-radius:8px;margin-left:4px;vertical-align:1px}
+.k-특별법{background:#fff0d9;color:#8a5200}.k-직업능력개발법{background:#e6f4ea;color:#11643f}
+.ir{cursor:pointer}.ir:hover td{background:#eef4fb!important}
+.dl{display:grid;grid-template-columns:118px minmax(0,1fr);gap:6px 12px;font-size:13px;margin:10px 0}.dl dt{color:var(--ink2);font-weight:700}.dl dd{margin:0}
+.gd{background:#f6f8fb;border-left:3px solid var(--brand2);padding:8px 10px;font-size:12.5px;line-height:1.6;white-space:pre-line}
+.k-폐교{background:#fde2e1;color:#a2231d}.k-통합{background:#e6e1fb;color:#4b3aa8}.k-교명변경,.k-표기변경{background:#e1effc;color:#1b5a9a}.k-신설{background:#ddf3e8;color:#11643f}
+.m-수시{background:#eef0f3;color:#4a5160}.m-별도{background:#fff0d9;color:#8a5200}.m-4월{background:#e1effc;color:#1b5a9a}.m-6월{background:#ddf3e8;color:#11643f}.m-8월{background:#fde8dc;color:#9a3d0b}.m-10월{background:#e6e1fb;color:#4b3aa8}
+.uname{color:var(--accent);cursor:pointer}
+.fig{position:relative;height:300px}.fig>svg{position:absolute;inset:0;width:100%;height:100%}.fig.sm{height:240px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--ink2);margin:4px 0 6px}.legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.bars .r{display:grid;grid-template-columns:96px minmax(0,1fr) 58px;gap:8px;align-items:center;font-size:12.5px;margin:3px 0}
+.bars .r b{display:block;height:14px;border-radius:3px;background:var(--brand2)}.bars .r span:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.tl{display:flex;flex-direction:column;gap:6px;max-height:300px;overflow:auto;font-size:12.5px}
+.tl .y{font-weight:700;color:var(--brand2);margin-top:4px}
+.stat{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.sc{border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.sc .h{font-size:12px;color:var(--ink2);display:flex;justify-content:space-between;gap:6px}.sc .k{font-weight:700;margin:2px 0 6px}
+.sc .p{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:6px;align-items:center;font-size:12.5px;margin:2px 0}
+.sc .p b{height:10px;border-radius:2px;display:block}.sc .def{font-size:11.5px;color:var(--muted);margin-top:4px}
+#tip{position:fixed;pointer-events:none;background:#14181f;color:#fff;font-size:12px;padding:6px 9px;border-radius:6px;z-index:50;opacity:0;max-width:320px;white-space:pre-line}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#14365f;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;z-index:60}.toast.on{opacity:1}
+.modal{position:fixed;inset:0;background:rgba(10,20,35,.45);display:flex;align-items:center;justify-content:center;z-index:70;padding:16px}
+.modal .box{background:var(--panel);border-radius:12px;max-width:720px;width:100%;max-height:86vh;overflow:auto;padding:18px 20px}
+.yr{display:flex;flex-wrap:wrap;gap:3px;margin:8px 0}.yr span{font-size:11px;padding:2px 6px;border-radius:4px;background:#eef0f3;color:#9aa1ad}.yr span.on{background:var(--brand2);color:#fff}
+.seclist{border:1px solid var(--line);border-radius:6px;padding:8px;font-size:12.5px;display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:2px 10px}
+.rep-wrap{background:#dde1e7;padding:16px;border-radius:10px;overflow:auto}
+#report{background:#fff;width:210mm;max-width:100%;margin:0 auto;color:#111;font-size:10pt;line-height:1.62;box-shadow:0 2px 14px rgba(0,0,0,.15)}
+#report .pg{padding:8mm 13mm 10mm}
+#report .rhead{background:#14365f;color:#fff;padding:9mm 13mm 7mm;position:relative}
+#report .rhead .series{font-size:9pt;font-weight:700;opacity:.85}#report .rhead .issue{position:absolute;right:13mm;top:9mm;font-size:9pt;opacity:.9}
+#report .rhead h1{font-size:18.5pt;margin:6px 0 4px;font-weight:900;line-height:1.3}#report .rhead .lede{font-size:10pt;opacity:.92}
+.rhead .rby{font-size:9pt;opacity:.85;margin-top:6px}
+#report .hl{padding:5mm 13mm;background:#eef3f9;border-bottom:3px solid #14365f}#report .hl ul{margin:0;padding-left:16px}#report .hl li{margin:2px 0;font-weight:500}
+#report h2.grp{font-size:12pt;color:#fff;background:#1f5a96;padding:4px 10px;margin:16px 0 8px;border-radius:2px}
+#report h3.sec{font-size:10.8pt;color:#14365f;margin:12px 0 4px}#report h3.sec::before{content:"● "}
+#report ul.b{margin:2px 0 6px;padding-left:0;list-style:none}#report ul.b li{padding-left:12px;text-indent:-10px;margin:2px 0}#report ul.b li::before{content:"- "}
+#report .cap{text-align:center;font-weight:700;font-size:9.5pt;margin:10px 0 2px}#report .unit{text-align:right;font-size:8pt;color:#444}
+#report table.rt{border-collapse:collapse;width:100%;font-size:8pt;border-top:2px solid #14365f;border-bottom:2px solid #14365f}
+#report table.rt th,#report table.rt td{border:1px solid #c9ced6;padding:2px 5px;text-align:right}
+#report table.rt th{background:#e9eef5;text-align:center}#report table.rt td.l{text-align:left}#report table.rt tr.tot td{background:#e4eaf2;font-weight:700}
+#report .fn{font-size:7.8pt;color:#444;margin:3px 0 8px}
+#report .remark{border:2px solid #14365f;border-radius:6px;padding:8px 12px;margin:14px 0 6px;background:#fbfcfe}#report .remark .rt-title{font-weight:900;color:#14365f;font-size:11pt;margin-bottom:4px}
+#report .foot{display:flex;justify-content:space-between;font-size:8pt;color:#555;border-top:1px solid #ccd;padding-top:4px;margin-top:10px}
+#report .fig{height:auto}#report .fig svg{position:static;width:100%;height:auto}
+#report [contenteditable]:hover{outline:1px dashed #9ab}
+.rgrid{display:grid;grid-template-columns:350px minmax(0,1fr);gap:14px;align-items:start}@media(max-width:1200px){.rgrid{grid-template-columns:1fr}}
+.rset{position:sticky;top:10px;max-height:calc(100vh - 20px);overflow:auto}
+.fmtsw{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}.fmtsw button{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px;cursor:pointer;text-align:left;font-weight:700}.fmtsw button small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}.fmtsw button.on{border-color:var(--brand2);background:#e8eef6;color:var(--brand)}
+.pklist{border:1px solid var(--line);border-radius:6px;padding:6px 8px;max-height:420px;overflow:auto}
+.pk{display:flex;align-items:flex-start;gap:6px;font-size:12.5px;padding:3px 0;border-bottom:1px dashed var(--line2)}.pk label{flex:1;cursor:pointer}.pk .lnk{background:none;border:0;color:var(--accent);cursor:pointer;font-size:12px;white-space:nowrap;padding:2px}
+.pkg{font-weight:700;color:var(--brand2);margin:8px 0 2px}.pkg small{color:var(--muted);font-weight:400}
+#report .rcover{background:#14365f;color:#fff;padding:40mm 16mm 30mm;min-height:200mm;display:flex;flex-direction:column}#report .rcno{font-size:10pt;opacity:.85}#report .rctit{font-size:24pt;font-weight:900;line-height:1.3;margin:20mm 0 6mm}#report .rcsub{font-size:12pt;opacity:.9}#report .rcby{margin-top:auto;font-size:11pt;line-height:1.7}#report .rcdate{font-size:10pt;opacity:.8;margin-top:4mm}
+#report .rchap{padding:24mm 16mm 10mm;border-top:14px solid #d9dde3}#report .rcnum{font-size:38pt;font-weight:900;color:#14365f;line-height:1}#report .rctitle{font-size:19pt;font-weight:900;margin:4mm 0 6mm;border-bottom:3px solid #14365f;padding-bottom:4mm}#report .rcsubs{font-size:11pt;color:#334;line-height:2}
+@media print{#report .rcover,#report .rchap{break-before:page;page-break-before:always}}
+.kgh{grid-column:1/-1;font-size:12px;font-weight:700;color:var(--accent);margin:6px 0 -2px;border-bottom:1px solid var(--line);padding-bottom:2px}
+.kgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(168px,1fr));gap:8px}
+.kp{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:8px 10px;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:2px;font:inherit;color:inherit}
+.kp .kn{font-size:12px;color:var(--muted);line-height:1.3}.kp b{font-size:18px}.kp b small{font-size:11px;font-weight:400;color:var(--muted);margin-left:2px}.kp .ks{font-size:11.5px;color:var(--muted)}
+.dir{font-size:10.5px;color:var(--muted);font-weight:500}.dir.up{color:var(--ok)}.dir.dn{color:#b5530c}
+.kp .ks .tier{font-weight:700;color:var(--ink2);white-space:nowrap}.kp .ks .tier.up{color:var(--ok)}.kp .ks .tier.dn{color:#b5530c}
+.kp.good{border-left:4px solid #1baf7a}.kp.bad{border-left:4px solid #eb6834}.kp.on{outline:2px solid var(--brand2);background:#e8eef6}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.anb{border-left:3px solid #1f5a96;background:#f3f7fc;padding:6px 10px;margin:6px 0 10px}.anb .anh{font-weight:700;font-size:9.5pt;color:#14365f;margin-bottom:2px}
+</style>
+</head>
+<body>
+<div class="top">
+  <div>
+    <h1>고등교육기관 학교개황 및 공시 자료 <span class="badge">HEDX / © DS2IXY. ALL RIGHTS RESERVED</span></h1>
+    <div class="sub">대학정보공시 학교개황 2015~2026 · 공시항목(2026 지침서) · 2026년 4·6·8·10월 대학정보공시 분석 결과 · 출처 대학알리미(한국대학교육협의회)</div>
+  </div>
+</div>
+<nav class="tabs" id="tabs"></nav>
+<div class="wrap">
+  <aside class="side">
+    <h3>분석 범위 · 필터</h3>
+    <div class="fg"><label>분석 범위 (프리셋)</label><select id="f-scope"><option value="">전체 고등교육기관</option><option value="대학,교육대학">4년제 (대학+교육대학)</option><option value="대학">대학</option><option value="교육대학">교육대학</option><option value="전문대학">전문대학 (고등교육법)</option><option value="원격대학">원격대학 (사이버·방송통신)</option><option value="전문대학,기능대학">전문대학 + 기능대학 (직업교육)</option><option value="기능대학">기능대학 (폴리텍 등)</option><option value="대학원대학">대학원대학</option><option value="대학,교육대학,전문대학">4년제 + 전문대학</option></select></div>
+    <div class="fg"><label>기준연도 (현황)</label><select id="f-y"></select></div>
+    <div class="fg"><label>추이 기간</label><div class="seg" id="f-per"><button data-v="3">3년</button><button data-v="5">5년</button><button data-v="10" class="on">10년</button><button data-v="99">전체</button></div></div>
+    <div class="fg"><label>집계 단위</label><div class="seg" id="f-unit"><button data-v="inst" class="on">기관</button><button data-v="camp">캠퍼스</button></div></div>
+    <div class="fg"><label>학교 구분</label><div class="chk" id="f-g"></div></div>
+    <div class="fg"><label>설립</label><div class="chk" id="f-e"></div></div>
+    <div class="fg"><label>설립 근거 법률</label><div class="chk" id="f-b"></div></div>
+    <div class="fg"><label>권역</label><div class="chk" id="f-r"></div></div>
+    <div class="fg"><label>학교 상태 <small class="note">(공시지표·학교별 지표 탭)</small></label><div class="chk" id="f-st"></div></div>
+    <div class="fg"><label>시도</label><select id="f-s"><option value="">전체</option></select></div>
+    <div class="fg"><label>학교명 검색</label><input type="search" id="f-q" placeholder="대학명 입력"></div>
+    <button class="btn ghost sm" id="reset" style="width:100%">필터 초기화</button>
+    <p class="note" style="margin-top:12px">기관: 같은 학교의 본교·캠퍼스를 하나로 셉니다(폴리텍은 I~VII·특성화대학 단위). 평생교육법상 사내대학·원격대학은 공시 대상이 아니므로 제외했습니다. 권역: 수도권(서울·경기·인천), 광역시(부산·대구·광주·대전·울산·세종), 도 지역.</p>
+  </aside>
+  <main>
+    <div class="chips" id="chips"></div>
+    <section id="v-ov"></section><section id="v-tr" class="hide"></section><section id="v-ls" class="hide"></section><section id="v-si" class="hide"></section>
+<section id="v-ia" class="hide"></section>
+
+    <section id="v-it" class="hide"></section>
+    <section id="v-st" class="hide"></section><section id="v-rp" class="hide"></section><section id="v-ab" class="hide"></section>
+  </main>
+</div>
+<div id="tip"></div><div class="toast" id="toast"></div><div id="modal"></div>
+<script>
+{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const fmt=(v,d=0)=>v==null||isNaN(v)?'–':Number(v).toLocaleString('ko-KR',{minimumFractionDigits:d,maximumFractionDigits:d});
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct=(a,b)=>b?((a-b)/b*100):null;
+const COLORS=['var(--c1)','var(--c2)','var(--c3)','var(--c4)','var(--c5)','var(--c6)','var(--c7)','var(--c8)'];
+const HEX=['#2a78d6','#eb6834','#1baf7a','#eda100','#e87ba4','#6250d6','#008300','#9aa1ad'];
+const TABS=[['ov','개요'],['ls','학교 목록'],['tr','추이 분석'],['si','학교별 지표'],['it','정보공시 항목'],['ia','공시지표 분석'],['st','공시 주요통계'],['rp','보고서'],['ab','자료 설명']];
+let D,REC,YEARS,S={y:2026,per:10,unit:'inst',g:new Set(),e:new Set(),r:new Set(),b:new Set(),st:new Set(),s:'',q:''},TAB='ov';
+const tip=$('#tip');
+function showTip(e,t){tip.textContent=t;tip.style.opacity=1;tip.style.left=Math.min(e.clientX+12,innerWidth-330)+'px';tip.style.top=(e.clientY+12)+'px'}
+function hideTip(){tip.style.opacity=0}
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');setTimeout(()=>el.classList.remove('on'),1800)}
+async function copy(t,msg){try{await navigator.clipboard.writeText(t);toast(msg||'복사했습니다')}catch(e){toast('이 화면에서는 복사할 수 없습니다')}}
+
+// ---------- data
+function decode(raw){
+  const d=raw.D;
+  REC=raw.R.map(r=>({y:r[0],nm:r[1],ins:d['기관'][r[2]],bb:d['본분교'][r[3]],g:d['구분'][r[4]],hj:d['학제'][r[5]],sd:d['지역'][r[6]],e:d['설립2'][r[7]],rg:d['권역'][r[8]],corp:d['법인명'][r[9]],st:d['학교상태'][r[10]],oy:r[11],url:r[12],bs:d['근거'][r[13]]}));
+  REC.forEach(r=>{r.g=GX(r.g,r.hj,r.bs)});REC.forEach(r=>{NAMEG[r.nm]=r.g;NAMEG[r.ins]=r.g});
+  YEARS=[...new Set(REC.map(r=>r.y))].sort();
+  D=raw; D.GR=raw.G.map(g=>({y:g[0],ins:d['기관'][g[1]],a:g[2],b:g[3],c:g[4]}));
+  D.EVL=raw.EV.map(x=>({y:x[0],t:x[1],n:x[2],g:NAMEG[x[2]]||x[3],e:x[4],r:x[5],m:x[6]}));
+}
+const GORDER=['대학','교육대학','전문대학','원격대학','기능대학','대학원대학','기타'];
+// 학교구분: 고등교육법 제2조 종류 기준으로 재분류(교육대학·원격대학 분리, 전문대학은 고등교육법 전문대학만)
+function GX(g,hj,bs){hj=hj||'';if(hj==='교육대학')return '교육대학';if(/사이버|방송통신/.test(hj))return '원격대학';if(g==='전문대학'&&bs==='특별법')return '기타';if(/각종학교/.test(hj))return '기타';return g}
+let NAMEG={};const BORDER=['고등교육법','특별법','직업능력개발법'], EORDER=['국립','공립','사립','특별법법인','기타'], RORDER=['수도권','광역시','도 지역'];
+function pass(r,skipQ){
+  if(S.g.size&&!S.g.has(r.g))return false; if(S.e.size&&!S.e.has(r.e))return false; if(S.r.size&&!S.r.has(r.rg))return false;
+  if(S.b.size&&!S.b.has(r.bs))return false; if(S.s&&r.sd!==S.s)return false; if(!skipQ&&S.q&&!(r.nm.includes(S.q)||r.ins.includes(S.q)))return false; return true;
+}
+const rowsY=y=>REC.filter(r=>r.y===y&&pass(r));
+function count(rows){return S.unit==='inst'?new Set(rows.map(r=>r.ins)).size:rows.length}
+function groupCount(rows,key,order){const m={};for(const r of rows){(m[r[key]]=m[r[key]]||[]).push(r)}const ks=order?order.filter(k=>m[k]).concat(Object.keys(m).filter(k=>!order.includes(k)).sort()):Object.keys(m).sort();return ks.map(k=>[k,count(m[k])])}
+const perYears=()=>YEARS.filter(y=>y>S.y-S.per&&y<=S.y);
+const EVBADGE={};
+
+// ---------- charts (svg at real pixel size)
+function mount(el,draw){const ro=new ResizeObserver(()=>draw(el.clientWidth,el.clientHeight));ro.observe(el);draw(el.clientWidth,el.clientHeight)}
+function stackBars(el,cats,series,unit){
+  mount(el,(W,H)=>{if(!W)return;const L=44,R=10,T=14,B=26,n=cats.length;const tot=cats.map((_,i)=>series.reduce((a,s)=>a+(s.v[i]||0),0));const mx=Math.max(1,...tot)*1.12;
+  const bw=(W-L-R)/n,y=v=>T+(H-T-B)*(1-v/mx);let g='';const tk=5;for(let i=0;i<=tk;i++){const v=mx/tk*i;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" opacity=".1"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="currentColor" opacity=".6">${fmt(v)}</text>`}
+  cats.forEach((c,i)=>{let acc=0;const x=L+i*bw+bw*.18,w=bw*.64;series.forEach((s,k)=>{const v=s.v[i]||0;if(!v)return;g+=`<rect x="${x}" y="${y(acc+v)}" width="${w}" height="${y(acc)-y(acc+v)}" fill="${s.c}" data-t="${esc(c+' · '+s.n+': '+fmt(v)+unit)}"/>`;acc+=v});
+  if(W>520||i%2===0)g+=`<text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">${W<520?String(c).slice(2):c}</text>`;
+  if(bw>34)g+=`<text x="${x+w/2}" y="${y(acc)-4}" text-anchor="middle" font-size="10.5" font-weight="700" fill="currentColor">${fmt(acc)}</text>`});
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;bindTip(el)})}
+// 축 범위: 데이터가 좁은 구간에 몰려 있으면 0부터 그리지 않고 하한·상한을 깔끔한 눈금으로 맞춤
+function niceAxis(lo,hi,n=5){if(!isFinite(lo)||!isFinite(hi)){lo=0;hi=1}if(lo===hi){const d=Math.abs(lo)*.1||1;lo-=d;hi+=d}
+  const zero=lo>=0&&lo<=(hi-lo)*0.6; // 0과 가까우면 0에서 시작
+  if(zero)lo=0;else{const pad=(hi-lo)*.08;lo-=pad}hi+=(hi-lo)*.06;
+  const raw=(hi-lo)/(n-1),p=Math.pow(10,Math.floor(Math.log10(raw))),f=raw/p,st=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*p;
+  const a=Math.floor(lo/st)*st,b=Math.ceil(hi/st)*st;const ticks=[];for(let v=a;v<=b+st/2;v+=st)ticks.push(+v.toFixed(10));return {mn:a,mx:b,ticks,st,cut:a>0}}
+function lines(el,cats,series,unit){
+  // 앞뒤로 모든 계열이 빈 연도는 잘라 데이터가 있는 구간만 그림
+  let i0=0,i1=cats.length-1;const has=i=>series.some(s=>s.v[i]!=null);while(i0<i1&&!has(i0))i0++;while(i1>i0&&!has(i1))i1--;
+  if(i0>0||i1<cats.length-1){cats=cats.slice(i0,i1+1);series=series.map(s=>({...s,v:s.v.slice(i0,i1+1)}))}
+  mount(el,(W,H)=>{if(!W)return;const L=52,R=70,T=12,B=26;const all=series.flatMap(s=>s.v).filter(v=>v!=null);
+  const ax=niceAxis(Math.min(...all),Math.max(...all),W<520?4:6),mx=ax.mx,mn=ax.mn;const dd=ax.st<1?(ax.st<.1?2:1):0;
+  const x=i=>L+(W-L-R)*(cats.length<2?.5:i/(cats.length-1)),y=v=>T+(H-T-B)*(1-(v-mn)/(mx-mn));let g='';
+  ax.ticks.forEach(v=>{g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" opacity=".1"/><text x="${L-6}" y="${y(v)+4}" text-anchor="end" font-size="11" fill="currentColor" opacity=".6">${fmt(v,dd)}</text>`});
+  if(ax.cut)g+=`<path d="M${L-4} ${H-B-2} l4 -4 l4 4" fill="none" stroke="currentColor" opacity=".45"/><text x="${L}" y="${T-2}" font-size="10" fill="currentColor" opacity=".55">축 ${fmt(mn,dd)}부터</text>`;
+  const stp=Math.max(1,Math.ceil(cats.length*38/Math.max(1,W-L-R)));cats.forEach((c,i)=>{if(i%stp===0||i===cats.length-1)g+=`<text x="${x(i)}" y="${H-8}" text-anchor="middle" font-size="11" fill="currentColor" opacity=".75">${W<520?String(c).slice(2):c}</text>`});
+  series.forEach(s=>{const p=s.v.map((v,i)=>v==null?null:[x(i),y(v)]).filter(Boolean);g+=`<polyline points="${p.map(q=>q.join(',')).join(' ')}" fill="none" stroke="${s.c}" stroke-width="2.2"/>`;
+   s.v.forEach((v,i)=>{if(v!=null)g+=`<circle cx="${x(i)}" cy="${y(v)}" r="3.5" fill="${s.c}" data-t="${esc(cats[i]+' · '+s.n+': '+fmt(v)+unit)}"/>`});
+});
+  {const lab=series.map(s=>{const lv=s.v[s.v.length-1];return lv==null?null:{s,yy:y(lv)+4}}).filter(Boolean).sort((a,b)=>a.yy-b.yy);for(let i=1;i<lab.length;i++)if(lab[i].yy-lab[i-1].yy<13)lab[i].yy=lab[i-1].yy+13;for(let i=lab.length-1,lim=H-B-2;i>=0;i--){if(lab[i].yy>lim)lab[i].yy=lim;lim=lab[i].yy-13}
+   lab.forEach(o=>{g+=`<text x="${x(cats.length-1)+6}" y="${o.yy}" font-size="11" fill="${o.s.c}" font-weight="700">${esc(String(o.s.n).slice(0,6))}</text>`})}
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;bindTip(el)})}
+function bindTip(el){el.querySelectorAll('[data-t]').forEach(n=>{n.addEventListener('mousemove',e=>showTip(e,n.dataset.t));n.addEventListener('mouseleave',hideTip)})}
+const legend=series=>`<div class="legend">${series.map(s=>`<span><i style="background:${s.c}"></i>${esc(s.n)}</span>`).join('')}</div>`;
+const hbars=(pairs,unit='',dd=0)=>{const mx=Math.max(1,...pairs.map(p=>p[1]));return `<div class="bars">${pairs.map(([k,v])=>`<div class="r"><span>${esc(k)}</span><span><b style="width:${v/mx*100}%"></b></span><span>${fmt(v,dd)}${unit}</span></div>`).join('')}</div>`};
+function tableHTML(head,rows,opt={}){return `<div class="tw"><table class="t"><thead><tr>${head.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table></div>`}
+function csv(head,rows){return [head,...rows].map(r=>r.map(c=>/[",\n]/.test(c)?`"${String(c).replace(/"/g,'""')}"`:c).join(',')).join('\n')}
+
+// ---------- views
+function chips(){const c=[`기준 ${S.y}년`,`추이 ${S.per>50?'전체':'최근 '+S.per+'년'}`,S.unit==='inst'?'기관 단위':'캠퍼스 단위'];
+ if(S.g.size)c.push([...S.g].join('·'));if(S.e.size)c.push([...S.e].join('·'));if(S.r.size)c.push([...S.r].join('·'));if(S.b.size)c.push([...S.b].join('·'));if(S.st&&S.st.size)c.push('상태: '+[...S.st].join('·'));if(S.s)c.push(S.s);if(S.q)c.push('“'+S.q+'”');
+ $('#chips').innerHTML=c.map(x=>`<span class="chip">${esc(x)}</span>`).join('')}
+
+function vOverview(){
+  const yrs=perYears(),cur=rowsY(S.y),prev=rowsY(S.y-1);const n=count(cur),np=count(prev);
+  const by=groupCount(cur,'g',GORDER),bp=Object.fromEntries(groupCount(prev,'g',GORDER));
+  const pub=groupCount(cur,'e',EORDER),nPub=pub.filter(p=>p[0]!=='사립').reduce((a,p)=>a+p[1],0);
+  const ev=D.EVL.filter(e=>e.y===S.y);
+  const kpi=(l,v,u,p)=>{const d=p==null?'':(v-p);return `<div class="kpi"><div class="l">${l}</div><div class="v">${fmt(v)}<small>${u}</small></div><div class="d ${d>0?'up':d<0?'dn':'flat'}">${p==null?'&nbsp;':'전년 대비 '+(d>0?'+':'')+fmt(d)}</div></div>`};
+  const ser=GORDER.map((g,i)=>({n:g,c:COLORS[i],v:yrs.map(y=>count(rowsY(y).filter(r=>r.g===g)))}));
+  const y0=yrs[0],n0=count(rowsY(y0));
+  const merges=D.EVL.filter(e=>yrs.includes(e.y)&&e.t==='통합').length,closes=D.EVL.filter(e=>yrs.includes(e.y)&&e.t==='폐교').length;
+  $('#v-ov').innerHTML=`
+  <p class="lead">${S.y}년 공시 대상 고등교육기관은 ${fmt(n)}${S.unit==='inst'?'개 기관':'개 캠퍼스'}으로 ${y0}년(${fmt(n0)})보다 ${fmt(Math.abs(n-n0))}곳 ${n>=n0?'늘었습니다':'줄었습니다'}. 같은 기간 통합 ${merges}건, 폐교 ${closes}건이 있었습니다.</p>
+  <div class="kpis">${kpi('전체',n,S.unit==='inst'?'개교':'곳',np||null)}${by.map(([g,v])=>kpi(g,v,'개교',bp[g]??null)).join('')}${kpi('국·공립 등(사립 외)',nPub,'개교',null)}${kpi(S.y+'년 변동',ev.length,'건',null)}</div>
+  <div class="card"><h2>연도별 공시 대상 기관 수 <small>학교개황 각 연도 원자료, 폐교 제외</small></h2>${legend(ser)}<div class="fig" id="ch-ov"></div></div>
+  <div class="grid2">
+    <div class="card"><h2>${S.y}년 시도별 <small>${S.unit==='inst'?'기관':'캠퍼스'} 수</small></h2>${hbars(groupCount(cur,'sd').sort((a,b)=>b[1]-a[1]))}</div>
+    <div class="card"><h2>${S.y}년 설립·학제별</h2>${hbars(pub)}<div style="height:10px"></div>${hbars(groupCount(cur,'hj').sort((a,b)=>b[1]-a[1]))}</div>
+  </div>
+  <div class="card"><h2>${S.y}년 특별법·직업능력개발법 설립 기관 <small>고등교육법 외 법률로 설립 · 학교명을 누르면 상세</small></h2>${tableHTML(['학교명','구분','학제','설립','소재지','설립 근거'],[...new Map(REC.filter(r=>r.y===S.y&&r.bs!=='고등교육법').map(r=>[r.ins,r])).values()].sort((a,b)=>GORDER.indexOf(a.g)-GORDER.indexOf(b.g)||a.ins.localeCompare(b.ins,'ko')).map(r=>`<tr><td><span class="uname" data-u="${esc(r.ins)}">${esc(r.ins)}</span></td><td>${r.g}</td><td>${esc(r.hj)}</td><td>${r.e}</td><td>${esc(r.sd)} · ${esc((D.AD[r.ins]||[''])[0].split(' ').slice(0,2).join(' '))}</td><td><span class="hb k-${r.bs}">${r.bs}</span> ${esc((D.AD[r.ins]||['',''])[1])}</td></tr>`))}<p class="note">한국농수산대학교는 「한국농수산대학교 설치법」에 따른 국립(특별법) 3년제 대학으로, 대학정보공시에서는 <b>전문대학</b>으로 분류되어 공시합니다(전북 전주). 왼쪽 ‘설립 근거 법률’에서 특별법을 고르면 이 기관들만 볼 수 있습니다.</p></div>
+  <div class="card"><h2>최근 변동 <small>교명변경·통합·폐교·신설 (${yrs[0]}~${S.y})</small></h2><div class="tl">${[...yrs].reverse().map(y=>{const es=D.EVL.filter(e=>e.y===y&&passEv(e));return es.length?`<div class="y">${y}</div>`+es.map(e=>`<div><span class="hb k-${e.t}">${e.t}</span> <b>${esc(e.n)}</b> <span class="note">${esc(e.g)} · ${esc(e.r)}</span>${e.m?' → '+esc(e.m):''}</div>`).join(''):''}).join('')}</div></div>`;
+  stackBars($('#ch-ov'),yrs,ser,'개교');
+}
+function passEv(e){if(S.g.size&&!S.g.has(e.g))return false;if(S.q&&!(e.n+e.m).includes(S.q))return false;if(S.s&&e.r!==S.s)return false;return true}
+
+let TRDIM='g';
+function vTrendCnt(){
+  const yrs=perYears();const dims={g:['학교 구분',GORDER],hj:['학제',null],e:['설립',EORDER],rg:['권역',RORDER],sd:['시도',null],bb:['본분교',null]};
+  const [lab,ord]=dims[TRDIM];const keys=groupCount(REC.filter(r=>yrs.includes(r.y)&&pass(r)),TRDIM,ord).map(p=>p[0]);
+  const mat=keys.map(k=>yrs.map(y=>count(rowsY(y).filter(r=>r[TRDIM]===k))));const tot=yrs.map(y=>count(rowsY(y)));
+  const ser=keys.slice(0,8).map((k,i)=>({n:k,c:COLORS[i],v:mat[i]}));
+  const head=[lab,...yrs,'증감','증감률(%)'];
+  const body=keys.map((k,i)=>{const a=mat[i][0],b=mat[i][mat[i].length-1];return `<tr><td>${esc(k)}</td>${mat[i].map(v=>`<td class="n">${fmt(v)}</td>`).join('')}<td class="n ${b-a>0?'up':b-a<0?'dn':''}">${fmt(b-a)}</td><td class="n">${fmt(pct(b,a),1)}</td></tr>`});
+  body.push(`<tr class="tot"><td>계</td>${tot.map(v=>`<td class="n">${fmt(v)}</td>`).join('')}<td class="n">${fmt(tot.at(-1)-tot[0])}</td><td class="n">${fmt(pct(tot.at(-1),tot[0]),1)}</td></tr>`);
+  window._trcsv=csv(head,[...keys.map((k,i)=>[k,...mat[i]]),['계',...tot]]);
+  $('#v-tr').innerHTML=`<div class="card"><h2>항목별 추이 <small>${yrs[0]}~${yrs.at(-1)} · ${S.unit==='inst'?'기관':'캠퍼스'} 수</small></h2>
+  <div class="ctrl">${trMeasureSel()}<div class="fg"><label>구분 기준</label><select id="trdim">${Object.entries(dims).map(([k,v])=>`<option value="${k}" ${k===TRDIM?'selected':''}>${v[0]}</option>`).join('')}</select></div><button class="btn ghost sm" id="trcsv">⬇ 표 CSV</button></div>
+  ${legend(ser)}<div class="fig" id="ch-tr"></div></div><div class="card"><h2>${lab}별 ${S.unit==='inst'?'기관':'캠퍼스'} 수</h2>${tableHTML(head,body)}</div>`;
+  lines($('#ch-tr'),yrs,ser,'');
+  $('#trdim').onchange=e=>{TRDIM=e.target.value;vTrend()};trMeasureBind();$('#trcsv').onclick=()=>saveFile(`추이분석_${TRM==='cnt'?'기관수':(SI&&SI.byK[TRM]?SI.byK[TRM].n.replace(/[\\/:*?"<>|()]/g,''):TRM)}.csv`,'\ufeff'+window._trcsv);
+}
+
+let TRM='cnt',TRS='mean';
+const SI_END={gov:'14-아 재정지원사업 수혜 실적은 2021년 공시를 끝으로 대학정보공시 항목에서 제외되었습니다(2026 공시 지침서에 없음).',emp:'졸업생 취업률은 전년도 졸업생 기준이라 최근 공시연도 값은 다음 공시 때 채워집니다.',land:'교지 확보율은 공시데이터 추이에서 2023년 이후 값이 제공되지 않습니다.'};
+function siEndNote(m,last){if(!m||!m.y||m.y[1]==null||m.y[1]>=last)return '';return `<p class="note" style="margin-top:8px;background:#f7f8fa;border-left:3px solid var(--line);padding:6px 8px">※ <b>${m.y[1]+1}년부터는 공시값이 없습니다.</b> ${SI_END[m.k]||'대학알리미 공시데이터 추이에 해당 연도 값이 제공되지 않습니다.'}</p>`}
+function trFence(xs){const s=xs.slice().sort((a,b)=>a-b),q=p=>s[Math.min(s.length-1,Math.max(0,Math.round((s.length-1)*p)))];const q1=q(.25),q3=q(.75),iq=Math.max(q3-q1,Math.abs(q3)*0.02,1e-6);return [q1-3*iq,q3+3*iq]}
+function trStat(k,js,y){const pts=js.map(j=>[j,siVal(k,j,y)]).filter(p=>p[1]!=null);if(!pts.length)return null;const xs=pts.map(p=>p[1]);
+ let use=xs,out=[];if(xs.length>=8){const [lo,hi]=trFence(xs);out=pts.filter(p=>p[1]<lo||p[1]>hi);if(TRS==='trim')use=pts.filter(p=>!(p[1]<lo||p[1]>hi)).map(p=>p[1])}
+ const s=use.slice().sort((a,b)=>a-b);const mean=s.reduce((a,b)=>a+b,0)/s.length,med=s[Math.floor(s.length/2)];const all=xs.reduce((a,b)=>a+b,0)/xs.length;
+ return {mean:TRS==='med'?med:mean,n:use.length,nAll:xs.length,out,meanAll:all}}
+// 특이값 카드: 그룹 목록 [[이름, 학교들]] , 지표 k, 연도들
+function outlierCard(k,groups,yrs,lab,opt={}){const m=SI.byK[k],U=v=>siU(v,m.u);const OUT=[];
+ groups.forEach(([g,gj])=>yrs.forEach(y=>{const pts=gj.map(j=>[j,siVal(k,j,y)]).filter(p=>p[1]!=null);if(pts.length<8)return;const xs=pts.map(p=>p[1]);const [lo,hi]=trFence(xs);const all=xs.reduce((a,b)=>a+b,0)/xs.length;
+   pts.filter(p=>p[1]<lo||p[1]>hi).forEach(([j,x])=>{const rest=xs.length-1;const mw=rest?(all*xs.length-x)/rest:null;const pv=siVal(k,j,y-1);OUT.push({y,g,j,x,pv,mAll:all,mw,imp:mw==null?0:all-mw,jump:pv!=null&&Math.abs(x-pv)>Math.max(3*(hi-lo)/6,Math.abs(pv)*0.5)})})}));
+ // 급등·급감: 그룹 평균이 전년 대비 크게 변한 연도
+ const SP=[];groups.forEach(([g,gj])=>yrs.forEach(y=>{const a=siStat(k,gj,y-1),b=siStat(k,gj,y);if(!a||!b)return;const ch=b.mean-a.mean,rel=Math.abs(a.mean)>1e-9?ch/Math.abs(a.mean):0;if(Math.abs(rel)>=0.3&&Math.abs(ch)>=(m.u==='%'?2:0)){const movers=gj.map(j=>[j,siVal(k,j,y),siVal(k,j,y-1)]).filter(p=>p[1]!=null&&p[2]!=null).map(p=>[p[0],p[1]-p[2],p[1],p[2]]).sort((p,q)=>Math.abs(q[1])-Math.abs(p[1])).slice(0,3);SP.push({y,g,a:a.mean,b:b.mean,ch,movers})}}));
+ OUT.sort((a,b)=>Math.abs(b.imp)-Math.abs(a.imp));
+ if(!OUT.length&&!SP.length)return '';
+ const GN=groups.map(g=>g[0]);const perG=(arr,n)=>GN.flatMap(g=>arr.filter(o=>o.g===g).slice(0,n));
+ const big=perG(OUT.filter(o=>o.mw!=null&&Math.abs(o.imp)>=Math.max(0.5,Math.abs(o.mw)*0.05)),3);
+ const cnt=GN.map(g=>{const a=OUT.filter(o=>o.g===g);return `<b>${esc(g)}</b> ${a.length?`${new Set(a.map(o=>o.j)).size}개교 ${a.length}건`:'특이값 없음'}`}).join(' · ');
+ const tbl=perG(OUT,Math.max(5,Math.ceil((opt.n||20)/Math.max(1,GN.length))));
+ const go=(j)=>`javascript:SIS.sel=${j};SIS.k='${k}';location.hash='si'`;
+ return `<div class="card"><h2>특이값 점검 <small>${esc(m.n)} · ${lab}별 · 다른 학교와 크게 동떨어진 값(사분위 범위 3배 밖)과 평균 급등·급감</small></h2>
+  ${SP.length?`<div class="note" style="background:#fff6e5;border-left:3px solid #f0a020;margin-bottom:8px"><b>평균 급등·급감</b><br>${perG(SP.slice().sort((a,b)=>Math.abs(b.ch/(b.a||1))-Math.abs(a.ch/(a.a||1))),3).map(s=>`${s.y}년 <b>${esc(s.g)}</b> 평균 ${U(s.a)} → <b>${U(s.b)}${m.u}</b> (${s.ch>=0?'▲':'▼'}${fmt(Math.abs(s.ch),m.u==='%'?1:0)}) · 가장 크게 변한 학교: ${s.movers.map(p=>`<a href="${go(p[0])}">${esc(SI.S[p[0]][1])}</a> ${U(p[3])}→${U(p[2])}`).join(', ')}`).join('<br>')}</div>`:''}
+  ${big.length?`<div class="note" style="background:#fdecec;border-left:3px solid #e34948;margin-bottom:8px"><b>평균을 크게 움직인 특이값</b><br>${big.map(o=>`${o.y}년 <b>${esc(o.g)}</b> 평균 ${U(o.mAll)}${m.u}는 <a href="${go(o.j)}"><b>${esc(SI.S[o.j][1])}</b></a>(${esc(SI.S[o.j][5])}) 값 <b>${U(o.x)}${m.u}</b>의 영향이 큽니다 → 이 학교를 빼면 <b>${U(o.mw)}${m.u}</b>`).join('<br>')}</div>`:''}
+  ${GN.length>1?`<p class="note" style="margin:0 0 6px">${lab}별 특이값: ${cnt}</p>`:''}
+  ${OUT.length?tableHTML(['연도',lab,'학교','상태','값','전년 값','평균(포함)','평균(제외)','영향'],tbl.map(o=>`<tr><td>${o.y}</td><td>${esc(o.g)}</td><td style="text-align:left"><a href="${go(o.j)}">${esc(SI.S[o.j][1])}</a>${o.jump?' <span class="hist close" title="전년보다 급변">급변</span>':''}</td><td>${esc(SI.S[o.j][5])}</td><td><b>${U(o.x)}</b></td><td>${o.pv!=null?U(o.pv):'–'}</td><td>${U(o.mAll)}</td><td>${o.mw!=null?U(o.mw):'–'}</td><td>${o.mw!=null?(o.imp>=0?'+':'')+fmt(o.imp,2):'–'}</td></tr>`)):''}
+  <p class="note">폐교 절차 중이거나 규모가 아주 작은 학교는 분모(재적학생 등)가 작아 비율이 비정상적으로 크게 나올 수 있습니다. 평균 대신 <b>이상값 제외 평균</b>이나 <b>중앙값</b>으로 보면 영향을 줄일 수 있습니다. 학교명을 누르면 학교별 지표에서 그 학교 추이를 봅니다.</p></div>`}
+function trMeasureSel(){const opts=SI?[...new Set(SI.I.map(m=>m.g))].map(g=>`<optgroup label="공시지표 · ${esc(g)}">${SI.I.filter(m=>m.g===g).map(m=>`<option value="${m.k}" ${m.k===TRM?'selected':''}>${esc(m.n)} (${esc(m.u)})</option>`).join('')}</optgroup>`).join(''):'<option disabled>공시지표 불러오는 중…</option>';
+ return `<div class="fg" style="min-width:260px"><label>보는 값</label><select id="trm"><option value="cnt" ${TRM==='cnt'?'selected':''}>기관 수</option>${opts}</select></div>`}
+function trMeasureBind(){const s=$('#trm');if(s)s.onchange=e=>{TRM=e.target.value;vTrend()}}
+function vTrend(){if(!SI)loadSI().then(()=>{if(TAB==='tr')vTrend()});if(TRM==='cnt'||!SI||!SI.byK[TRM])return vTrendCnt();vTrendInd()}
+function vTrendInd(){
+ const m=SI.byK[TRM],yrs=SI.Y.filter(y=>y>S.y-S.per&&y<=S.y),U=v=>siU(v,m.u);
+ const DM={g:['학교 구분',s=>s[2],['대학','전문대학','기능대학']],e:['설립',s=>s[3],['국립','공립','사립','특별법법인']],rg:['권역',s=>siReg(s),RORDER],sd:['시도',s=>s[4],SDORDER]};
+ const dk=DM[TRDIM]?TRDIM:'g',[lab,fn,ord]=DM[dk];
+ const js=SI.S.map((s,i)=>i).filter(i=>{const s=SI.S[i];if(!siUnitOk(s))return false;if(S.g.size&&!S.g.has(s[2]))return false;if(S.e.size&&!S.e.has(s[3]))return false;if(S.r.size&&!S.r.has(siReg(s)))return false;if(S.s&&s[4]!==S.s)return false;if(S.b.size&&!S.b.has(siBase(s)))return false;if(S.st.size&&!S.st.has(s[5]))return false;if(S.q&&!s[1].includes(S.q))return false;return true});
+ const gm=new Map();js.forEach(j=>{const k=fn(SI.S[j]);if(!gm.has(k))gm.set(k,[]);gm.get(k).push(j)});
+ const keys=[...gm.keys()].sort((a,b)=>{const x=ord.indexOf(a),y=ord.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+ let mat=keys.map(k=>yrs.map(y=>trStat(TRM,gm.get(k),y)));{const keep=mat.map(r=>r.some(Boolean));const k2=keys.filter((_,i)=>keep[i]);mat=mat.filter((_,i)=>keep[i]);keys.length=0;keys.push(...k2)}const tot=yrs.map(y=>trStat(TRM,js,y));
+ const r2=v=>v?Math.round(v.mean*100)/100:null;
+ const ser=keys.slice(0,8).map((k,i)=>({n:k,c:COLORS[i],v:mat[i].map(r2)}));ser.push({n:'전체',c:'#14181f',v:tot.map(r2)});
+ const head=[lab,...yrs,'증감'];const fv=a=>a.find(v=>v),lv=a=>[...a].reverse().find(v=>v);
+ const body=keys.map((k,i)=>{const a=fv(mat[i]),b=lv(mat[i]);return `<tr><td>${esc(k)}</td>${mat[i].map(v=>`<td class="n">${v?U(v.mean)+` <small class="note">(${v.n})</small>`:'–'}</td>`).join('')}<td class="n">${a&&b?deltaG(b.mean,a.mean,m.u,m.b):'–'}</td></tr>`});
+ body.push(`<tr class="tot"><td>전체</td>${tot.map(v=>`<td class="n">${v?U(v.mean)+` <small class="note">(${v.n})</small>`:'–'}</td>`).join('')}<td class="n">${fv(tot)&&lv(tot)?deltaG(lv(tot).mean,fv(tot).mean,m.u,m.b):'–'}</td></tr>`);
+ window._trcsv=csv([`${m.n}(${m.u}) ${lab}별 학교 평균`,...yrs],[...keys.map((k,i)=>[k,...mat[i].map(v=>v?Math.round(v.mean*100)/100:'')]),['전체',...tot.map(v=>v?Math.round(v.mean*100)/100:'')]]);
+ const dims={g:'학교 구분',e:'설립',rg:'권역',sd:'시도'};
+ $('#v-tr').innerHTML=`<div class="card"><h2>항목별 추이 <small>${yrs[0]}~${yrs.at(-1)} · ${esc(m.n)} (${esc(m.u)}) · ${{mean:'학교 단순평균',trim:'이상값 제외 학교 평균',med:'중앙값'}[TRS]}</small></h2>
+  <div class="ctrl">${trMeasureSel()}<div class="fg"><label>구분 기준</label><select id="trdim">${Object.entries(dims).map(([k,v])=>`<option value="${k}" ${k===dk?'selected':''}>${v}</option>`).join('')}</select></div><div class="fg"><label>통계 방식</label><select id="trs"><option value="mean" ${TRS==='mean'?'selected':''}>학교 평균 (전체)</option><option value="trim" ${TRS==='trim'?'selected':''}>학교 평균 (이상값 제외)</option><option value="med" ${TRS==='med'?'selected':''}>중앙값</option></select></div><button class="btn ghost sm" id="trcsv">⬇ 표 CSV</button></div>
+  <p class="note">공시항목 <a href="javascript:itemModal('${m.c}')">${m.c}</a> · ${DIRL(m.b)} · 자료 ${m.y[0]}~${m.y[1]} · 왼쪽 필터 ${esc(gfText())} · 대학원대학은 이 지표 자료에 없습니다. 기간은 왼쪽 '추이 기간'을 따릅니다.</p>
+  ${legend(ser)}<div class="fig" id="ch-tr"></div></div>
+  <div class="card"><h2>${lab}별 ${esc(m.n)} <small>${{mean:'학교 평균',trim:'이상값 제외 학교 평균',med:'중앙값'}[TRS]} (괄호: 학교 수)</small></h2>${tableHTML(head,body)}${siEndNote(m,yrs.at(-1))}</div>
+  ${outlierCard(TRM,keys.map(k=>[k,gm.get(k)]),yrs,lab)}`;
+ lines($('#ch-tr'),yrs,ser,m.u);
+ $('#trdim').onchange=e=>{TRDIM=e.target.value;vTrend()};trMeasureBind();$('#trcsv').onclick=()=>saveFile(`추이분석_${TRM==='cnt'?'기관수':(SI&&SI.byK[TRM]?SI.byK[TRM].n.replace(/[\\/:*?"<>|()]/g,''):TRM)}.csv`,'\ufeff'+window._trcsv);$('#trs').onchange=e=>{TRS=e.target.value;vTrend()};
+}
+
+let LSORT='g',LPAGE=0;
+function lastName(ins){const e=D.EVL.filter(x=>x.n===ins);return e}
+function vList(){
+  const cur=rowsY(S.y);const m={};
+  for(const r of cur){const k=S.unit==='inst'?r.ins:r.nm+'|'+r.bb;(m[k]=m[k]||{...r,camp:[]}).camp.push(r.bb)}
+  const gmap={};D.GR.filter(g=>g.y===S.y).forEach(g=>gmap[g.ins]=g);
+  let list=Object.values(m);const so={g:(a,b)=>GORDER.indexOf(a.g)-GORDER.indexOf(b.g)||a.ins.localeCompare(b.ins,'ko'),nm:(a,b)=>a.ins.localeCompare(b.ins,'ko'),oy:(a,b)=>(a.oy||'9999').localeCompare(b.oy||'9999'),sd:(a,b)=>a.sd.localeCompare(b.sd,'ko')};list.sort(so[LSORT]);
+  const PS=60,pages=Math.ceil(list.length/PS);LPAGE=Math.min(LPAGE,Math.max(0,pages-1));
+  const head=['학교명','캠퍼스','구분','학제','설립','시도','법인','개교','부설대학원','이력'];
+  const body=list.slice(LPAGE*PS,LPAGE*PS+PS).map(r=>{const g=gmap[r.ins];const ev=D.EVL.filter(e=>e.n===r.ins||e.m.includes(r.ins));
+   return `<tr><td><span class="uname" data-u="${esc(r.ins)}">${esc(S.unit==='inst'?r.ins:r.nm)}</span>${r.st==='신설'?'<span class="hb k-신설">신설</span>':''}${r.bs!=='고등교육법'?`<span class="hb k-${r.bs}">${r.bs}</span>`:''}</td><td>${esc(S.unit==='inst'?r.camp.join('·'):r.bb)}</td><td>${r.g}</td><td>${esc(r.hj)}</td><td>${r.e}</td><td>${r.sd}</td><td>${esc(r.corp)}</td><td>${esc(r.oy)}</td><td class="n">${g?fmt(g.a+g.b+g.c):'–'}</td><td>${ev.map(e=>`<span class="hb k-${e.t}" title="${esc(e.y+' '+e.n+' '+e.t+' '+e.m)}">${e.y}${e.t}</span>`).join('')}</td></tr>`});
+  window._lscsv=csv(head.slice(0,8),list.map(r=>[r.ins,r.camp.join('·'),r.g,r.hj,r.e,r.sd,r.corp,r.oy]));
+  $('#v-ls').innerHTML=`<div class="card"><h2>${S.y}년 학교 목록 <small>${fmt(list.length)}${S.unit==='inst'?'개 기관':'개 캠퍼스'} · 학교명을 누르면 연도별 이력을 봅니다</small></h2>
+  <div class="ctrl"><div class="fg"><label>정렬</label><select id="lsort"><option value="g">구분·이름</option><option value="nm">이름</option><option value="oy">개교연도</option><option value="sd">시도</option></select></div><button class="btn ghost sm" id="lscsv">⬇ 목록 CSV</button></div>
+  ${tableHTML(head,body)}<div class="ctrl" style="justify-content:flex-end;margin-top:8px"><button class="btn ghost sm" id="lp">이전</button><span class="note">${LPAGE+1} / ${pages||1}</span><button class="btn ghost sm" id="ln">다음</button></div></div>`;
+  $('#lsort').value=LSORT;$('#lsort').onchange=e=>{LSORT=e.target.value;vList()};$('#lp').onclick=()=>{LPAGE=Math.max(0,LPAGE-1);vList()};$('#ln').onclick=()=>{LPAGE++;vList()};$('#lscsv').onclick=()=>saveFile(`학교목록_${S.y}${gfText()!=='전체'?'_필터':''}.csv`,'\ufeff'+window._lscsv);
+}
+function profile(ins){
+  const rs=REC.filter(r=>r.ins===ins),last=rs[rs.length-1]||{};const ys=new Set(rs.map(r=>r.y));
+  const ev=D.EVL.filter(e=>e.n===ins||e.m.includes(ins));const gr=D.GR.filter(g=>g.ins===ins&&g.y===S.y)[0];
+  const camps=[...new Set(rs.filter(r=>r.y===last.y).map(r=>r.nm+' ('+r.bb+')'))];
+  $('#modal').innerHTML=`<div class="modal" id="mbg"><div class="box"><div style="display:flex;justify-content:space-between;gap:8px"><h3 style="margin:0">${esc(ins)}</h3><button class="btn ghost sm" id="mx">닫기</button></div>
+  <div class="note">${esc(last.g||'')} · ${esc(last.hj||'')} · ${esc(last.e||'')} · ${esc(last.sd||'')} · 법인 ${esc(last.corp||'–')} · 개교 ${esc(last.oy||'–')} ${last.url?`· <a href="https://${esc(String(last.url).replace(/^https?:\/\//,''))}">${esc(last.url)}</a>`:''}</div>
+  <div class="note">소재지 ${esc((D.AD[ins]||[''])[0]||'–')} · 설립 근거 <span class="hb k-${last.bs}">${esc(last.bs||'')}</span> ${esc((D.AD[ins]||['',''])[1])}</div>
+  <div class="yr">${YEARS.map(y=>`<span class="${ys.has(y)?'on':''}">${y}</span>`).join('')}</div>
+  <p style="margin:6px 0"><b>캠퍼스(${last.y})</b> ${camps.map(esc).join(', ')}</p>
+  ${gr?`<p style="margin:6px 0"><b>부설대학원(${S.y})</b> 일반 ${gr.a} · 전문 ${gr.b} · 특수 ${gr.c}</p>`:''}
+  <p style="margin:6px 0"><b>변동 이력</b></p>${ev.length?ev.map(e=>`<div><span class="hb k-${e.t}">${e.t}</span> ${e.y} ${esc(e.n)}${e.m?' → '+esc(e.m):''}</div>`).join(''):'<div class="note">학교개황 2015~2026 기간 중 교명변경·통합·폐교 기록이 없습니다.</div>'}
+  </div></div>`;$('#mx').onclick=$('#mbg').onclick=e=>{if(e.target.id==='mx'||e.target.id==='mbg')$('#modal').innerHTML=''};
+}
+
+let EVT='';
+function vEvents(){
+  const yrs=perYears();const types=['교명변경','통합','폐교','신설','표기변경'];
+  const es=D.EVL.filter(e=>yrs.includes(e.y)&&passEv(e)&&(!EVT||e.t===EVT));
+  const ser=types.map((t,i)=>({n:t,c:['#1f5a96','#6250d6','#c0392b','#11734f','#9aa1ad'][i],v:yrs.map(y=>D.EVL.filter(e=>e.y===y&&e.t===t&&passEv(e)).length)}));
+  const head=['연도','유형','학교명','구분','설립','시도','후속·비고'];
+  window._evcsv=csv(head,es.map(e=>[e.y,e.t,e.n,e.g,e.e,e.r,e.m]));
+  $('#v-ev').innerHTML=`<div class="card"><h2>연도별 변동 건수 <small>${yrs[0]}~${yrs.at(-1)}</small></h2>${legend(ser)}<div class="fig sm" id="ch-ev"></div>
+  <p class="note">판정 방법: 전년도 공시 대상에서 빠진 학교를 같은 해 새로 나타난 학교와 주소로 대조해 교명변경을 찾고, 통합·폐교는 교육부 보도자료와 학교개황 학교상태로 확인했습니다. ‘표기변경’은 캠퍼스 표기만 바뀐 경우입니다.</p></div>
+  <div class="card"><h2>변동 목록 <small>${es.length}건</small></h2><div class="ctrl"><div class="fg"><label>유형</label><select id="evt"><option value="">전체</option>${types.map(t=>`<option ${t===EVT?'selected':''}>${t}</option>`).join('')}</select></div><button class="btn ghost sm" id="evcsv">⬇ 목록 CSV</button></div>
+  ${tableHTML(head,[...es].reverse().map(e=>`<tr><td>${e.y}</td><td><span class="hb k-${e.t}">${e.t}</span></td><td><span class="uname" data-u="${esc(e.n)}">${esc(e.n)}</span></td><td>${e.g}</td><td>${e.e}</td><td>${e.r}</td><td class="w">${esc(e.m)}</td></tr>`))}</div>`;
+  stackBars($('#ch-ev'),yrs,ser,'건');$('#evt').onchange=e=>{EVT=e.target.value;vEvents()};$('#evcsv').onclick=()=>saveFile('교명변경_통합_폐교_목록.csv','\ufeff'+window._evcsv);
+}
+
+function vGrad(){
+  const cur=rowsY(S.y);const corp={};for(const r of cur){if(!r.corp||r.corp==='해당없음')continue;(corp[r.corp]=corp[r.corp]||new Set()).add(r.ins)}
+  const multi=Object.entries(corp).filter(([k,v])=>v.size>1).sort((a,b)=>b[1].size-a[1].size);
+  const insSet=new Set(cur.map(r=>r.ins));const yrs=perYears();
+  const gser=[['일반대학원','a','#2a78d6'],['전문대학원','b','#eb6834'],['특수대학원','c','#1baf7a']].map(([n,k,c])=>({n,c,v:yrs.map(y=>{const s=new Set(rowsY(y).map(r=>r.ins));return D.GR.filter(g=>g.y===y&&s.has(g.ins)).reduce((a,g)=>a+g[k],0)})}));
+  const top=D.GR.filter(g=>g.y===S.y&&insSet.has(g.ins)).map(g=>[g.ins,g.a+g.b+g.c]).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  const age=groupCount(cur.map(r=>({...r,dec:r.oy?(r.oy<'1950'?'1949년 이전':Math.floor(r.oy/10)*10+'년대'):'미상'})),'dec').sort();
+  $('#v-gr').innerHTML=`<div class="card"><h2>부설대학원 수 추이 <small>대학·전문대학 내 대학원(학교개황 ‘대학원’ 행) · 대학원대학 제외</small></h2>${legend(gser)}<div class="fig sm" id="ch-gr"></div></div>
+  <div class="grid2"><div class="card"><h2>${S.y}년 부설대학원이 많은 대학</h2>${hbars(top,'개')}</div>
+  <div class="card"><h2>${S.y}년 개교 시기별 <small>${S.unit==='inst'?'기관':'캠퍼스'} 수</small></h2>${hbars(age)}</div></div>
+  <div class="card"><h2>${S.y}년 2개 이상 학교를 운영하는 학교법인 <small>${multi.length}개 법인</small></h2>${tableHTML(['법인명','학교 수','학교'],multi.map(([k,v])=>`<tr><td>${esc(k)}</td><td class="n">${v.size}</td><td class="w">${[...v].map(esc).join(', ')}</td></tr>`))}</div>`;
+  stackBars($('#ch-gr'),yrs,gser,'개');
+}
+
+const FIELDS=['','1. 학교규칙 등 학교운영에 관한 규정','2. 교육과정 편성 및 운영','3. 학생의 선발 방법 및 일정','4. 충원율·재학생 수 등 학생 현황','5. 졸업 후 진학·취업 등 진로','6. 전임교원 현황','7. 전임교원의 연구 성과','8. 예·결산 등 학교·법인 회계','9. 등록금·학생 1인당 교육비 산정근거','10. 고등교육법 시정명령 등','11. 학교 발전계획 및 특성화계획','12. 교원 연구·학생 교육·산학협력','13. 도서관 및 연구 지원','14. 그 밖에 교육여건·학교운영'];
+const KEYIND=[['학생','신입생 경쟁률','4-다','8월','정원내 지원자 ÷ 정원내 모집인원'],['학생','신입생 충원율','4-다','8월','정원내 입학자 ÷ 정원내 모집인원 × 100'],['학생','취업률','5-다','별도','취업자 ÷ {졸업자−(진학+입대+취업불가+외국인유학생+제외인정)} × 100'],['학생','외국인 학생 수','4-바-1','8월','학위과정+교육과정공동운영생+연수과정(4.1. 기준)'],['교원·연구','전임교원 1인당 학생 수(학생정원 기준)','6-나','8월','학생정원 ÷ 전임교원 수'],['교원·연구','전임교원 확보율(학생정원·재학생 기준)','6-나','8월','전임교원 ÷ 교원 법정정원 × 100'],['교원·연구','전임교원 강의 담당 비율','12-나-2','8월','전임교원 담당학점 ÷ 전체 강의학점 × 100'],['재정','학생 1인당 연간 장학금','12-다-1','8월','장학금 총액 ÷ 재학생 수'],['재정','평균 등록금','8-차-1','4월·8월','Σ(학과·학년별 등록금×입학정원) ÷ Σ입학정원'],['재정','학생 1인당 교육비','9-나','8월','총 교육비(회계+발전기금+산단+도서+기계기구) ÷ 재학생 수'],['교육여건','기숙사 수용률','14-마-1','10월','수용 가능 인원 ÷ 재학생 수 × 100'],['교육여건','학생 1인당 도서자료 수','13-가','10월','(국내서+국외서) ÷ 재학생 수']];
+let ITM='',ITA='';
+function vItems(){
+  const it=D.IT.map(x=>({m:x[0],c:x[1],n:x[2],a:x[3],f:+x[1].split('-')[0]}));
+  const uniq=new Set(it.map(x=>x.c)).size;const ags=[...new Set(it.flatMap(x=>x.a.split(/,\s*/)))].sort();
+  const sel=it.filter(x=>(!ITM||x.m===ITM)&&(!ITA||x.a.includes(ITA)));
+  const byM=['수시','별도','4월','6월','8월','10월'].map(m=>[m,it.filter(x=>x.m===m).length]);
+  $('#v-it').innerHTML=`<p class="lead">2026년 대학정보공시는 14개 분야, 65개 항목, ${uniq}개 세부항목을 4·6·8·10월 정기공시와 수시·별도 공시로 나눠 공개합니다. 세부항목의 절반(50개)이 8월에 몰려 있습니다. 항목을 누르면 지침서 상세가 열립니다.</p>
+  <div class="grid2"><div class="card"><h2>공시 시기별 세부항목 수 <small>연 2회 항목(8-라, 8-차-1, 8-차-2, 9-가)은 두 번 집계</small></h2>${hbars(byM,'개')}</div>
+  <div class="card"><h2>대학주요정보 한눈에 보기 12개 지표 <small>대학알리미 화면 기준</small></h2>${tableHTML(['영역','지표','공시항목','시기','산식'],KEYIND.map(k=>`<tr class="ir" data-it="${k[2]}" data-k="${esc(k[1])}" tabindex="0"><td>${k[0]}</td><td>${k[1]}</td><td>${k[2]}</td><td><span class="hb m-${k[3].split('·')[0]}">${k[3]}</span></td><td class="w">${k[4]}</td></tr>`))}</div></div>
+  <div class="card"><h2>세부 공시항목 <small>${sel.length}건 · 2026년 대학정보공시 지침서(2026.3.10.)</small></h2>
+  <div class="ctrl"><div class="fg"><label>공시 시기</label><select id="itm"><option value="">전체</option>${byM.map(b=>`<option ${b[0]===ITM?'selected':''}>${b[0]}</option>`).join('')}</select></div><div class="fg"><label>항목관리기관</label><select id="ita"><option value="">전체</option>${ags.map(a=>`<option ${a===ITA?'selected':''}>${esc(a)}</option>`).join('')}</select></div></div>
+  ${tableHTML(['코드','세부항목','분야','시기','자료 연계(관리기관)'],sel.map(x=>`<tr class="ir" data-it="${x.c}" tabindex="0"><td>${x.c}</td><td class="w">${esc(x.n)}</td><td class="w">${FIELDS[x.f]}</td><td><span class="hb m-${x.m}">${x.m}</span></td><td>${esc(x.a)}</td></tr>`))}</div>`;
+  $$('#v-it .ir').forEach(r=>{r.onclick=()=>itemModal(r.dataset.it,r.dataset.k);r.onkeydown=e=>{if(e.key==='Enter')itemModal(r.dataset.it,r.dataset.k)}});
+  $('#itm').onchange=e=>{ITM=e.target.value;vItems()};$('#ita').onchange=e=>{ITA=e.target.value;vItems()};
+}
+
+function itemModal(code,key){
+  const it=D.IT.filter(x=>x[1]===code);if(!it.length)return;const d=D.DT[code]||[];const f=+code.split('-')[0];
+  const ki=KEYIND.filter(k=>k[2]===code);const st=D.ST.filter(s=>s.item===code);
+  const months=[...new Set(it.map(x=>x[0]))].join('·');
+  const pg=d[7];
+  $('#modal').innerHTML=`<div class="modal" id="mbg"><div class="box" role="dialog" aria-label="공시항목 상세">
+  <div style="display:flex;justify-content:space-between;gap:8px;align-items:flex-start"><div><div class="note">${FIELDS[f]}</div><h3 style="margin:2px 0 4px">${code}. ${esc(it[0][2])}</h3>${months.split('·').map(m=>`<span class="hb m-${m}" style="margin-left:0;margin-right:4px">${m} 공시</span>`).join('')}${ki.length?'<span class="hb k-신설">대학주요정보 지표</span>':''}</div><div style="display:flex;gap:6px"><button class="btn ghost sm" id="mx">닫기</button></div></div>
+  <dl class="dl">
+   <dt>공시 내용</dt><dd>${esc(d[3]||'')}</dd>
+   <dt>공시 시기</dt><dd>${esc(d[1]||months)}</dd>
+   <dt>원자료 조사</dt><dd>${esc(d[0]||'')}</dd>
+   <dt>공시 방법</dt><dd>${esc(d[2]||it[0][3])}</dd>
+   <dt>자료 연계</dt><dd>${esc(it[0][3])}</dd>
+   ${d[4]?`<dt>자료기준일</dt><dd>${esc(d[4])}</dd>`:''}
+   <dt>공시 대상</dt><dd>대학 · 전문대학 · 대학원 · 대학원대학 (항목별 양식 상이)</dd>
+  </dl>
+  ${ki.map(k=>`<p style="margin:8px 0"><b>${esc(k[1])}</b> 산식: ${esc(k[4])}</p>`).join('')}
+  ${d[5]?`<p style="margin:12px 0 4px"><b>작성지침 요약</b></p><div class="gd">${esc(d[5]).replace(/ \| /g,'\n')}</div>`:''}
+  ${d[6]?`<p style="margin:12px 0 4px"><b>검증사항</b></p><div class="gd">${esc(d[6]).replace(/ \| /g,'\n')}</div>`:''}
+  ${D.RF[code]?`<p style="margin:12px 0 4px"><b>대학알리미 원자료(학교별·학과별)</b></p><ul style="margin:0;padding-left:18px;font-size:12.5px">${D.RF[code].map(f=>`<li>${esc(f)}</li>`).join('')}</ul>`:''}
+  ${st.length?`<p style="margin:12px 0 4px"><b>2026년 분석 결과 주요 수치</b></p>${tableHTML(['지표','기준','4년제','전문대학'],st.map(s=>`<tr><td>${esc(s.k)}</td><td>${esc(s.base)}</td><td class="n">${s.U.v!=null?fmt(s.U.v,s.u==='%'||s.u==='천원'||s.u==='만원'?1:0)+s.u:'–'} ${delta(s.U.v,s.U.p,s.u)}</td><td class="n">${s.J.v!=null?fmt(s.J.v,s.u==='%'||s.u==='천원'||s.u==='만원'?1:0)+s.u:'–'} ${delta(s.J.v,s.J.p,s.u)}</td></tr>`))}`:''}
+  </div></div>`;
+  $('#mx').onclick=$('#mbg').onclick=e=>{if(e.target.id==='mx'||e.target.id==='mbg')$('#modal').innerHTML=''};
+  }
+addEventListener('keydown',e=>{if(e.key==='Escape')$('#modal').innerHTML=''});
+let STM='';
+function deltaG(v,p,u,b){if(v==null||p==null)return '';const d=v-p;const pp=u==='%'?`${d>=0?'+':''}${fmt(d,1)}%p`:`${d>=0?'+':''}${fmt(pct(v,p),1)}%`;const c=!b||!d?'flat':(d>0)===(b>0)?'up':'dn';return `<span class="${c}" title="${!b?'방향 없는 지표':c==='up'?'좋아짐':'나빠짐'}">${pp}</span>`}
+const DIRL=b=>b>0?'<span class="dir up" title="값이 높을수록 좋은 지표">▲ 높을수록 좋음</span>':b<0?'<span class="dir dn" title="값이 낮을수록 좋은 지표">▼ 낮을수록 좋음</span>':'<span class="dir" title="규모·구성 지표: 좋고 나쁨을 판단하지 않음">규모·구성</span>';
+const TIER=p=>p>=67?'상위권':p<=33?'하위권':'중위권';
+function siCut(k,js,y){const m=SI.byK[k];const xs=js.map(j=>siVal(k,j,y)).filter(v=>v!=null);if(xs.length<4)return '';const s=xs.slice().sort((a,b)=>m.b<0?a-b:b-a);const q=p=>s[Math.min(s.length-1,Math.max(0,Math.ceil(s.length*p)-1))];const top=s[0],tie=s.filter(x=>x===top).length;
+ return `${m.b<0?'낮은':'높은'} 쪽 기준 — 상위 10%: <b>${siU(q(.1),m.u)}</b> · 상위 25%: <b>${siU(q(.25),m.u)}</b> · 중앙값: ${siU((siStat(k,js,y)||{}).med,m.u)} · 하위 25%: ${siU(q(.75),m.u)}${tie>1?` · 최고값 ${siU(top,m.u)}은(는) <b>${tie}개교 공동 1위</b>`:''}`}
+function delta(v,p,u){if(v==null||p==null)return '';const d=v-p;const pp=u==='%'?`${d>=0?'+':''}${fmt(d,1)}%p`:`${d>=0?'+':''}${fmt(pct(v,p),1)}%`;return `<span class="${d>0?'up':d<0?'dn':'flat'}">${pp}</span>`}
+
+// ----- 범위 필터 → 교육부 집계(4년제/전문대) 표시 범위
+const SIDES=()=>{const a=S.g.has('대학'),e=S.g.has('교육대학');const u=!S.g.size||a||e,j=!S.g.size||S.g.has('전문대학'),k=S.g.has('기능대학');const uk=a&&!e?'D':e&&!a?'E':'U';return {u,j,k,uk,ul:{U:'4년제',D:'대학',E:'교육대학'}[uk],both:u&&j,none:!u&&!j}};
+const SIDEL={U:'4년제',J:'전문대학',K:'기능대학'};Object.defineProperty(SIDEL,'U',{get:()=>SIDES().ul,enumerable:true});
+function SUBK(side){const out=[];if(S.e.size===1){const e=[...S.e][0];if(e==='사립')out.push('사립');else if(e==='국립'||e==='공립')out.push(side==='U'?'국·공립':'공립');}
+ if(S.r.size){const cap=S.r.has('수도권'),non=S.r.has('광역시')||S.r.has('도 지역');if(cap&&!non)out.push('수도권');else if(non&&!cap)out.push('비수도권')}return out}
+const ST2SI={'연간 1인당 평균 등록금':['tui',10],'기회균형선발 비율':['opp',1],'일반고 출신 신입생 비율':['gen',1],'학생 1인당 교육비':['edu',1],'학생 1인당 장학금':['sch',1],'학자금 대출 이용률':['loan',1],'전임교원 1인당 연구비':['res',.1],'기숙사 수용률':['dorm',1],'사립법인 수익용 기본재산 확보율':['prof',1],'사립법인 법정부담금 부담률':['legal',1]};
+function stSchoolAvg(s,side){const mp=ST2SI[s.k];if(!mp||!SI)return null;const [k,f]=mp;const g=side==='U'?'대학':'전문대학';
+ const js=SI.S.map((x,i)=>i).filter(i=>{const x=SI.S[i];if(x[2]!==g||x[5]==='폐교'||x[6]<2025)return false;if(S.e.size&&!S.e.has(x[3]))return false;if(S.r.size&&!S.r.has(siReg(x)))return false;if(S.s&&x[4]!==S.s)return false;if(S.q&&!x[1].includes(S.q))return false;if(S.st.size&&!S.st.has(x[5]))return false;if(/사립법인/.test(s.k)&&x[3]!=='사립')return false;return true});
+ const z=siStat(k,js,Math.min(S.y,SI.byK[k].y[1]));return z?{v:z.mean*f,n:z.n}:null}
+// 기능대학(폴리텍)은 교육부 분석 대상이 아니므로 학교별 지표로 자체계산(학교 단순평균). 원자료 수집이 끝나면 나머지 지표도 같은 방식으로 채움
+const K_NA=s=>/사립법인|사립대/.test(s.k);
+function stKAvg(s){const mp=ST2SI[s.k];if(!mp||!SI||K_NA(s))return null;const [k,f]=mp;
+ const js=SI.S.map((x,i)=>i).filter(i=>{const x=SI.S[i];if(x[2]!=='기능대학'||!siUnitOk(x)||x[5]==='폐교'||x[6]<2025)return false;if(S.e.size&&!S.e.has(x[3]))return false;if(S.r.size&&!S.r.has(siReg(x)))return false;if(S.s&&x[4]!==S.s)return false;if(S.q&&!x[1].includes(S.q))return false;if(S.st.size&&!S.st.has(x[5]))return false;return true});
+ const y=Math.min(S.y,SI.byK[k].y[1]),z=siStat(k,js,y),zp=siStat(k,js,y-1);return z?{v:z.mean*f,p:zp?zp.mean*f:null,n:z.n,y}:null}
+const gfExtra=()=>[S.s,S.q&&'“'+S.q+'”',[...S.b].join('·'),[...S.st].join('·')].filter(Boolean).join(' / ');
+
+// ===== HEDX 자체 집계(공시 원자료 기준): 2026 지침서 산식, 가중(Σ분자/Σ분모)
+function hxPick(h,y){const ys=Object.keys(h.Y).map(Number).sort((a,b)=>a-b);if(!ys.length)return null;let yy=ys.filter(x=>x<=y).pop();return yy==null?ys[0]:yy}
+function hxSide(h,yy,g){const Y=h.Y[yy]||{},P=h.Y[yy-1]||{};const o=Y[g];const ser={};Object.keys(h.Y).forEach(y=>{const z=h.Y[y][g];if(z&&z.v!=null)ser[y]=z.v});if(!o||o.v==null)return {v:null,ser};const sub={},subp={};['국·공립','사립','수도권','비수도권'].forEach(k=>{const a=Y[g+':'+k],b=P[g+':'+k];if(a&&a.v!=null)sub[k]=a.v;if(b&&b.v!=null)subp[k]=b.v});return {v:o.v,p:P[g]&&P[g].v!=null?P[g].v:null,n:o.n,num:o.num,den:o.den,sub,subp,ser}}
+function stx(){const y=S.y;return (D.HX||[]).map(h=>{const yy=hxPick(h,y);if(yy==null)return null;const b=String((h.Y[yy]||{}).base||'');return {m:h.m,cat:h.cat,k:h.k,u:h.u,item:h.item,def:h.defn,stk:h.stk,mode:h.mode,y:yy,base:`${yy}년 공시${b&&!b.startsWith(String(yy))?` (${b.replace(/\s+/g,'')} 자료)`:''}`,U:hxSide(h,yy,SIDES().uk),J:hxSide(h,yy,'J'),K:hxSide(h,yy,'K'),G:hxSide(h,yy,'G'),hx:1}}).filter(Boolean)}
+const HXSUB=k=>k==='공립'?'국·공립':k;
+const HXL={J:'전문대학',K:'기능대학',G:'대학원대학'};Object.defineProperty(HXL,'U',{get:()=>SIDES().ul,enumerable:true});const _HXL0={U:'4년제',D:'대학',E:'교육대학',J:'전문대학',K:'기능대학',G:'대학원대학'},HXC={U:'#1f5a96',J:'#eb6834',K:'#2a9d6f',G:'#7a5195'};
+function vStats(){
+  const SD=SIDES();const X=stx();const st=X.filter(s=>!STM||s.m===STM);const dg=u=>u==='%'||u==='천원'||u==='만원'||u==='억원'?1:0;
+  const sides=[SD.u&&'U',SD.j&&'J',SD.k&&'K',S.g.has('대학원대학')&&'G'].filter(Boolean);
+  const card=s=>{const vs=sides.map(g=>s[g].v).filter(v=>v!=null);const mx=Math.max(...vs.map(Math.abs),0);
+   const p=g=>{const o=s[g];if(o.v==null)return `<div class="def">· ${HXL[g]}: 원자료 없음</div>`;return `<div class="p"><span>${HXL[g]}</span><span><b style="width:${mx?Math.abs(o.v)/mx*100:0}%;background:${HXC[g]}"></b></span><span>${fmt(o.v,s.u==='억원'&&o.v<10?2:dg(s.u))}${s.u} ${delta(o.v,o.p,s.u)}</span></div>`};
+   const subl=g=>{const o=s[g];if(o.v==null)return '';const ks=SUBK(g).map(HXSUB).filter(k=>o.sub&&o.sub[k]!=null);return ks.map(k=>`<div class="def" style="color:var(--ink);font-weight:600">└ ${HXL[g]} ${k}: ${fmt(o.sub[k],dg(s.u))}${s.u}${o.subp&&o.subp[k]!=null?' '+delta(o.sub[k],o.subp[k],s.u):''}</div>`).join('')};
+   const nl=sides.filter(g=>s[g].v!=null).map(g=>`${HXL[g]} ${s[g].n}개교`).join(' · ');
+   return `<div class="sc"><div class="h"><span><span class="hb m-${s.m}">${s.m}</span> ${s.cat}</span><span>${esc(s.base)} · <a href="#it" class="itl" data-it="${s.item}">${s.item}</a></span></div><div class="k">${esc(s.k)}</div>${sides.map(g=>p(g)+subl(g)).join('')}${nl?`<div class="def">· 집계 학교 수: ${nl}</div>`:''}${s.def?`<div class="def">산식: ${esc(s.def)}</div>`:''}</div>`};
+  const G=k=>X.find(x=>x.stk===k||x.k===k);const e_=G('학생 1인당 교육비'),sc_=G('학생 1인당 장학금'),t_=G('연간 1인당 평균 등록금');
+  const pc=o=>o.p!=null?` (전년 대비 ${o.v>=o.p?'+':''}${fmt((o.v-o.p)/o.p*100,1)}%)`:'';
+  const one=g=>`${HXL[g]} ${t_.y}년 공시(HEDX 자체 집계): 1인당 평균 등록금 ${fmt(t_[g].v/10,1)}만 원${pc(t_[g])}, 사립 1인당 교육비 ${e_[g].v!=null?fmt(e_[g].v,1)+'만 원'+pc(e_[g]):'해당 없음(국·공립만)'}, 1인당 장학금 ${sc_[g].v!=null?fmt(sc_[g].v,1)+'만 원'+pc(sc_[g]):'–'}.`;
+  const lead=SD.none&&!SD.k&&!S.g.has('대학원대학')?`선택한 학교구분(${[...S.g].join('·')})은 이 탭의 집계 대상(4년제·전문대학·기능대학·대학원대학)이 아닙니다. 학교별 값은 '공시지표 분석' 탭에서 보세요.`
+   :SD.both?`HEDX가 공시 원자료를 2026년 지침서 산식으로 직접 더해 계산한 값입니다(${t_.y}년 공시). 전문대학의 사립 1인당 교육비는 4년제의 ${fmt(e_.J.v/e_.U.v*100,1)}% 수준이고, 1인당 장학금은 ${sc_.J.v>sc_.U.v?'전문대학이 더 많습니다':'4년제가 더 많습니다'}(${fmt(sc_.J.v,1)}만 원 대 ${fmt(sc_.U.v,1)}만 원).`
+   :one(sides[0]||'U');
+  const fnote=`<p class="note"><b>HEDX 자체 집계(공시 원자료 기준)</b> — 대학알리미 분야별 공시항목의 전체 학교 표(2024~2026 공시)를 「2026년 대학정보공시 지침서」 산식으로 계산했습니다. 비율은 학교 값의 평균이 아니라 <b>Σ분자 ÷ Σ분모</b>(가중), 규모 지표는 합계입니다. 4년제는 대학교·교육대학(본·분교 행 포함, 학교구분에서 대학·교육대학을 따로 고르면 각각 집계), 전문대학은 고등교육법 전문대학만(특별법 한국농수산대학교·사이버대학 제외), 폐교 행 제외. 국·공립 = 사립 외 전부, 수도권 = 서울·경기·인천. 교육부·대교협 보도자료 값은 맨 아래 <b>대교협 분석보고서(참고)</b>에만 둡니다. 연도는 상단 연도 선택(${S.y}년)을 따르며, 해당 연도 원자료가 없으면 가장 가까운 이전 연도를 씁니다.</p>`;
+  const keyK=['학생 1인당 교육비','학생 1인당 장학금','전임교원 1인당 연구비','학생 1인당 도서관 자료 구입비','기숙사 수용률','연간 1인당 평균 등록금','전임교원 확보율(학생정원 기준)','졸업생 취업률'];
+  const short=k=>k.replace('학생 1인당 ','1인당 ').replace('전임교원 1인당','교원 1인당').replace('연간 1인당 ','').replace('(학생정원 기준)','');
+  const gapCard=SD.both?`<div class="card"><h2>4년제 대비 전문대학 수준 <small>HEDX 자체 집계 · 전문대학 ÷ 4년제 × 100</small></h2>${hbars(X.filter(s=>keyK.includes(s.stk)&&s.U.v&&s.J.v!=null).map(s=>[short(s.k),Math.round(s.J.v/s.U.v*1000)/10]),'%',1)}</div>`
+   :SD.k&&SD.j?`<div class="card"><h2>전문대학 대비 기능대학 수준 <small>HEDX 자체 집계 · 기능대학 ÷ 전문대학 × 100</small></h2>${hbars(X.filter(s=>keyK.includes(s.stk)&&s.J.v&&s.K.v!=null).map(s=>[short(s.k),Math.round(s.K.v/s.J.v*1000)/10]),'%',1)}</div>`:'';
+  const trend=(()=>{const g=sides[0];if(!g)return '';const rows=(D.HX||[]).filter(h=>keyK.includes(h.stk)).map(h=>[h.k,h.u,...[2024,2025,2026].map(y=>{const gk=g==='U'?SD.uk:g;return h.Y[y]&&h.Y[y][gk]?h.Y[y][gk].v:null})]);
+    return `<div class="card"><h2>${HXL[g]} 핵심 지표 3개년 추이 <small>HEDX 자체 집계 · 공시연도 기준</small></h2><table class="tb"><tr><th>지표</th><th>단위</th><th>2024</th><th>2025</th><th>2026</th></tr>${rows.map(r=>`<tr><td>${esc(r[0])}</td><td>${r[1]}</td>${r.slice(2).map(v=>`<td style="text-align:right">${v==null?'–':fmt(v,dg(r[1]))}</td>`).join('')}</tr>`).join('')}</table></div>`})();
+  // 대교협 분석보고서(참고)
+  const ref=s=>{const h=X.find(x=>x.stk===s.k);const r=(g,o)=>o.v==null?'':`<div class="def">${g} ${fmt(o.v,dg(s.u))}${s.u}${o.p!=null?' '+delta(o.v,o.p,s.u):''}${h&&h.y===2026&&h[g==='4년제'?'U':'J'].v!=null?` <span style="color:var(--mut)">(HEDX ${fmt(h[g==='4년제'?'U':'J'].v,dg(s.u))})</span>`:''}</div>`;
+    return `<div class="sc"><div class="h"><span><span class="hb m-${s.m}">${s.m}</span> ${s.cat}</span><span>${esc(s.base)} · ${s.item}</span></div><div class="k">${esc(s.k)}</div>${SD.u||!SD.j?r('4년제',s.U):''}${SD.j||!SD.u?r('전문대',s.J):''}${s.U.note||s.J.note?`<div class="def">${esc([s.U.note&&'4년제: '+s.U.note,s.J.note&&'전문대: '+s.J.note].filter(Boolean).join(' / '))}</div>`:''}</div>`};
+  const refCard=`<div class="card"><details><summary style="cursor:pointer;font-weight:700">대교협 분석보고서 (참고) <small style="font-weight:400;color:var(--mut)">교육부·대교협 「2026년 대학정보공시 분석 결과」 보도자료 값 — 4년제 192개교·전문대학 125개교 대상, HEDX 집계와 대상·산식이 달라 값이 다를 수 있음</small></summary><div class="stat" style="margin-top:10px">${D.ST.filter(s=>!STM||s.m===STM).map(ref).join('')}</div></details></div>`;
+  $('#v-st').innerHTML=`<p class="lead">${lead}</p>${fnote}
+  ${gapCard}${trend}
+  <div class="card"><h2>HEDX 자체 집계(공시 원자료 기준) 주요 지표 <small>${X.length}개 지표 · 증감은 전년 공시 대비</small></h2>
+  <div class="ctrl"><div class="seg" id="stm" style="min-width:300px">${['','4월','6월','8월','10월'].map(m=>`<button data-v="${m}" class="${m===STM?'on':''}">${m||'전체'}</button>`).join('')}</div><button class="btn" id="hxdl">집계표 CSV</button></div>
+  <div class="stat">${st.map(card).join('')}</div></div>${refCard}`;
+  $$('#stm button').forEach(b=>b.onclick=()=>{STM=b.dataset.v;vStats()});
+  $$('#v-st .itl').forEach(a=>a.onclick=e=>{e.preventDefault();itemModal(a.dataset.it)});
+  $('#hxdl').onclick=()=>{const rows=[['지표','항목','단위','산식','공시연도','구분','세부','값','분자 합','분모 합','학교 수']];(D.HX||[]).forEach(h=>Object.entries(h.Y).forEach(([y,Y])=>Object.entries(Y).forEach(([k,o])=>{if(k==='base')return;const [g,sb]=k.split(':');rows.push([h.k,h.item,h.u,h.defn,y,_HXL0[g],sb||'전체',o.v??'',o.num,o.den,o.n])})));saveFile('HEDX_자체집계_공시원자료_2024-2026.csv',rowsCSV(rows))};
+}
+
+// ---------- reports (월별 FOCUS · 연간 보고서) + 항목별 데이터 내려받기
+const MONTHS=['4월','6월','8월','10월'];
+const AREA=[['학생',[2,3,4,5]],['교원·연구',[6,7]],['재정',[8,9]],['교육·산학협력',[12]],['교육여건·학교운영',[1,10,11,13,14]]];
+const areaOf=c=>{const f=+c.split('-')[0];return (AREA.find(a=>a[1].includes(f))||AREA[4])[0]};
+const uniqItems=()=>{const m=new Map();D.IT.forEach(x=>{if(!m.has(x[1]))m.set(x[1],{c:x[1],n:x[2],a:x[3],ms:[]});m.get(x[1]).ms.push(x[0])});return [...m.values()]};
+const monthItems=m=>uniqItems().filter(x=>x.ms.includes(m));
+const statsOf=c=>stx().filter(s=>s.item===c);
+const KEYCODES=[...new Set(KEYIND.map(k=>k[2]))];
+let RP={mode:'focus',month:'8월',fsel:{},asel:null,title:'',no:'HEDX 연구 2026-01',author:'',org:'',series:'HEDX FOCUS',ftitle:'',flede:'',fdate:'',copy:'© DS2IXY. ALL RIGHTS RESERVED',fno:13,school:true,remark:true,prof:false,noClosed:true};
+function defFocus(m){return new Set(monthItems(m).filter(x=>statsOf(x.c).length).map(x=>x.c))}
+function fSel(){if(!RP.fsel[RP.month])RP.fsel[RP.month]=defFocus(RP.month);return RP.fsel[RP.month]}
+function aSel(){if(!RP.asel)RP.asel=new Set([...KEYCODES,...stx().map(s=>s.item)]);return RP.asel}
+const dgt=u=>u==='%'||u==='천원'||u==='만원'||u==='억원'?1:0;
+const vv=(v,u)=>v==null?'–':fmt(v,u==='억원'?(v<10?2:v<1000?1:0):dgt(u));
+const chg=(v,p,u)=>v==null||p==null?'–':(u==='%'?`${v-p>=0?'+':''}${fmt(v-p,1)}%p`:`${v-p>=0?'+':'△'}${fmt(Math.abs(pct(v,p)),1)}%`).replace('+△','△');
+
+// --- 항목별 데이터(CSV) ---
+function itemRows(c){
+  const it=uniqItems().find(x=>x.c===c)||{n:'',a:'',ms:[]};const d=D.DT[c]||[];const rows=[];
+  rows.push(['구분','항목','값']);
+  [['공시항목코드',c],['세부항목',it.n],['분야',FIELDS[+c.split('-')[0]]],['공시 시기',it.ms.join('·')],['공시 내용',d[3]||''],['원자료 조사 시기',d[0]||''],['공시 방법',d[2]||''],['자료 연계(관리기관)',it.a],['자료기준일',d[4]||''],['작성지침 요약',(d[5]||'').replace(/ \| /g,' / ')],['검증사항',(d[6]||'').replace(/ \| /g,' / ')],['지침서 쪽',d[7]||'']].forEach(r=>rows.push(['공시지침',...r.map(String)]));
+  KEYIND.filter(k=>k[2]===c).forEach(k=>rows.push(['대학주요정보 지표',k[1],k[4]]));
+  const st=statsOf(c);
+  if(st.length){rows.push([]);rows.push(['HEDX 자체 집계','지표','자료기준','단위','구분','세부','당해값','전년값','증감']);
+    st.forEach(s=>{[['4년제',s.U],['전문대학',s.J],['기능대학',s.K]].forEach(([g,o])=>{if(o.v!=null)rows.push(['HEDX 자체 집계',s.k,s.base,s.u,g,'전체',o.v,o.p??'',chg(o.v,o.p,s.u)]);
+      if(o.sub)Object.entries(o.sub).forEach(([k,v])=>rows.push(['HEDX 자체 집계',s.k,s.base,s.u,g,k,v,(o.subp||{})[k]??'',(o.subp||{})[k]!=null?chg(v,o.subp[k],s.u):'']));
+      });
+      if(s.def)rows.push(['HEDX 자체 집계',s.k,'','','','산식',s.def,'','']);});}
+  const rs=D.ST.filter(s=>s.item===c);if(rs.length){rows.push([]);rows.push(['대교협 분석보고서(참고)','지표','자료기준','단위','구분','세부','2026 발표값','전년값','증감']);rs.forEach(s=>[['4년제',s.U],['전문대학',s.J]].forEach(([g,o])=>{if(o.v!=null)rows.push(['대교협 분석보고서(참고)',s.k,s.base,s.u,g,'전체',o.v,o.p??'',chg(o.v,o.p,s.u)]);if(o.note)rows.push(['대교협 분석보고서(참고)',s.k,s.base,'',g,'비고',o.note,'',''])}))}
+  const rf=D.RF[c];rows.push([]);
+  if(rf){rows.push(['원자료(학교별·학과별)','대학알리미 > 공시데이터 추이에서 내려받기','https://www.academyinfo.go.kr/main/main0830/main0830.do']);rf.forEach(f=>rows.push(['원자료(학교별·학과별)',f,'']));}
+  else rows.push(['원자료(학교별·학과별)','대학알리미 공시정보 > 항목별 공시정보에서 학교별 조회','https://www.academyinfo.go.kr']);
+  rows.push(['출처','대학알리미 분야별 공시항목 원자료(2024~2026 공시) HEDX 자체 집계 · 산식: 한국대학교육협의회 「2026년 대학정보공시 지침서」 · 참고: 교육부·대교협 「2026년 대학정보공시 분석 결과」','']);
+  return rows;
+}
+function rowsCSV(rows){return '﻿'+rows.map(r=>r.map(c=>{c=String(c??'');return /[",\n]/.test(c)?`"${c.replace(/"/g,'""')}"`:c}).join(',')).join('\n')}
+let DLNS;
+async function saveFile(filename,data){
+  try{if(DLNS===undefined)DLNS=window.claude&&claude.use?await claude.use('downloads'):null;}catch(e){DLNS=null}
+  if(!DLNS){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:/\.html?$/.test(filename)?'text/html;charset=utf-8':'text/csv;charset=utf-8'}));a.download=filename;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},1500);toast('내려받기를 시작했습니다')}catch(e){copy(data,'내려받기가 안 되어 클립보드에 복사했습니다')}return}
+  try{await DLNS.save({filename,data});toast('내려받기를 시작했습니다')}catch(e){if(e&&e.code==='declined')return;if(e&&e.code==='rate_limited'){toast('잠시 후 다시 눌러 주세요');return}copy(data,'내려받기가 안 되어 클립보드에 복사했습니다')}
+}
+function dlItem(c){saveFile(`대학정보공시_${c}_${(uniqItems().find(x=>x.c===c)||{n:''}).n.replace(/[\\/:*?"<>|\[\]]/g,'').slice(0,40)}.csv`,rowsCSV(itemRows(c)))}
+function dlItems(codes,name){const all=[];codes.forEach((c,i)=>{if(i)all.push([],[]);all.push([`■ ${c}`]);itemRows(c).forEach(r=>all.push(r))});saveFile(name,rowsCSV(all))}
+
+// --- 보고서 공통 조각 ---
+function svgCompare(s,W=600,H=170){const SD=SIDES();
+  const ser=[['4년제',s.U,'#1f5a96','#9db8d6',SD.u],['전문대학',s.J,'#eb6834','#f4b99c',SD.j]].filter(x=>x[4]&&x[1].v!=null);if(!ser.length)return '';
+  const mx=Math.max(...ser.flatMap(x=>[x[1].v,x[1].p||0]))*1.18||1;const L=10,T=14,B=26,gw=(W-L*2)/ser.length,y=v=>T+(H-T-B)*(1-v/mx);let g='';
+  ser.forEach(([lab,o,c1,c0],i)=>{const x0=L+i*gw+gw*.22,bw=gw*.24;
+    if(o.p!=null)g+=`<rect x="${x0}" y="${y(o.p)}" width="${bw}" height="${y(0)-y(o.p)}" fill="${c0}"/><text x="${x0+bw/2}" y="${y(o.p)-3}" text-anchor="middle" font-size="9" fill="#444">${vv(o.p,s.u)}</text>`;
+    g+=`<rect x="${x0+bw+4}" y="${y(o.v)}" width="${bw}" height="${y(0)-y(o.v)}" fill="${c1}"/><text x="${x0+bw*1.5+4}" y="${y(o.v)-3}" text-anchor="middle" font-size="9" font-weight="700">${vv(o.v,s.u)}</text>`;
+    g+=`<text x="${x0+bw+2}" y="${H-8}" text-anchor="middle" font-size="9.5" fill="#222">${lab}${o.p!=null?' (전년·올해)':''}</text>`});
+  return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR,sans-serif" style="width:100%;height:auto"><line x1="${L}" x2="${W-L}" y1="${y(0)}" y2="${y(0)}" stroke="#999" stroke-width=".6"/>${g}</svg>`}
+function statTable(st){const SD=SIDES();const sides=[SD.u&&[SD.uk==='U'?'4년제(대학·교육대학)':SD.ul,'U'],SD.j&&['전문대학','J'],SD.k&&['기능대학','K']].filter(Boolean);if(!sides.length)return '';
+  return `<table class="rt"><tr><th rowspan="2">지표(단위)</th><th rowspan="2">자료기준</th>${sides.map(([l])=>`<th colspan="3">${l}</th>`).join('')}</tr><tr>${sides.map(()=>'<th>전년</th><th>당해</th><th>증감</th>').join('')}</tr>${st.map(s=>`<tr><td class="l">${esc(s.k)}(${s.u})</td><td class="c">${esc(s.base)}</td>${sides.map(([,k])=>`<td>${vv(s[k].p,s.u)}</td><td>${vv(s[k].v,s.u)}</td><td>${chg(s[k].v,s[k].p,s.u)}</td>`).join('')}</tr>`).join('')}</table>`}
+function subTable(s){const ks=[...new Set([...Object.keys(s.U.sub||{}),...Object.keys(s.J.sub||{})])];if(!ks.length)return '';
+  const SD=SIDES();return `<table class="rt"><tr><th>구분</th>${ks.map(k=>`<th>${k}</th>`).join('')}</tr>${[SD.u&&['4년제',s.U],SD.j&&['전문대학',s.J]].filter(Boolean).map(([g,o])=>`<tr><td class="l">${g}</td>${ks.map(k=>`<td>${o.sub&&o.sub[k]!=null?vv(o.sub[k],s.u):'–'}</td>`).join('')}</tr>`).join('')}</table>`}
+
+// ===== 보고서 분석: 3개년 추이·전년 대비 특이점·세부집단 격차·지표 간 비교 (HEDX 자체 집계)
+const ANS=()=>{const SD=SIDES();return [SD.u&&['U',SD.ul],SD.j&&['J','전문대학'],SD.k&&['K','기능대학']].filter(Boolean)};
+const _bat=w=>{const c=String(w).trim().slice(-1).charCodeAt(0);if(c>=0xAC00&&c<=0xD7A3)return (c-0xAC00)%28;return /[0-9]/.test(String(w).slice(-1))?({'0':1,'1':1,'3':1,'6':1,'7':1,'8':1}[String(w).slice(-1)]?1:0):0};const jo=(w,a,b)=>w+(_bat(w)?a:b);const ro=w=>{const b=_bat(w);return w+(b&&b!==8?'으로':'로')};
+const gapF=(g,u)=>u==='%'?`${fmt(g,1)}%p`:`${vv(g,u)}${u}`;
+const rchg=(o,u)=>o&&o.v!=null&&o.p!=null?(u==='%'?o.v-o.p:(o.p?(o.v-o.p)/Math.abs(o.p)*100:null)):null;
+function trendTxt(ser,u){const ys=Object.keys(ser||{}).map(Number).sort();if(ys.length<3)return '';const [a,b,c]=ys.slice(-3).map(y=>ser[y]);const d1=b-a,d2=c-b;
+  const t=d1>0&&d2>0?'3년 연속 증가':d1<0&&d2<0?'3년 연속 감소':d1<0&&d2>0?`${ys.at(-2)}년 감소 후 반등`:d1>0&&d2<0?`${ys.at(-2)}년 증가 후 감소 전환`:'보합';
+  const tot=u==='%'?`${c-a>=0?'+':''}${fmt(c-a,1)}%p`:`${c-a>=0?'+':''}${fmt(a?(c-a)/Math.abs(a)*100:0,1)}%`;
+  return `${ys.at(-3)}→${ys.at(-1)}년 공시 ${vv(a,u)}→${vv(b,u)}→${ro(vv(c,u)+u)} ${t}(2년간 ${tot})`}
+function analyzeStat(s){const L=[];const sides=ANS();
+  sides.forEach(([g,nm])=>{const o=s[g];if(!o||o.v==null)return;const t=trendTxt(o.ser,s.u);if(t)L.push(`${nm}: ${t}`);
+    if(o.sub&&o.subp)[['국·공립','사립','설립별'],['수도권','비수도권','소재지별']].forEach(([a,b,lab])=>{if(o.sub[a]==null||o.sub[b]==null)return;const gp=o.sub[a]-o.sub[b];
+      let x=`${nm} ${lab}: ${a} ${vv(o.sub[a],s.u)}${s.u}, ${b} ${vv(o.sub[b],s.u)}${s.u}`;
+      if(o.subp[a]!=null&&o.subp[b]!=null){const g0=o.subp[a]-o.subp[b];x+=` → 격차 ${gapF(Math.abs(gp),s.u)}(전년 ${gapF(Math.abs(g0),s.u)})으로 ${Math.abs(gp)>Math.abs(g0)*1.02?'확대':Math.abs(gp)<Math.abs(g0)*0.98?'축소':'유지'}`;
+        const ca=o.sub[a]-o.subp[a],cb=o.sub[b]-o.subp[b];if(ca&&cb&&Math.sign(ca)!==Math.sign(cb))x+=`; ${jo(a,'은','는')} ${ca>0?'늘고':'줄고'} ${jo(b,'은','는')} ${cb>0?'늘어':'줄어'} 방향이 엇갈림`}
+      L.push(x)})});
+  const SD=SIDES();if(SD.u&&SD.j&&s.U.v!=null&&s.J.v!=null&&s.U.p!=null&&s.J.p!=null){
+    if(s.u==='%'){const g1=s.J.v-s.U.v,g0=s.J.p-s.U.p;L.push(`전문대학−${SD.ul} 차이: ${gapF(g0,'%')} → ${gapF(g1,'%')}로 ${Math.abs(g1)<Math.abs(g0)?'좁혀짐':'벌어짐'}`)}
+    else if(s.U.v&&s.U.p){const r1=s.J.v/s.U.v*100,r0=s.J.p/s.U.p*100;L.push(`${SD.ul} 대비 전문대학 수준: ${fmt(r0,1)}% → ${fmt(r1,1)}%로 ${r1>r0?'격차 축소':'격차 확대'}`)}}
+  return L}
+// 선택 항목 전체에서 전년 대비 변화가 큰 지표
+function moverLines(codes){const L=[];const X=stx().filter(s=>!codes||codes.includes(s.item));
+  ANS().forEach(([g,nm])=>{const a=X.map(s=>({s,c:rchg(s[g],s.u)})).filter(x=>x.c!=null&&isFinite(x.c));if(!a.length)return;
+    const sc=x=>x.s.u==='%'?x.c*3:x.c; // %p는 1%p≈3%로 환산해 순위
+    const up=a.filter(x=>x.c>0).sort((p,q)=>sc(q)-sc(p)).slice(0,3),dn=a.filter(x=>x.c<0).sort((p,q)=>sc(p)-sc(q)).slice(0,3);
+    const f=x=>`${x.s.k} ${x.s.u==='%'?(x.c>0?'+':'')+fmt(x.c,1)+'%p':(x.c>0?'+':'')+fmt(x.c,1)+'%'}`;
+    if(up.length)L.push(`${nm} 전년 대비 증가 폭이 큰 지표: ${up.map(f).join(', ')}`);
+    if(dn.length)L.push(`${nm} 전년 대비 감소한 지표: ${dn.map(f).join(', ')}`);
+    const rev=X.filter(s=>{const o=s[g];const ys=Object.keys(o.ser||{}).sort();if(ys.length<3)return false;const v=ys.slice(-3).map(y=>o.ser[y]);return Math.sign(v[1]-v[0])!==Math.sign(v[2]-v[1])&&v[1]!==v[0]&&v[2]!==v[1]});
+    if(rev.length)L.push(`${nm} 추세가 바뀐 지표(전년과 증감 방향 반대): ${rev.slice(0,5).map(s=>s.k).join(', ')}`)});
+  return L}
+// 지표 간 비교(등록금 대비 교육비·장학금, 충원·탈락·취업, 연구·교원, 유학생·기숙사)
+function crossLines(){const L=[];const X=stx();const G=k=>X.find(x=>x.stk===k||x.k===k);
+  const tu=G('연간 1인당 평균 등록금'),ed=G('학생 1인당 교육비'),sc=G('학생 1인당 장학금'),fr=G('정원내 신입생 충원율'),en=G('재학생 충원율'),dr=G('중도탈락 학생 비율'),em=G('졸업생 취업률'),rs=G('전임교원 1인당 연구비'),fc=G('전임교원 확보율(학생정원 기준)'),fo=G('외국인 유학생 수'),dm=G('기숙사 수용률'),ln=G('학자금 대출 이용률');
+  ANS().forEach(([g,nm])=>{
+    if(tu&&ed&&tu[g].sub&&tu[g].sub['사립']&&ed[g].v){const r=ed[g].v*10/tu[g].sub['사립']*100;const r0=tu[g].subp&&tu[g].subp['사립']&&ed[g].p?ed[g].p*10/tu[g].subp['사립']*100:null;
+      L.push(`${nm} 사립 등록금 대비 1인당 교육비(교육비 환원율): ${fmt(r,0)}%${r0!=null?` (전년 ${fmt(r0,0)}%, ${Math.abs(r-r0)<0.5?'유지':r>r0?'개선':'하락'})`:''} — 학생이 낸 등록금 1원당 ${fmt(r/100,2)}원을 교육에 투입`)}
+    if(tu&&sc&&tu[g].v&&sc[g].v){const r=sc[g].v*10/tu[g].v*100;const r0=tu[g].p&&sc[g].p?sc[g].p*10/tu[g].p*100:null;L.push(`${nm} 평균 등록금 대비 1인당 장학금: ${fmt(r,1)}%${r0!=null?` (전년 ${fmt(r0,1)}%)`:''}${ln&&ln[g].v!=null?`, 학자금 대출 이용률 ${fmt(ln[g].v,1)}%`:''}`)}
+    if(fr&&en&&fr[g].v!=null&&en[g].v!=null){const d=dr&&dr[g].v!=null?dr[g]:null;L.push(`${nm} 학생 확보: 신입생 충원율 ${fmt(fr[g].v,1)}%${fr[g].p!=null?`(${chg(fr[g].v,fr[g].p,'%')})`:''}, 재학생 충원율 ${fmt(en[g].v,1)}%${en[g].p!=null?`(${chg(en[g].v,en[g].p,'%')})`:''}${d?`, 중도탈락률 ${fmt(d.v,1)}%${d.p!=null?`(${chg(d.v,d.p,'%')})`:''}`:''}${fr[g].p!=null&&d&&d.p!=null?(fr[g].v>=fr[g].p&&d.v>d.p?' — 입학은 늘었지만 이탈도 늘어 유지 관리가 과제':fr[g].v<fr[g].p&&d.v>d.p?' — 입학 감소와 이탈 증가가 겹쳐 재학생 기반 약화 우려':fr[g].v>=fr[g].p&&d.v<=d.p?' — 입학 증가·이탈 감소로 학생 기반이 개선':''):''}`)}
+    if(em&&em[g].v!=null&&dr&&dr[g].v!=null)L.push(`${nm} 성과: 취업률 ${fmt(em[g].v,1)}%(${em.y}년 공시)${em[g].p!=null?`, 전년 대비 ${chg(em[g].v,em[g].p,'%')}`:''}, 중도탈락률 ${fmt(dr[g].v,1)}%`);
+    if(rs&&fc&&rs[g].v!=null&&fc[g].v!=null)L.push(`${nm} 교원: 전임교원 확보율 ${fmt(fc[g].v,1)}%${fc[g].p!=null?`(${chg(fc[g].v,fc[g].p,'%')})`:''}, 전임교원 1인당 연구비 ${vv(rs[g].v,'만원')}만 원${rs[g].p!=null?`(${chg(rs[g].v,rs[g].p,'만원')})`:''}${fc[g].p!=null&&rs[g].p!=null?(fc[g].v<fc[g].p&&rs[g].v>rs[g].p?' — 교원 확보는 줄었으나 1인당 연구비는 늘어 소수 교원 집중 여부 확인 필요':''):''}`);
+    if(fo&&dm&&fo[g].v!=null&&dm[g].v!=null&&fo[g].p)L.push(`${nm} 외국인 유학생 ${vv(fo[g].v,'명')}명(${chg(fo[g].v,fo[g].p,'명')}) 대비 기숙사 수용률 ${fmt(dm[g].v,1)}%${dm[g].p!=null?`(${chg(dm[g].v,dm[g].p,'%')})`:''}${(fo[g].v-fo[g].p)/fo[g].p>0.05&&dm[g].p!=null&&dm[g].v<=dm[g].p?' — 유학생은 늘었으나 기숙사 여건은 그대로여서 주거 지원 점검 필요':''}`)});
+  return L}
+function bulletsFor(s){const L=[];const SD=SIDES();if(SD.none)return L;
+  const f=(g,o)=>o.v==null?'':`${g} ${vv(o.v,s.u)}${s.u}${o.p!=null?`(전년 ${vv(o.p,s.u)}${s.u}, ${chg(o.v,o.p,s.u)})`:''}`;
+  const ff=[SD.u&&f(SD.ul,s.U),SD.j&&f('전문대학',s.J),SD.k&&f('기능대학',s.K)].filter(Boolean);if(ff.length)L.push(`${s.base} ${s.k}은(는) ${ff.join(', ')}임`);
+  if(SD.both&&s.U.v!=null&&s.J.v!=null&&s.u!=='%')L.push(`전문대학은 ${SD.ul}의 ${fmt(s.J.v/s.U.v*100,1)}% 수준`);
+  if(SD.both&&s.U.v!=null&&s.J.v!=null&&s.u==='%')L.push(`전문대학과 ${SD.ul}의 차이는 ${fmt(s.J.v-s.U.v,1)}%p`);
+  [SD.u&&[SD.ul,s.U],SD.j&&['전문대학',s.J]].filter(Boolean).forEach(([g,o])=>{if(o.sub){const e=Object.entries(o.sub);const pub=e.filter(x=>/국|공립/.test(x[0])),reg=e.filter(x=>/수도권/.test(x[0]));if(pub.length&&e.find(x=>x[0]==='사립'))L.push(`${g}: ${pub.map(x=>x[0]+' '+vv(x[1],s.u)).join(', ')}, 사립 ${vv(o.sub['사립'],s.u)}${s.u}`);if(reg.length===2)L.push(`${g}: 수도권 ${vv(o.sub['수도권'],s.u)}, 비수도권 ${vv(o.sub['비수도권'],s.u)}${s.u}`)}});
+  if(SD.u&&s.U.note)L.push('4년제 '+s.U.note);if(SD.j&&s.J.note)L.push('전문대학 '+s.J.note);
+  return L}
+function itemSection(c,T,F,num){
+  const it=uniqItems().find(x=>x.c===c);const d=D.DT[c]||[];const st=statsOf(c);const ki=KEYIND.filter(k=>k[2]===c);
+  let h=`<h3 class="sec">${num?num+' ':''}${esc(it.n)} <span style="font-weight:400;font-size:8.5pt;color:#555">(${c}, ${it.ms.join('·')} 공시)</span></h3>`;
+  h+=`<ul class="b"><li>공시 내용: ${esc(d[3]||it.n)}${d[4]?` (자료기준 ${esc(d[4])})`:''}</li><li>자료: ${esc(d[2]||it.a)} · 원자료 조사 ${esc(d[0]||'-')}</li>${ki.map(k=>`<li>${esc(k[1])} = ${esc(k[4])}</li>`).join('')}${st.filter(s=>s.def).map(s=>`<li>${esc(s.k)} = ${esc(s.def)}</li>`).join('')}</ul>`;
+  if(st.length){h+=`<ul class="b">${st.flatMap(bulletsFor).map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`;const an=st.flatMap(s=>analyzeStat(s).map(x=>`${s.k} — ${x}`));if(an.length)h+=`<div class="anb"><div class="anh">분석: 추이·전년 대비·집단 간 격차</div><ul class="b">${an.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;h+=T(`${it.n} 주요 지표`)+`<div class="unit">(단위: 지표별 표기)</div>`+statTable(st);
+    st.filter(s=>s.U.sub||s.J.sub).forEach(s=>{h+=T(`${s.k} 설립·소재지별 현황`)+`<div class="unit">(단위: ${s.u})</div>`+subTable(s)});
+    const SD_=SIDES();const ch=st.filter(s=>(SD_.u?s.U.v!=null:true)&&(SD_.j?s.J.v!=null:true)&&!SD_.none).slice(0,2);ch.forEach(s=>{h+=F(`${s.k}(${s.u}) ${SD_.both?'4년제·전문대학 비교':(SD_.u?'4년제':'전문대학')+' 전년 대비'}`)+`<div class="fig">${svgCompare(s)}</div>`});
+    h+=`<div class="fn"><p>자료: 대학알리미 공시 원자료, HEDX 자체 집계(공시 원자료 기준·가중 Σ분자/Σ분모). 산식: 「2026년 대학정보공시 지침서」</p></div>`;}
+  else h+=`<p class="fn">※ 이 항목은 아직 HEDX 자체 집계 지표가 없습니다.${D.RF[c]?' 학교별·학과별 원자료는 대학알리미 ‘공시데이터 추이’에서 받을 수 있습니다: '+D.RF[c].map(esc).join(' / '):' 학교별 값은 대학알리미 항목별 공시정보에서 조회할 수 있습니다.'}</p>`;
+  return h}
+function schoolBlock(T,F){
+  const yrs=YEARS.filter(y=>y>2016);const cnt=(y,f)=>new Set(REC.filter(r=>r.y===y&&f(r)).map(r=>r.ins)).size;
+  const ser=GORDER.map((g,i)=>({n:g,c:HEX[i],v:yrs.map(y=>cnt(y,r=>r.g===g))}));
+  const tb=GORDER.map(g=>`<tr><td class="l">${g}</td><td>${cnt(2025,r=>r.g===g)}</td><td>${cnt(2026,r=>r.g===g)}</td><td>${cnt(2026,r=>r.g===g)-cnt(2025,r=>r.g===g)}</td></tr>`).join('');
+  const mt=D.EVL.filter(e=>e.t==='통합'&&e.y>=2024).map(e=>`<tr><td class="c">${e.y}</td><td class="l">${esc(e.n)}</td><td class="l">${e.g}·${e.e}</td><td class="l">${esc(e.m)}</td></tr>`).join('');
+  return `<ul class="b"><li>2026년 공시 대상은 403개교(대학 222, 전문대학 137(기능대학 9 포함), 대학원대학 44)로 시작해 10월 기준 402개교임(광양보건대학교 2026.8.31. 폐교)</li><li>학교개황 원자료(2026.2.19.) 기준 기관 수는 ${cnt(2017,()=>true)}개(2017) → ${cnt(2026,()=>true)}개(2026)이며, 2024년 이후 국립대-도립전문대 통합이 감소를 이끎</li></ul>`+
+   F('연도별 공시 대상 기관 수(2017~2026)')+`<div class="fig">${svgStatic(yrs,ser)}</div>`+T('학교 구분별 공시 대상 기관 수')+`<div class="unit">(단위: 개교)</div><table class="rt"><tr><th>구분</th><th>2025년</th><th>2026년</th><th>증감</th></tr>${tb}</table>`+
+   T('2024~2026년 통합 현황')+`<table class="rt"><tr><th>연도</th><th>통합 전 학교</th><th>구분</th><th>통합 후</th></tr>${mt}</table><div class="fn"><p>주: 학교개황 원자료에서 폐교·평생교육법상 대학 제외, 본교·캠퍼스는 1개 기관. 출처: 대학알리미 학교개황</p></div>`}
+function svgStatic(cats,series,W=640,H=230){const L=40,R=8,T=14,B=24,n=cats.length;const tot=cats.map((_,i)=>series.reduce((a,s)=>a+s.v[i],0));const mx=Math.max(...tot)*1.15;const bw=(W-L-R)/n,y=v=>T+(H-T-B)*(1-v/mx);let g='';
+ for(let i=0;i<=4;i++){const v=mx/4*i;g+=`<line x1="${L}" x2="${W-R}" y1="${y(v)}" y2="${y(v)}" stroke="#ccc" stroke-width=".5"/><text x="${L-4}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="#555">${fmt(v)}</text>`}
+ cats.forEach((c,i)=>{let a=0;const x=L+i*bw+bw*.2,w=bw*.6;series.forEach(s=>{const v=s.v[i];g+=`<rect x="${x}" y="${y(a+v)}" width="${w}" height="${y(a)-y(a+v)}" fill="${s.c}"/>`;a+=v});g+=`<text x="${x+w/2}" y="${y(a)-3}" text-anchor="middle" font-size="9" font-weight="700">${fmt(a)}</text><text x="${x+w/2}" y="${H-8}" text-anchor="middle" font-size="9" fill="#333">${c}</text>`});
+ return `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans KR,sans-serif" style="width:100%;height:auto">${g}</svg><div style="text-align:center;font-size:8pt">${series.map(s=>`<span style="margin:0 6px"><span style="display:inline-block;width:9px;height:9px;background:${s.c}"></span> ${s.n}</span>`).join('')}</div>`}
+function gapTable(codes){if(!SIDES().both)return '';const st=stx().filter(s=>codes.includes(s.item)&&s.U.v!=null&&s.J.v!=null);if(!st.length)return '';
+  return `<table class="rt"><tr><th>지표</th><th>단위</th><th>${SIDES().ul}(A)</th><th>전문대학(B)</th><th>B/A(%) 또는 차이</th></tr>${st.map(s=>`<tr><td class="l">${esc(s.k)}</td><td class="c">${s.u}</td><td>${vv(s.U.v,s.u)}</td><td>${vv(s.J.v,s.u)}</td><td>${s.u==='%'?fmt(s.J.v-s.U.v,1)+'%p':fmt(s.J.v/s.U.v*100,1)}</td></tr>`).join('')}</table>`}
+function hlLines(codes,n=4){const SD=SIDES();const st=stx().filter(s=>codes.includes(s.item)&&((SD.u&&s.U.v!=null)||(SD.j&&s.J.v!=null)));return st.slice(0,n).map(s=>`${s.k}: ${[SD.u&&s.U.v!=null&&`4년제 ${vv(s.U.v,s.u)}${s.u}${s.U.p!=null?`(${chg(s.U.v,s.U.p,s.u)})`:''}`,SD.j&&s.J.v!=null&&`전문대학 ${vv(s.J.v,s.u)}${s.u}${s.J.p!=null?`(${chg(s.J.v,s.J.p,s.u)})`:''}`].filter(Boolean).join(', ')}`)}
+function remarkLines(codes){const L=[];const g=k=>stx().find(s=>s.k===k&&codes.includes(s.item));const SD=SIDES();
+  if(!SD.both&&!SD.none){const sd=SD.u?'U':'J',nm=SIDEL[sd];const st=stx().filter(s=>codes.includes(s.item)&&s[sd].v!=null&&s[sd].p!=null);const up=st.filter(s=>s[sd].v>s[sd].p),dn=st.filter(s=>s[sd].v<s[sd].p);
+   if(up.length)L.push(`${nm}은(는) ${up.slice(0,4).map(s=>s.k).join(', ')} 등이 전년보다 늘었음`);if(dn.length)L.push(`${dn.slice(0,4).map(s=>s.k).join(', ')} 등은 전년보다 줄어 원인 점검이 필요함`);
+   const sub=st.filter(s=>s[sd].sub&&s[sd].sub['사립']!=null&&(s[sd].sub['국·공립']!=null||s[sd].sub['공립']!=null));if(sub.length){const s=sub[0];const pk=s[sd].sub['국·공립']!=null?'국·공립':'공립';L.push(`${s.k}는 ${pk} ${vv(s[sd].sub[pk],s.u)}${s.u}, 사립 ${vv(s[sd].sub['사립'],s.u)}${s.u}로 설립별 차이가 있음`)}
+   if(!L.length)L.push('선택한 항목의 분석 결과를 바탕으로 시사점을 직접 작성하십시오(클릭하여 편집).');return L}
+  const e=g('학생 1인당 교육비'),t=g('연간 1인당 평균 등록금'),sc=g('학생 1인당 장학금'),dm=g('기숙사 수용률'),rs=g('전임교원 1인당 연구비'),lb=g('학생 1인당 도서관 자료 구입비');
+  if(t&&e)L.push(`전문대학 등록금은 4년제의 ${fmt(t.J.v/t.U.v*100,1)}%이지만 1인당 교육비는 ${fmt(e.J.v/e.U.v*100,1)}%에 그쳐, 등록금 대비 교육투자 격차가 큼`);
+  else if(e)L.push(`1인당 교육비는 4년제 ${chg(e.U.v,e.U.p,e.u)}, 전문대학 ${chg(e.J.v,e.J.p,e.u)}로 엇갈려 격차가 커짐`);
+  if(sc)L.push(`1인당 장학금은 전문대학이 4년제보다 ${fmt(sc.J.v-sc.U.v,1)}만 원 많으나 국가장학금 의존도가 높아 대학 자체 재원 확충이 과제임`);
+  if(rs)L.push(`전임교원 1인당 연구비는 전문대학이 4년제의 ${fmt(rs.J.v/rs.U.v*100,1)}%로 연구·산학 기반 차이가 가장 큰 영역임`);
+  if(lb||dm)L.push(`교육여건 지표(${[lb&&'도서관 자료 구입비',dm&&'기숙사 수용률'].filter(Boolean).join(', ')})에서도 전문대학이 낮아 여건 개선 투자가 필요함`);
+  if(!L.length)L.push('선택한 항목의 분석 결과를 바탕으로 시사점을 직접 작성하십시오(클릭하여 편집).');
+  return L}
+
+function focusReport(){
+  let tno=0,fno=0;const T=t=>`<div class="cap">&lt;표 ${++tno}&gt; ${t}</div>`,F=t=>`<div class="cap">[그림 ${++fno}] ${t}</div>`;
+  const m=RP.month,all=monthItems(m),sel=[...fSel()].filter(c=>all.some(x=>x.c===c));
+  const dates={'4월':'2026.4.29.','6월':'2026.6.29.','8월':'2026.8.27.','10월':'2026.10.29.'};
+  const hl=hlLines(sel);
+  let h=`<div class="rhead"><div class="series" contenteditable>${esc(RP.series||'HEDX FOCUS')}</div><div class="issue" contenteditable>제${RP.fno}호 · ${esc(RP.fdate||'2026.'+m.replace('월','')+'.')}</div><h1 contenteditable>${esc(RP.ftitle||`2026년 ${m} 대학정보공시 분석`)}</h1><div class="lede" contenteditable>${esc(RP.flede||`${m} 공시 ${all.length}개 세부항목 중 ${sel.length}개 항목 집중 분석`)}</div>${RP.author||RP.org?`<div class="rby" contenteditable>${[RP.author,RP.org].filter(Boolean).map(esc).join(' · ')}</div>`:''}</div>`;
+  h+=`<div class="hl"><ul contenteditable>${(hl.length?hl:[`${m}에는 ${all.length}개 세부항목이 공시됨`]).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div><div class="pg">`;
+  h+=`<div contenteditable><h2 class="grp">Ⅰ. ${m} 공시 개요</h2><ul class="b"><li>대학정보공시는 ｢교육관련기관의 정보공개에 관한 특례법｣에 따라 실시하며, 2026년 ${m}에는 ${all.length}개 세부항목을 공시함(${dates[m]} 대학알리미 공개)</li><li>HEDX 자체 집계 대상: 공시 원자료의 4년제(대학교·교육대학)·전문대학·기능대학 전체 학교 행(폐교 제외), 비율은 Σ분자/Σ분모 가중</li></ul>`+
+    T(`2026년 ${m} 공시 세부항목`)+`<table class="rt"><tr><th>코드</th><th>세부항목</th><th>자료 연계</th><th>HEDX 집계</th><th>본 보고서</th></tr>${all.map(x=>`<tr><td class="c">${x.c}</td><td class="l">${esc(x.n)}</td><td class="l">${esc(x.a)}</td><td class="c">${statsOf(x.c).length?'●':''}</td><td class="c">${sel.includes(x.c)?'✔':''}</td></tr>`).join('')}</table><div class="fn"><p>● HEDX 자체 집계 지표가 있는 항목. 출처: 「2026년 대학정보공시 지침서」</p></div></div>`;
+  h+=`<div contenteditable><h2 class="grp">Ⅱ. 공시항목별 분석</h2>${sel.map((c,i)=>itemSection(c,T,F,(i+1)+'.')).join('')}</div>`;
+  {const mv=moverLines(sel),cr=crossLines();if(mv.length||cr.length)h+=`<div contenteditable><h2 class="grp">종합 분석</h2>${mv.length?`<h3 class="sec">전년 대비 특이점</h3><ul class="b">${mv.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${cr.length?`<h3 class="sec">지표 간 비교</h3><ul class="b">${cr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p class="fn">※ 교육비 환원율 = 사립 1인당 교육비 ÷ 사립 평균 등록금(HEDX 자체 집계). 모두 공시 원자료 가중 집계값.</p>`:''}</div>`}
+  if(RP.school)h+=`<div contenteditable><h2 class="grp">Ⅲ. 공시 대상 기관 현황(학교개황)</h2>${schoolBlock(T,F)}</div>`;
+  if(sel.some(c=>statsOf(c).some(s=>s.U.v!=null&&s.J.v!=null)))h+=`<div contenteditable><h2 class="grp">${RP.school?'Ⅳ':'Ⅲ'}. 4년제·전문대학 비교</h2>${T(`${SIDES().ul} 대비 전문대학 수준`)+gapTable(sel)}</div>`;
+  if(RP.prof&&SI)h+=`<div contenteditable><h2 class="grp">학교 프로파일: ${esc(SI.S[SIS.sel][1])}</h2>${siReportBlock(T)}</div>`;
+  if(RP.remark)h+=`<div class="remark" contenteditable><div class="rt-title">Remark</div><ul class="b">${remarkLines(sel).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  h+=`<div class="foot"><span>${esc(RP.org||'HEDX · 고등교육기관 데이터 연결 허브')}${RP.copy?' · '+esc(RP.copy):''}</span><span>자료: 대학정보공시 지침서·${m} 분석 결과·학교개황</span></div></div>`;
+  return h}
+
+function annualReport(){
+  let tno=0,fno=0;const tabs=[],toc=[];const T=t=>{tabs.push(`<표 ${++tno}> ${t}`);return `<div class="cap">&lt;표 ${tno}&gt; ${t}</div>`},F=t=>`<div class="cap">[그림 ${++fno}] ${t}</div>`;
+  const sel=uniqItems().filter(x=>aSel().has(x.c));const codes=sel.map(x=>x.c);
+  const title=RP.title||'2026년 대학정보공시 연간 분석 보고서';
+  const chap=(n,t,subs)=>{toc.push({lv:1,t:`${['','Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ'][n]}. ${t}`});subs.forEach(s=>toc.push({lv:2,t:s}));return `<section class="rchap"><div class="rcnum">${['','Ⅰ','Ⅱ','Ⅲ','Ⅳ','Ⅴ'][n]}</div><div class="rctitle">${t}</div><div class="rcsubs">${subs.map(esc).join('<br>')}</div></section>`};
+  let body='';
+  body+=chap(1,'대학정보공시 개요',['1. 공시 체계','2. 월별 공시항목'])+`<div class="pg" contenteditable><h2 class="grp">1. 공시 체계</h2><ul class="b"><li>대학정보공시는 ｢교육관련기관의 정보공개에 관한 특례법｣(2008.5.26. 시행)에 따라 대학의 학생·교원·재정·교육여건 정보를 매년 공개하는 제도임</li><li>2026년 공시 내용은 14개 분야, 65개 항목, 103개 세부항목이며 4·6·8·10월 정기공시와 수시·별도 공시로 운영됨</li><li>본 보고서는 이 가운데 ${codes.length}개 세부항목을 선정하여 분석함</li></ul><h2 class="grp">2. 월별 공시항목</h2>`+T('2026년 월별 공시 세부항목 수')+`<table class="rt"><tr><th>구분</th><th>수시</th><th>별도</th><th>4월</th><th>6월</th><th>8월</th><th>10월</th></tr><tr><td class="l">세부항목</td>${['수시','별도','4월','6월','8월','10월'].map(m=>`<td>${D.IT.filter(x=>x[0]===m).length}</td>`).join('')}</tr><tr><td class="l">본 보고서 선정</td>${['수시','별도','4월','6월','8월','10월'].map(m=>`<td>${sel.filter(x=>x.ms.includes(m)).length}</td>`).join('')}</tr></table><div class="fn"><p>출처: 「2026년 대학정보공시 지침서」(2026.3.10.)</p></div></div>`;
+  body+=chap(2,'공시 대상 기관 현황',['1. 기관 수 추이와 구성','2. 교명변경·통합·폐교'])+`<div class="pg" contenteditable><h2 class="grp">학교개황</h2>${schoolBlock(T,F)}</div>`;
+  const groups=AREA.map(([a])=>[a,sel.filter(x=>areaOf(x.c)===a)]).filter(g=>g[1].length);
+  body+=chap(3,'주요 공시항목 분석',groups.map((g,i)=>`${i+1}. ${g[0]} (${g[1].length}개 항목)`))+`<div class="pg" contenteditable>${groups.map((g,i)=>`<h2 class="grp">${i+1}. ${g[0]}</h2>`+g[1].map((x,j)=>itemSection(x.c,T,F,`${i+1}-${j+1}.`)).join('')).join('')}</div>`;
+  const gt=gapTable(codes);
+  if(RP.prof&&SI){body+=chap(4,'기관 프로파일',[SI.S[SIS.sel][1]])+`<div class="pg" contenteditable><h2 class="grp">${esc(SI.S[SIS.sel][1])}</h2>${siReportBlock(T)}</div>`}
+  const mv=moverLines(codes),cr=crossLines();let cn=0;const nx=()=>++cn;
+  body+=chap(RP.prof&&SI?5:4,'종합 분석 및 시사점',[gt?'4년제·전문대학 비교':'',mv.length?'전년 대비 특이점':'',cr.length?'지표 간 비교':'','시사점'].filter(Boolean).map((x,i)=>`${i+1}. ${x}`))+`<div class="pg" contenteditable>${gt?`<h2 class="grp">${nx()}. 4년제·전문대학 비교</h2>`+T(`${SIDES().ul} 대비 전문대학 수준`)+gt:''}${mv.length?`<h2 class="grp">${nx()}. 전년 대비 특이점</h2><ul class="b">${mv.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}${cr.length?`<h2 class="grp">${nx()}. 지표 간 비교</h2><ul class="b">${cr.map(x=>`<li>${esc(x)}</li>`).join('')}</ul><p class="fn">※ 교육비 환원율 = 사립 1인당 교육비 ÷ 사립 평균 등록금(HEDX 자체 집계)</p>`:''}<h2 class="grp">${nx()}. 시사점</h2><ul class="b">${remarkLines(codes).map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  toc.push({lv:1,t:'참고문헌'});
+  body+=`<div class="pg" contenteditable><h2 class="grp">참고문헌</h2><p>대학알리미 (2024~2026). 분야별 공시항목 원자료(HEDX 자체 집계).<br>교육부·한국대학교육협의회 (2026). 2026년 4월·6월·8월·10월 대학정보공시 분석 결과(보도자료, 참고).<br>한국대학교육협의회 대학정보공시센터 (2026). 2026년 대학정보공시 지침서.<br>대학알리미 (2015~2026). 학교 개황 정보.</p></div>`;
+  const hl=hlLines(codes,6);
+  const cover=`<section class="rcover"><div class="rcno" contenteditable>${esc(RP.no)}</div><div class="rctit" contenteditable>${esc(title)}</div><div class="rcsub" contenteditable>학교개황과 ${codes.length}개 주요 공시항목으로 본 고등교육기관 현황</div><div class="rcby" contenteditable>${esc(RP.author||'')}${RP.author&&RP.org?'<br>':''}${esc(RP.org||'')}</div><div class="rcdate">2026. 11.</div></section>`;
+  const sum=`<div class="pg" contenteditable><h2 class="grp">요 약</h2><ul class="b">${['2026년 공시 대상은 403개교(대학 222, 전문대학 137, 대학원대학 44)이며 10월 기준 402개교임',...hl].map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`;
+  const tocH=`<div class="pg"><h2 class="grp">차 례</h2>${toc.map(x=>`<div style="${x.lv===1?'font-weight:700;margin-top:6px':'padding-left:14px;font-size:9.5pt;color:#333'}">${esc(x.t)}</div>`).join('')}<h2 class="grp" style="margin-top:12mm">표 차례</h2>${tabs.map(t=>`<div style="padding-left:14px;font-size:9pt;color:#333">${esc(t)}</div>`).join('')}</div>`;
+  return cover+sum+tocH+body+`<div class="pg"><div class="foot"><span>${esc(RP.org||'HEDX · 고등교육기관 데이터 연결 허브')}${RP.copy?' · '+esc(RP.copy):''}</span><span>자료: 대학정보공시 지침서·분석 결과·학교개황</span></div></div>`}
+
+function itemPicker(list,set,key){
+  return list.map(x=>{const st=statsOf(x.c).length,kk=KEYCODES.includes(x.c),rf=!!D.RF[x.c];
+    return `<div class="pk"><label><input type="checkbox" data-pk="${key}" value="${x.c}" ${set.has(x.c)?'checked':''}> <b>${x.c}</b> ${esc(x.n)} ${st?'<span class="hb k-신설" title="HEDX 자체 집계 지표">집계</span>':''}${kk?'<span class="hb m-4월" title="대학주요정보 지표">주요</span>':''}${rf?'<span class="hb k-특별법" title="대학알리미 원자료 파일 있음">원자료</span>':''}</label><button class="lnk" data-dt="${x.c}" title="상세">ⓘ</button></div>`}).join('')}
+function vReport(){
+  const isF=RP.mode==='focus';
+  const list=isF?monthItems(RP.month):uniqItems();const set=isF?fSel():aSel();
+  const grouped=isF?itemPicker(list,set,'f'):AREA.map(([a])=>{const l=list.filter(x=>areaOf(x.c)===a);return l.length?`<div class="pkg">${a} <small>${l.filter(x=>set.has(x.c)).length}/${l.length}</small></div>`+itemPicker(l,set,'a'):''}).join('');
+  $('#v-rp').innerHTML=`<div class="rgrid">
+  <div class="card rset"><h2>보고서 설정</h2>
+   <div class="fmtsw"><button class="${isF?'on':''}" data-mode="focus">월별 FOCUS<small>해당 월 공시항목 선택</small></button><button class="${!isF?'on':''}" data-mode="annual">연간 보고서<small>전체 항목 중 중요 항목 선택</small></button></div>
+   ${isF?`<div class="fg"><label>공시 월</label><div class="seg" id="rp-m">${MONTHS.map(m=>`<button data-v="${m}" class="${m===RP.month?'on':''}">${m}</button>`).join('')}</div></div><div class="ctrl"><div class="fg" style="flex:1"><label>시리즈명</label><input type="search" id="rp-ser" value="${esc(RP.series)}" placeholder="HEDX FOCUS"></div><div class="fg" style="flex:1"><label>발행일</label><input type="search" id="rp-fdt" value="${esc(RP.fdate)}" placeholder="${'2026.'+RP.month.replace('월','')+'.'}"></div></div><div class="fg"><label>제목</label><input type="search" id="rp-fti" value="${esc(RP.ftitle)}" placeholder="2026년 ${RP.month} 대학정보공시 분석"></div><div class="fg"><label>부제</label><input type="search" id="rp-fld" value="${esc(RP.flede)}" placeholder="비우면 자동 (공시 항목 수·선택 항목 수)"></div><div class="ctrl"><div class="fg" style="flex:1"><label>작성자</label><input type="search" id="rp-au" value="${esc(RP.author)}" placeholder="이름"></div><div class="fg" style="flex:1"><label>발행기관</label><input type="search" id="rp-org" value="${esc(RP.org)}" placeholder="HEDX · 고등교육기관 데이터 연결 허브"></div></div><div class="fg"><label>저작권 표기 <small class="note">(보고서 아래쪽)</small></label><input type="search" id="rp-cp" value="${esc(RP.copy)}" placeholder="© DS2IXY. ALL RIGHTS RESERVED"></div>
+   <div class="ctrl"><div class="fg" style="min-width:90px"><label>호수</label><select id="rp-no">${Array.from({length:30},(_,i)=>`<option ${i+1===RP.fno?'selected':''}>${i+1}</option>`).join('')}</select></div><label class="note" style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="rp-sch" ${RP.school?'checked':''}> 학교개황 장 포함</label><label class="note" style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="rp-rmk" ${RP.remark?'checked':''}> Remark</label></div>
+   <label class="note" style="display:flex;gap:4px;align-items:center;margin-bottom:8px"><input type="checkbox" id="rp-prof" ${RP.prof?'checked':''}> 학교 프로파일 포함 ${SI&&SIS.sel!=null?'('+esc(SI.S[SIS.sel][1])+')':'(학교별 지표 탭에서 학교 선택)'}</label>
+   <label class="note" style="display:flex;gap:4px;align-items:center;margin-bottom:8px" title="폐교 절차 중인 학교는 분모가 작아 비율이 비정상적으로 크게 나올 수 있어 기본으로 제외합니다"><input type="checkbox" id="rp-nc" ${RP.noClosed?'checked':''}> 폐교 학교 제외 <small>(학교 단위 통계·비교 집단, 권장)</small></label>`
+   :`<div class="fg"><label>보고서 제목</label><input type="search" id="rp-title" value="${esc(RP.title)}" placeholder="2026년 대학정보공시 연간 분석 보고서"></div>
+   <div class="ctrl"><div class="fg" style="flex:1"><label>보고서 번호</label><input type="search" id="rp-rno" value="${esc(RP.no)}"></div><div class="fg" style="flex:1"><label>작성자</label><input type="search" id="rp-au" value="${esc(RP.author)}"></div></div>
+   <div class="fg"><label>발행기관</label><input type="search" id="rp-org" value="${esc(RP.org)}" placeholder="HEDX · 고등교육기관 데이터 연결 허브"></div><div class="fg"><label>저작권 표기 <small class="note">(보고서 아래쪽)</small></label><input type="search" id="rp-cp" value="${esc(RP.copy)}" placeholder="© DS2IXY. ALL RIGHTS RESERVED"></div><label class="note" style="display:flex;gap:4px;align-items:center;margin-bottom:8px"><input type="checkbox" id="rp-prof" ${RP.prof?'checked':''}> 학교 프로파일 장 포함 ${SI&&SIS.sel!=null?'('+esc(SI.S[SIS.sel][1])+')':'(학교별 지표 탭에서 학교 선택)'}</label>`}
+   <div class="fg"><label>공시항목 선택 <small class="note">${set.size}개 선택</small></label>
+    <div class="ctrl" style="margin-bottom:6px">${isF?`<button class="btn ghost sm" data-pre="stat">분석 항목만</button><button class="btn ghost sm" data-pre="all">${RP.month} 전체</button>`:`<button class="btn ghost sm" data-pre="key">대학주요정보 12</button><button class="btn ghost sm" data-pre="stat">분석 항목</button><button class="btn ghost sm" data-pre="keystat">주요+분석</button>`}<button class="btn ghost sm" data-pre="none">해제</button></div>
+    <div class="pklist">${grouped}</div></div>
+   
+   <div class="ctrl"><button class="btn ghost" id="rp-html">보고서 HTML 내려받기</button><button class="btn ghost" id="rp-copy">HTML 복사</button></div>
+   
+  </div>
+  <div class="rep-wrap"><div id="report">${isF?focusReport():annualReport()}</div></div></div>`;
+  const re=()=>vReport();
+  $$('#v-rp [data-mode]').forEach(b=>b.onclick=()=>{RP.mode=b.dataset.mode;re()});
+  $$('#rp-m button').forEach(b=>b.onclick=()=>{RP.month=b.dataset.v;re()});
+  $$('#v-rp [data-pk]').forEach(c=>c.onchange=()=>{c.checked?set.add(c.value):set.delete(c.value);re()});
+  $$('#v-rp [data-dt]').forEach(b=>b.onclick=()=>itemModal(b.dataset.dt));
+  $$('#v-rp [data-pre]').forEach(b=>b.onclick=()=>{const p=b.dataset.pre;set.clear();list.forEach(x=>{const s=statsOf(x.c).length,k=KEYCODES.includes(x.c);if(p==='all'||(p==='stat'&&s)||(p==='key'&&k)||(p==='keystat'&&(s||k)))set.add(x.c)});re()});
+  const on=(id,ev,f)=>{const e=$(id);if(e)e[ev]=f};
+  on('#rp-no','onchange',e=>{RP.fno=+e.target.value;re()});on('#rp-prof','onchange',async e=>{RP.prof=e.target.checked;if(RP.prof)await loadSI();re()});on('#rp-nc','onchange',e=>{RP.noClosed=e.target.checked;re()});on('#rp-sch','onchange',e=>{RP.school=e.target.checked;re()});on('#rp-rmk','onchange',e=>{RP.remark=e.target.checked;re()});
+  let tt;const deb=(k)=>e=>{clearTimeout(tt);RP[k]=e.target.value;tt=setTimeout(()=>{$('#report').innerHTML=RP.mode==='focus'?focusReport():annualReport()},400)};
+  on('#rp-title','oninput',deb('title'));on('#rp-rno','oninput',deb('no'));on('#rp-au','oninput',deb('author'));on('#rp-org','oninput',deb('org'));on('#rp-ser','oninput',deb('series'));on('#rp-fdt','oninput',deb('fdate'));on('#rp-fti','oninput',deb('ftitle'));on('#rp-fld','oninput',deb('flede'));on('#rp-cp','oninput',deb('copy'));
+  const html=()=>{const css=[...document.styleSheets].flatMap(s=>{try{return [...s.cssRules]}catch(e){return []}}).map(r=>r.cssText).filter(t=>t.startsWith('#report')).join('\n');return `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><title>${isF?'HEDX FOCUS '+RP.month:'대학정보공시 연간 보고서'}</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap"><style>body{background:#eee;word-break:keep-all;overflow-wrap:break-word;font-family:'Noto Sans KR',sans-serif}${css}@page{size:A4;margin:8mm}</style></head><body><div id="report">${$('#report').innerHTML}</div></body></html>`};
+  $('#rp-html').onclick=()=>saveFile(isF?`HEDX_FOCUS_2026_${RP.month}.html`:'대학정보공시_2026_연간보고서.html',html());
+  $('#rp-copy').onclick=()=>copy(html(),'보고서 HTML을 복사했습니다');
+}
+
+// ---------- 학교별 지표 (대학알리미 공시데이터 추이 32개 항목, 2008~2026)
+let SI=null,SIP=null;const SIS={sel:null,cmp:[],k:'fill',y:2026,g:'',e:'',r:'',q:'',closed:false,peer:'g'};
+const POLY_SUM=new Set(['adm','enr','intl','fac','pat','tt','gov','enr_in','leave','intl_deg','nfac']);
+function siAddPoly(){const grp=new Map();SI.S.forEach((s,i)=>{if(s[2]!=='기능대학')return;const m=s[1].match(/한국폴리텍\s*(VII|VI|IV|V|III|II|I|특성화)\s*대학/);if(!m)return;const nm=m[1]==='특성화'?'한국폴리텍 특성화대학':`한국폴리텍 ${m[1]} 대학`;if(!grp.has(nm))grp.set(nm,[]);grp.get(nm).push(i)});
+ const ord=['I','II','III','IV','V','VI','VII','특성화'];[...grp.entries()].sort((a,b)=>ord.indexOf(a[0].split(' ')[1].replace('대학',''))-ord.indexOf(b[0].split(' ')[1].replace('대학',''))).forEach(([nm,idx])=>{const live=idx.filter(i=>SI.S[i][5]!=='폐교');const f=SI.S[live[0]??idx[0]];const ni=SI.S.length;
+  SI.S.push(['P'+String(ni).padStart(6,'0'),nm,'기능대학',f[3],f[4],'기존',Math.max(...idx.map(i=>SI.S[i][6])),'대학 묶음',idx]);
+  SI.I.forEach(m=>{const V=SI.V[m.k];if(!V)return;const row=SI.Y.map((y,t)=>{const xs=idx.map(i=>V[i]&&V[i][t]).filter(v=>v!=null);if(!xs.length)return null;const v=POLY_SUM.has(m.k)?xs.reduce((a,b)=>a+b,0):xs.reduce((a,b)=>a+b,0)/xs.length;return Math.round(v*100)/100});if(row.some(v=>v!=null))V[ni]=row})})}
+// 집계 단위: 기관이면 폴리텍을 I~VII·특성화대학으로 묶어 보고, 캠퍼스면 캠퍼스별로 봄
+const siUnitOk=s=>s[7]==='대학 묶음'?S.unit==='inst':(s[2]==='기능대학'&&/^한국폴리텍/.test(s[1]))?S.unit!=='inst':true;
+async function loadSI(){if(SI)return SI;if(!SIP)SIP=fetch('si.json?v=20261125').then(r=>r.json()).then(j=>{SI=j;j.S.forEach(s=>{if(s[2]==='기능대학')return;const g=NAMEG[s[1]]||(/교육대학교$/.test(s[1])?'교육대학':/사이버|방송통신|디지털대학/.test(s[1])?'원격대학':null);if(g)s[2]=g});siAddPoly();SI.idx=Object.fromEntries(j.S.map((s,i)=>[s[0],i]));SI.byK=Object.fromEntries(j.I.map(m=>[m.k,m]));return j});return SIP}
+const siYi=y=>y-2008;
+const siVal=(k,i,y)=>{const r=SI.V[k]&&SI.V[k][i];return r?r[siYi(y)]:null};
+const siLast=(k,i,y)=>{for(let t=y;t>=2008;t--){const v=siVal(k,i,t);if(v!=null)return [t,v]}return [null,null]};
+const REGION={서울:'수도권',경기:'수도권',인천:'수도권',부산:'광역시',대구:'광역시',광주:'광역시',대전:'광역시',울산:'광역시',세종:'광역시'};
+const siReg=s=>REGION[s[4]]||'도 지역';
+function siPeers(i,mode,inc){const s=SI.S[i];return SI.S.map((x,j)=>j).filter(j=>{const x=SI.S[j];if(!siUnitOk(x)&&j!==i)return false;if(!inc&&(x[5]==='폐교'||x[6]<2025))return false;if(mode==='g')return x[2]===s[2];if(mode==='ge')return x[2]===s[2]&&x[3]===s[3];if(mode==='gr')return x[2]===s[2]&&siReg(x)===siReg(s);if(mode==='gs')return x[2]===s[2]&&x[4]===s[4];return true})}
+function siStat(k,js,y){const xs=js.map(j=>siVal(k,j,y)).filter(v=>v!=null).sort((a,b)=>a-b);if(!xs.length)return null;const m=xs.reduce((a,b)=>a+b,0)/xs.length;return {n:xs.length,mean:m,med:xs[Math.floor(xs.length/2)],xs}}
+function siRank(k,i,js,y){const v=siVal(k,i,y);if(v==null)return null;const m=SI.byK[k];const xs=js.map(j=>siVal(k,j,y)).filter(x=>x!=null);const better=m.b>=0;const rk=1+xs.filter(x=>better?x>v:x<v).length;return {rk,n:xs.length,tie:xs.filter(x=>x===v).length,pct:Math.round((1-(rk-1)/Math.max(1,xs.length-1))*100)}}
+const PEERN={g:'같은 학교구분',ge:'같은 구분·설립',gr:'같은 구분·권역',gs:'같은 구분·시도'};
+const siU=(v,u)=>v==null?'–':fmt(v,u==='%'||u==='대1'||u==='편'?1:u==='만원'||u==='천원'?1:0);
+function siFiltered(){const q=SIS.q.trim();return SI.S.map((s,i)=>i).filter(i=>{const s=SI.S[i];if(!siUnitOk(s))return false;if(S.st.size&&!S.st.has(s[5]))return false;if(S.g.size&&!S.g.has(s[2]))return false;if(S.e.size&&!S.e.has(s[3]))return false;if(S.r.size&&!S.r.has(siReg(s)))return false;if(S.s&&s[4]!==S.s)return false;if(S.q&&!s[1].includes(S.q))return false;if(!SIS.closed&&!S.st.has('폐교')&&(s[5]==='폐교'||s[6]<2025))return false;if(SIS.g&&s[2]!==SIS.g)return false;if(SIS.e&&s[3]!==SIS.e)return false;if(SIS.r&&siReg(s)!==SIS.r)return false;if(q&&!s[1].includes(q))return false;return true})}
+function siDist(el,k,js,i,y){mount(el,(W,H)=>{if(!W)return;const pts=js.map(j=>[j,siVal(k,j,y)]).filter(p=>p[1]!=null);if(!pts.length){el.innerHTML='<p class="note">자료 없음</p>';return}
+ const xs=pts.map(p=>p[1]).sort((a,b)=>a-b);const lo=xs[Math.floor(xs.length*.02)],hi=xs[Math.ceil(xs.length*.98)-1];const mn=Math.min(lo,siVal(k,i,y)??lo),mx=Math.max(hi,siVal(k,i,y)??hi)||1;const L=16,R=16,x=v=>L+(W-L-R)*((Math.min(Math.max(v,mn),mx)-mn)/((mx-mn)||1));
+ const NB=24,bins=Array(NB).fill(0);xs.forEach(v=>{const b=Math.min(NB-1,Math.max(0,Math.floor((Math.min(Math.max(v,mn),mx)-mn)/((mx-mn)||1)*NB)));bins[b]++});const bm=Math.max(...bins);const bw=(W-L-R)/NB;let g='';
+ bins.forEach((c,b)=>{const h=(H-46)*c/bm;g+=`<rect x="${L+b*bw+1}" y="${H-28-h}" width="${bw-2}" height="${h}" fill="var(--c1)" opacity=".35" data-t="${esc(fmt(mn+(mx-mn)*b/NB,1)+' ~ '+fmt(mn+(mx-mn)*(b+1)/NB,1)+': '+c+'개교')}"/>`});
+ const st=siStat(k,js,y);const mx_=x(st.med),an=mx_>W-90?'end':mx_<90?'start':'middle';g+=`<line x1="${mx_}" x2="${mx_}" y1="22" y2="${H-28}" stroke="currentColor" stroke-dasharray="3 3" opacity=".6"/><text x="${mx_+(an==='end'?-4:an==='start'?4:0)}" y="${H-36}" text-anchor="${an}" font-size="11" opacity=".75">중앙값 ${fmt(st.med,1)}</text>`;
+ const v=siVal(k,i,y);if(v!=null){const vx=x(v),va=vx>W-120?'end':vx<120?'start':'middle';g+=`<line x1="${vx}" x2="${vx}" y1="18" y2="${H-28}" stroke="#eb6834" stroke-width="3"/><text x="${vx+(va==='end'?-2:va==='start'?2:0)}" y="13" text-anchor="${va}" font-size="12" font-weight="700" fill="#eb6834">${esc(SI.S[i][1].slice(0,10))} ${fmt(v,1)}</text>`}
+ g+=`<text x="${L}" y="${H-12}" font-size="10.5" opacity=".6">${fmt(mn,1)}</text><text x="${W-R}" y="${H-12}" text-anchor="end" font-size="10.5" opacity=".6">${fmt(mx,1)}</text>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;bindTip(el)})}
+function siCSV(k){const m=SI.byK[k];const head=['학교코드','학교명','구분','설립','시도','상태',...SI.Y.map(String)];const rows=SI.S.map((s,i)=>[s[0],s[1],s[2],s[3],s[4],s[5],...SI.Y.map(y=>siVal(k,i,y)??'')]);return rowsCSV([[`${m.n}(${m.u}) · 공시항목 ${m.c} · 출처: 대학알리미 공시데이터 추이`],head,...rows])}
+function siProfileCSV(i){const s=SI.S[i];const rows=[[`${s[1]} 공시 지표 (2008~2026)`],['지표','단위','공시항목',...SI.Y.map(String)]];SI.I.forEach(m=>rows.push([m.n,m.u,m.c,...SI.Y.map(y=>siVal(m.k,i,y)??'')]));return rowsCSV(rows)}
+async function vSI(){
+ const el=$('#v-si');if(!SI){el.innerHTML='<div class="card"><p class="note">학교별 지표 자료(약 2.7MB)를 불러오는 중…</p></div>';await loadSI()}
+ if(SIS.sel!=null&&!siGlobalOk(SI.S[SIS.sel]))SIS.sel=null;
+ if(SIS.sel==null)return vSIGroup();
+ const i=SIS.sel,s=SI.S[i],m=SI.byK[SIS.k],y=Math.min(SIS.y,SI.byK[SIS.k].y[1]||SIS.y),peers=siPeers(i,SIS.peer);
+ const list=siFiltered().sort((a,b)=>SI.S[a][1].localeCompare(SI.S[b][1],'ko'));
+ let _g='';const GORD=[...new Set(SI.I.map(x=>x.g))];const kp=SI.I.slice().sort((a,b)=>GORD.indexOf(a.g)-GORD.indexOf(b.g)).map(mm=>{const [ly,v]=siLast(mm.k,i,SIS.y);if(v==null)return '';const hd=mm.g&&mm.g!==_g?(_g=mm.g,`<div class="kgh">${esc(mm.g)}</div>`):'';const pv=siVal(mm.k,i,ly-1);const r=siRank(mm.k,i,peers,ly);const good=mm.b===0||!r?'':r.pct>=67?'good':r.pct<=33?'bad':'';
+   return hd+`<button class="kp ${good} ${mm.k===SIS.k?'on':''}" data-k="${mm.k}" title="${esc(mm.n)} · 공시항목 ${mm.c}"><span class="kn">${esc(mm.n)}</span>${DIRL(mm.b)}<b>${siU(v,mm.u)}<small>${esc(mm.u)}</small></b><span class="ks">${ly!==SIS.y?ly+'년 · ':''}${pv!=null?deltaG(v,pv,mm.u,mm.b):''}${r?` · ${r.rk}${r.tie>1?'(공동)':''}/${r.n}위`:''}${r&&mm.b!==0?` · <span class="tier ${r.pct>=67?'up':r.pct<=33?'dn':''}">${TIER(r.pct)}</span>`:''}</span></button>`}).join('');
+ const st=siStat(SIS.k,peers,y),rk=siRank(SIS.k,i,peers,y);
+ const cmp=[i,...SIS.cmp.filter(j=>j!==i)].slice(0,6);
+ el.innerHTML=`<div class="rgrid" style="grid-template-columns:300px minmax(0,1fr)">
+ <div class="card rset"><h2>학교 선택</h2>
+  <input type="search" id="si-q" placeholder="대학명 입력" value="${esc(SIS.q)}">
+  <div class="ctrl" style="margin:8px 0"><select id="si-g"><option value="">전체 구분</option>${['대학','교육대학','전문대학','원격대학','기능대학'].map(g=>`<option ${SIS.g===g?'selected':''}>${g}</option>`).join('')}</select>
+  <select id="si-e"><option value="">전체 설립</option>${['국립','공립','사립','특별법법인'].map(g=>`<option ${SIS.e===g?'selected':''}>${g}</option>`).join('')}</select>
+  <select id="si-r"><option value="">전체 권역</option>${RORDER.map(g=>`<option ${SIS.r===g?'selected':''}>${g}</option>`).join('')}</select></div>
+  <label class="note" style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="si-c" ${SIS.closed?'checked':''}> 폐교·통합 학교 포함</label>
+  <div class="pklist" style="max-height:520px;margin-top:6px">${list.map(j=>`<div class="pk"><label style="cursor:pointer" data-s="${j}"><b style="${j===i?'color:var(--accent)':''}">${esc(SI.S[j][1])}</b>${SI.S[j][7]&&SI.S[j][7]!=='본교'?` <small>(${esc(SI.S[j][7])})</small>`:''} <small class="note">${SI.S[j][2]}·${SI.S[j][3]}·${SI.S[j][4]}${SI.S[j][5]!=='기존'?'·'+SI.S[j][5]:''}</small></label><button class="lnk" data-cmp="${j}" title="비교에 추가">${cmp.includes(j)&&j!==i?'✓':'＋'}</button></div>`).join('')}</div>
+  <p class="note">${list.length}개 학교 · ＋는 비교 대상(최대 5개)${list.some(j=>SI.S[j][2]==='기능대학')?`<br>기능대학(한국폴리텍): 왼쪽 <b>집계 단위</b>가 '기관'이면 I~VII·특성화대학으로 묶어서, '캠퍼스'면 캠퍼스별로 봅니다. 지금: <b>${S.unit==='inst'?'대학별 묶음':'캠퍼스별'}</b>`:''}</p>
+ </div>
+ <div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">${esc(s[1])}</h2><p class="note" style="margin:4px 0 0">${s[2]} · ${s[3]} · ${s[4]}(${siReg(s)}) · ${s[7]||''}${s[8]?` (캠퍼스 ${s[8].length}곳: ${s[8].map(q=>esc(SI.S[q][1].replace(/^한국폴리텍\s*\S+\s*대학\s*/,''))+(SI.S[q][5]==='폐교'?'·폐교':'')).join(', ')} · 인원은 합계, 비율은 캠퍼스 평균)`:` · 학교코드 ${s[0]}`}${s[5]!=='기존'?` · <b>${s[5]}</b>(마지막 공시 ${s[6]}년)`:''}</p></div>
+   <div class="ctrl"><button class="btn ghost sm" id="si-back" title="학교 선택을 풀고 선택 범위 통계 보기">← 선택 범위 통계</button><label class="note">기준연도 <select id="si-y">${SI.Y.slice().reverse().map(t=>`<option ${t===SIS.y?'selected':''}>${t}</option>`).join('')}</select></label><label class="note">비교 집단 <select id="si-p">${Object.entries(PEERN).map(([k2,v])=>`<option value="${k2}" ${k2===SIS.peer?'selected':''}>${v}</option>`).join('')}</select></label><button class="btn ghost sm" id="si-dlp">⬇ 이 학교 전체 지표 CSV</button></div></div>
+   <p class="note">지표 카드를 누르면 아래에 추이·분포·순위가 나옵니다. 테두리 색: 비교 집단(${PEERN[SIS.peer]} ${peers.length}개교) 안에서 <b class="up">상위권(상위 ⅓) 초록</b>, <b style="color:#b5530c">하위권(하위 ⅓) 주황</b>, 중위권은 색 없음. 카드마다 <span class="dir up">▲ 높을수록 좋음</span> / <span class="dir dn">▼ 낮을수록 좋음</span> / <span class="dir">규모·구성</span>을 표시했고, 순위·색·전년 대비 색(초록=좋아짐, 빨강=나빠짐)은 이 방향을 따릅니다. 값이 같으면 공동 순위입니다.</p>
+   <div class="kgrid">${kp}</div></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">${esc(m.n)} <small>(${m.u}) · 공시항목 <a href="javascript:itemModal('${m.c}')">${m.c}</a> · ${m.y[0]}~${m.y[1]}</small></h2><button class="btn ghost sm" id="si-dlk">⬇ 이 지표 전체 학교 CSV</button></div>
+   <div class="grid2">
+    <div><p class="note">${y}년: <b>${siU(siVal(SIS.k,i,y),m.u)}${m.u}</b>${rk?` · ${PEERN[SIS.peer]} ${rk.n}개교 중 ${rk.rk}위${rk.tie>1?`(공동 ${rk.tie}개교)`:''}${m.b!==0?' · '+TIER(rk.pct):''}`:''}${st?` · 평균 ${siU(st.mean,m.u)}`:''} · ${DIRL(m.b)}</p><p class="note" style="margin-top:-4px">${siCut(SIS.k,peers,y)}</p>${legend([{n:s[1],c:HEX[1]},{n:PEERN[SIS.peer]+' 평균',c:HEX[0]},...cmp.slice(1).map((j,q)=>({n:SI.S[j][1],c:HEX[q+2]}))])}<div class="fig" id="si-line"></div></div>
+    <div><p class="note">${y}년 ${PEERN[SIS.peer]} 분포 (상·하위 2% 절사)</p><div class="fig sm" id="si-dist"></div>
+     <p class="note" style="margin-top:8px"><b>순위</b> (${m.b>0?'높을수록 좋음':m.b<0?'낮을수록 좋음':'규모 지표: 큰 순'})</p><div id="si-rank"></div></div>
+   </div></div>
+  ${outlierCard(SIS.k,[[PEERN[SIS.peer],peers]],SI.Y.filter(t=>t<=SIS.y).slice(-10),'비교 집단',{n:12})}
+ </div></div>`;
+ const peerAvg=SI.Y.map(t=>{const z=siStat(SIS.k,peers,t);return z?Math.round(z.mean*100)/100:null});
+ lines($('#si-line'),SI.Y,[{n:s[1],c:HEX[1],v:SI.Y.map(t=>siVal(SIS.k,i,t))},{n:'집단평균',c:HEX[0],v:peerAvg},...cmp.slice(1).map((j,q)=>({n:SI.S[j][1],c:HEX[q+2],v:SI.Y.map(t=>siVal(SIS.k,j,t))}))],m.u);
+ siDist($('#si-dist'),SIS.k,peers,i,y);
+ const ranked=peers.map(j=>[j,siVal(SIS.k,j,y)]).filter(p=>p[1]!=null).sort((a,b)=>m.b<0?a[1]-b[1]:b[1]-a[1]);const pos=ranked.findIndex(p=>p[0]===i);
+ const show=[...new Set([...ranked.slice(0,5),...ranked.slice(Math.max(0,pos-2),pos+3),...ranked.slice(-3)].map(p=>p[0]))].map(j=>ranked.findIndex(p=>p[0]===j)).sort((a,b)=>a-b);
+ $('#si-rank').innerHTML=tableHTML(['순위','학교','값'],show.map((r,q)=>`${q&&r-show[q-1]>1?'<tr><td colspan="3" class="note" style="text-align:center">⋯</td></tr>':''}<tr style="${ranked[r][0]===i?'background:#fff3ec;font-weight:700':''}"><td>${r+1}</td><td><a href="javascript:SIS.sel=${ranked[r][0]};vSI()">${esc(SI.S[ranked[r][0]][1])}</a></td><td>${siU(ranked[r][1],m.u)}</td></tr>`));
+ const re=()=>vSI();
+ $('#si-back').onclick=()=>{SIS.sel=null;re()};
+ $$('#v-si [data-k]').forEach(b=>b.onclick=()=>{SIS.k=b.dataset.k;re()});
+ $$('#v-si [data-s]').forEach(b=>b.onclick=()=>{SIS.sel=+b.dataset.s;re()});
+ $$('#v-si [data-cmp]').forEach(b=>b.onclick=()=>{const j=+b.dataset.cmp;if(j===i)return;SIS.cmp=SIS.cmp.includes(j)?SIS.cmp.filter(x=>x!==j):[...SIS.cmp,j].slice(-5);re()});
+ let tt;$('#si-q').oninput=e=>{clearTimeout(tt);SIS.q=e.target.value;tt=setTimeout(()=>{re().then(()=>{const q=$('#si-q');q.focus();q.setSelectionRange(q.value.length,q.value.length)})},300)};
+ $('#si-g').onchange=e=>{SIS.g=e.target.value;re()};$('#si-e').onchange=e=>{SIS.e=e.target.value;re()};$('#si-r').onchange=e=>{SIS.r=e.target.value;re()};$('#si-c').onchange=e=>{SIS.closed=e.target.checked;re()};
+ $('#si-y').onchange=e=>{SIS.y=+e.target.value;re()};$('#si-p').onchange=e=>{SIS.peer=e.target.value;re()};
+ $('#si-dlk').onclick=()=>saveFile(`학교별지표_${m.n.replace(/[\\/:*?"<>|()]/g,'')}_2008-2026.csv`,siCSV(SIS.k));
+ $('#si-dlp').onclick=()=>saveFile(`학교별지표_${s[1].replace(/[\\/:*?"<>|()]/g,'')}.csv`,siProfileCSV(i));
+}
+
+function siGlobalOk(s){if(!siUnitOk(s))return false;if(S.g.size&&!S.g.has(s[2]))return false;if(S.e.size&&!S.e.has(s[3]))return false;if(S.r.size&&!S.r.has(siReg(s)))return false;if(S.s&&s[4]!==S.s)return false;if(S.st.size&&!S.st.has(s[5]))return false;return true}
+async function vSIGroup(){
+ const el=$('#v-si');const i=-1;const cmp=SIS.cmp.slice(0,5);
+ const list=siFiltered().sort((a,b)=>SI.S[a][1].localeCompare(SI.S[b][1],'ko'));
+ const scope=[gfText()!=='전체'?gfText():'',SIS.g,SIS.e,SIS.r].filter(Boolean).join(' / ')||'전체 학교';
+ const GORD=[...new Set(SI.I.map(x=>x.g))];let _g='';
+ const kp=SI.I.slice().sort((a,b)=>GORD.indexOf(a.g)-GORD.indexOf(b.g)).map(mm=>{let ly=null,st=null;for(let t=SIS.y;t>=2008;t--){const z=siStat(mm.k,list,t);if(z){ly=t;st=z;break}}if(!st)return '';const pv=siStat(mm.k,list,ly-1);
+   const hd=mm.g!==_g?(_g=mm.g,`<div class="kgh">${esc(mm.g)}</div>`):'';
+   return hd+`<button class="kp ${mm.k===SIS.k?'on':''}" data-k="${mm.k}" title="${esc(mm.n)} · 공시항목 ${mm.c}"><span class="kn">${esc(mm.n)}</span>${DIRL(mm.b)}<b>${siU(st.mean,mm.u)}<small>${esc(mm.u)}</small></b><span class="ks">${ly!==SIS.y?ly+'년 · ':''}${pv?deltaG(st.mean,pv.mean,mm.u,mm.b)+' · ':''}${st.n}개교 평균 · 중앙값 ${siU(st.med,mm.u)}</span></button>`}).join('');
+ const m=SI.byK[SIS.k],y=Math.min(SIS.y,m.y[1]||SIS.y),st=siStat(SIS.k,list,y);
+ el.innerHTML=`<div class="rgrid" style="grid-template-columns:300px minmax(0,1fr)">
+ <div class="card rset"><h2>학교 선택</h2>
+  <input type="search" id="si-q" placeholder="대학명 입력" value="${esc(SIS.q)}">
+  <div class="ctrl" style="margin:8px 0"><select id="si-g"><option value="">전체 구분</option>${['대학','교육대학','전문대학','원격대학','기능대학'].map(g=>`<option ${SIS.g===g?'selected':''}>${g}</option>`).join('')}</select>
+  <select id="si-e"><option value="">전체 설립</option>${['국립','공립','사립','특별법법인'].map(g=>`<option ${SIS.e===g?'selected':''}>${g}</option>`).join('')}</select>
+  <select id="si-r"><option value="">전체 권역</option>${RORDER.map(g=>`<option ${SIS.r===g?'selected':''}>${g}</option>`).join('')}</select></div>
+  <label class="note" style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="si-c" ${SIS.closed?'checked':''}> 폐교·통합 학교 포함</label>
+  <div class="pklist" style="max-height:520px;margin-top:6px">${list.map(j=>`<div class="pk"><label style="cursor:pointer" data-s="${j}"><b style="${j===i?'color:var(--accent)':''}">${esc(SI.S[j][1])}</b>${SI.S[j][7]&&SI.S[j][7]!=='본교'?` <small>(${esc(SI.S[j][7])})</small>`:''} <small class="note">${SI.S[j][2]}·${SI.S[j][3]}·${SI.S[j][4]}${SI.S[j][5]!=='기존'?'·'+SI.S[j][5]:''}</small></label><button class="lnk" data-cmp="${j}" title="비교에 추가">${cmp.includes(j)&&j!==i?'✓':'＋'}</button></div>`).join('')}</div>
+  <p class="note">${list.length}개 학교 · ＋는 비교 대상(최대 5개)${list.some(j=>SI.S[j][2]==='기능대학')?`<br>기능대학(한국폴리텍): 왼쪽 <b>집계 단위</b>가 '기관'이면 I~VII·특성화대학으로 묶어서, '캠퍼스'면 캠퍼스별로 봅니다. 지금: <b>${S.unit==='inst'?'대학별 묶음':'캠퍼스별'}</b>`:''}</p>
+ </div>
+ <div>
+  <div class="card"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap"><div><h2 style="margin:0">선택 범위 통계 <small>${esc(scope)}</small></h2><p class="note" style="margin:4px 0 0">${list.length}개 학교의 단순평균입니다. 왼쪽 목록에서 학교를 누르면 그 학교 값과 순위를 보여 줍니다.</p></div>
+   <div class="ctrl"><label class="note">기준연도 <select id="si-y">${SI.Y.slice().reverse().map(t=>`<option ${t===SIS.y?'selected':''}>${t}</option>`).join('')}</select></label><button class="btn ghost sm" id="si-gcsv">⬇ 범위 통계 CSV</button></div></div>
+   <p class="note">카드 값 = 선택 범위 학교 평균 · 아래 작은 글씨 = 전년 대비(초록 좋아짐/빨강 나빠짐) · 학교 수 · 중앙값</p>
+   <div class="kgrid">${kp||'<p class="note">선택 범위에 해당하는 학교 자료가 없습니다.</p>'}</div></div>
+  <div class="card"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">${esc(m.n)} <small>(${m.u}) · 공시항목 <a href="javascript:itemModal('${m.c}')">${m.c}</a> · ${m.y[0]}~${m.y[1]}</small></h2><button class="btn ghost sm" id="si-dlk">⬇ 이 지표 전체 학교 CSV</button></div>
+   <div class="grid2">
+    <div><p class="note">${y}년 평균 <b>${siU(st&&st.mean,m.u)}${m.u}</b> · 중앙값 ${siU(st&&st.med,m.u)} · ${st?st.n:0}개교 · ${DIRL(m.b)}</p><p class="note" style="margin-top:-4px">${siCut(SIS.k,list,y)}</p>${legend([{n:'선택 범위 평균',c:HEX[0]},...cmp.map((j,q)=>({n:SI.S[j][1],c:HEX[q+2]}))])}<div class="fig" id="si-line"></div></div>
+    <div><p class="note">${y}년 분포 (상·하위 2% 절사)</p><div class="fig sm" id="si-dist"></div>
+     <p class="note" style="margin-top:8px"><b>순위</b> (${m.b>0?'높을수록 좋음':m.b<0?'낮을수록 좋음':'규모 지표: 큰 순'}) · 학교명을 누르면 그 학교 보기</p><div id="si-rank"></div></div>
+   </div></div>
+  ${outlierCard(SIS.k,[['선택 범위',list]],SI.Y.filter(t=>t<=SIS.y).slice(-10),'범위',{n:12})}
+ </div></div>`;
+ lines($('#si-line'),SI.Y,[{n:'범위 평균',c:HEX[0],v:SI.Y.map(t=>{const z=siStat(SIS.k,list,t);return z?Math.round(z.mean*100)/100:null})},...cmp.map((j,q)=>({n:SI.S[j][1],c:HEX[q+2],v:SI.Y.map(t=>siVal(SIS.k,j,t))}))],m.u);
+ siDist($('#si-dist'),SIS.k,list,-1,y);
+ const ranked=list.map(j=>[j,siVal(SIS.k,j,y)]).filter(p=>p[1]!=null).sort((a,b)=>m.b<0?a[1]-b[1]:b[1]-a[1]);
+ const show=[...ranked.slice(0,8).map((p,r)=>[r,p]),...(ranked.length>13?[[-1,null]]:[]),...ranked.slice(Math.max(8,ranked.length-5)).map((p,q)=>[Math.max(8,ranked.length-5)+q,p])];
+ $('#si-rank').innerHTML=tableHTML(['순위','학교','값'],show.map(([r,p])=>r<0?'<tr><td colspan="3" class="note" style="text-align:center">⋯</td></tr>':`<tr><td>${r+1}</td><td><a href="javascript:SIS.sel=${p[0]};vSI()">${esc(SI.S[p[0]][1])}</a></td><td>${siU(p[1],m.u)}</td></tr>`));
+ const re=()=>vSI();
+ $$('#v-si [data-k]').forEach(b=>b.onclick=()=>{SIS.k=b.dataset.k;re()});
+ $$('#v-si [data-s]').forEach(b=>b.onclick=()=>{SIS.sel=+b.dataset.s;re()});
+ $$('#v-si [data-cmp]').forEach(b=>b.onclick=()=>{const j=+b.dataset.cmp;SIS.cmp=SIS.cmp.includes(j)?SIS.cmp.filter(x=>x!==j):[...SIS.cmp,j].slice(-5);re()});
+ let tt;$('#si-q').oninput=e=>{clearTimeout(tt);SIS.q=e.target.value;tt=setTimeout(()=>{re().then(()=>{const q=$('#si-q');if(q){q.focus();q.setSelectionRange(q.value.length,q.value.length)}})},300)};
+ $('#si-g').onchange=e=>{SIS.g=e.target.value;re()};$('#si-e').onchange=e=>{SIS.e=e.target.value;re()};$('#si-r').onchange=e=>{SIS.r=e.target.value;re()};$('#si-c').onchange=e=>{SIS.closed=e.target.checked;re()};
+ $('#si-y').onchange=e=>{SIS.y=+e.target.value;re()};
+ $('#si-dlk').onclick=()=>saveFile(`학교별지표_${m.n.replace(/[\\/:*?"<>|()]/g,'')}_2008-2026.csv`,siCSV(SIS.k));
+ $('#si-gcsv').onclick=()=>saveFile(`학교별지표_선택범위통계_${SIS.y}.csv`,rowsCSV([[`선택 범위 통계 · ${scope} · ${list.length}개교 · 학교 단순평균`],['분야','지표','단위','공시항목',...SI.Y.map(String)],...SI.I.map(x=>[x.g,x.n,x.u,x.c,...SI.Y.map(t=>{const z=siStat(x.k,list,t);return z?Math.round(z.mean*100)/100:''})])]));
+}
+// 보고서용 학교 프로파일 블록
+function siReportBlock(T){if(!SI||SIS.sel==null)return '';const i=SIS.sel,s=SI.S[i],y=SIS.y,peers=siPeers(i,SIS.peer,!RP.noClosed);
+ const rows=SI.I.map(m=>{const [ly,v]=siLast(m.k,i,y);if(v==null)return '';const st=siStat(m.k,peers,ly),r=siRank(m.k,i,peers,ly),pv=siVal(m.k,i,ly-1);return `<tr><td class="l">${esc(m.n)}</td><td class="c">${m.u}</td><td class="c">${ly}</td><td>${siU(v,m.u)}</td><td>${pv!=null?siU(pv,m.u):'–'}</td><td>${st?siU(st.mean,m.u):'–'}</td><td class="c">${r&&m.b!==0?r.rk+'/'+r.n:'–'}</td></tr>`}).join('');
+ const strong=SI.I.filter(m=>m.b!==0).map(m=>{const [ly,v]=siLast(m.k,i,y);const r=v==null?null:siRank(m.k,i,peers,ly);return r?[m,r]:null}).filter(Boolean);
+ const top=strong.filter(x=>x[1].pct>=75).map(x=>x[0].n),low=strong.filter(x=>x[1].pct<=25).map(x=>x[0].n);
+ return `<ul class="b"><li>${esc(s[1])}(${s[2]}·${s[3]}·${s[4]})의 ${y}년 공시 지표를 ${PEERN[SIS.peer]} ${peers.length}개교(${RP.noClosed?'폐교 학교 제외':'폐교 학교 포함'})와 비교함</li>${top.length?`<li>상위 25% 지표: ${esc(top.join(', '))}</li>`:''}${low.length?`<li>하위 25% 지표: ${esc(low.join(', '))}</li>`:''}</ul>`+T(`${s[1]} 주요 공시 지표`)+`<table class="rt"><tr><th>지표</th><th>단위</th><th>연도</th><th>학교</th><th>전년</th><th>집단 평균</th><th>순위</th></tr>${rows}</table><div class="fn"><p>주: 순위는 ‘높을수록 좋음/낮을수록 좋음’ 방향 기준. 출처: 대학알리미 공시데이터 추이(2026.11.20. 생성)</p></div>`}
+
+// ===== 공시지표 분석 (지표 중심) =====
+const IA={k:'fill',k2:'emp',y:2025,g:'',e:'',r:'',sd:'',by:'e',closed:false,q:'',sort:-1,page:0,sel:[]};
+const IA_BY={e:['설립',s=>s[3]],r:['권역',s=>siReg(s)],sd:['시도',s=>s[4]],g:['학교구분',s=>s[2]]};
+const SDORDER=['서울','경기','인천','부산','대구','광주','대전','울산','세종','강원','충북','충남','전북','전남','경북','경남','제주'];
+const siBase=s=>s[2]==='기능대학'?'직업능력개발법':(s[3]==='특별법법인'||/특별법/.test(s[3]))?'특별법':'고등교육법';
+let SCOPESYNC=null;function syncSide(){if(SCOPESYNC)SCOPESYNC();[['#f-g',S.g],['#f-e',S.e],['#f-r',S.r],['#f-b',S.b],['#f-st',S.st]].forEach(([id,set])=>$$(id+' input').forEach(c=>c.checked=set.has(c.value)));const fs=$('#f-s');if(fs)fs.value=S.s;const fq=$('#f-q');if(fq)fq.value=S.q}
+const gfText=()=>[[...S.g].join('·'),[...S.e].join('·'),[...S.r].join('·'),[...S.b].join('·'),[...S.st].join('·'),S.s,S.q&&'“'+S.q+'”'].filter(Boolean).join(' / ')||'전체';
+function iaSchools(){const q=IA.q.trim();return SI.S.map((s,i)=>i).filter(i=>{const s=SI.S[i];if(!siUnitOk(s))return false;if(S.st.size){if(!S.st.has(s[5]))return false}else if(!IA.closed&&(s[5]==='폐교'||s[6]<2025))return false;if(S.g.size&&!S.g.has(s[2]))return false;if(S.e.size&&!S.e.has(s[3]))return false;if(S.r.size&&!S.r.has(siReg(s)))return false;if(S.s&&s[4]!==S.s)return false;if(S.b.size&&!S.b.has(siBase(s)))return false;if(S.q&&!s[1].includes(S.q))return false;if(q&&!s[1].includes(q))return false;return true})}
+function iaGroups(js){const f=IA_BY[IA.by][1];const m=new Map();js.forEach(j=>{const g=f(SI.S[j]);if(!m.has(g))m.set(g,[]);m.get(g).push(j)});
+ const ord=IA.by==='r'?RORDER:IA.by==='sd'?SDORDER:IA.by==='g'?['대학','전문대학','기능대학']:['국립','공립','사립','특별법법인'];
+ return [...m.entries()].sort((a,b)=>{const x=ord.indexOf(a[0]),y=ord.indexOf(b[0]);return (x<0?99:x)-(y<0?99:y)||a[0].localeCompare(b[0],'ko')})}
+const iaOpts=sel=>{const gs=[...new Set(SI.I.map(m=>m.g))];return gs.map(g=>`<optgroup label="${esc(g)}">${SI.I.filter(m=>m.g===g).map(m=>`<option value="${m.k}" ${m.k===sel?'selected':''}>${esc(m.n)} (${esc(m.u)})</option>`).join('')}</optgroup>`).join('')};
+function iaSpark(vals){const xs=vals.filter(v=>v!=null);if(xs.length<2)return '';const mn=Math.min(...xs),mx=Math.max(...xs);const W=70,H=18;const p=vals.map((v,i)=>v==null?null:`${(i/(vals.length-1)*W).toFixed(1)},${(H-2-(mx===mn?.5:(v-mn)/(mx-mn))*(H-4)).toFixed(1)}`).filter(Boolean);return `<svg width="${W}" height="${H}" style="vertical-align:middle"><polyline points="${p.join(' ')}" fill="none" stroke="var(--c1)" stroke-width="1.5"/></svg>`}
+function iaScatter(el,kx,ky,js,y){mount(el,(W,H)=>{if(!W)return;const mx_=SI.byK[kx],my_=SI.byK[ky];const pts=js.map(j=>[j,siVal(kx,j,y),siVal(ky,j,y)]).filter(p=>p[1]!=null&&p[2]!=null);
+ if(pts.length<3){el.innerHTML='<p class="note">두 지표가 모두 있는 학교가 부족합니다.</p>';return}
+ const q=(a,p)=>{const s=a.slice().sort((x,y)=>x-y);return s[Math.min(s.length-1,Math.max(0,Math.round((s.length-1)*p)))]};
+ const xs=pts.map(p=>p[1]),ys=pts.map(p=>p[2]);const x0=q(xs,.01),x1=q(xs,.99),y0=q(ys,.01),y1=q(ys,.99);
+ const L=50,R=14,T=12,B=34,X=v=>L+(W-L-R)*((Math.min(Math.max(v,x0),x1)-x0)/((x1-x0)||1)),Y=v=>T+(H-T-B)*(1-(Math.min(Math.max(v,y0),y1)-y0)/((y1-y0)||1));
+ const n=pts.length,mxv=xs.reduce((a,b)=>a+b,0)/n,myv=ys.reduce((a,b)=>a+b,0)/n;let sxy=0,sxx=0,syy=0;pts.forEach(p=>{sxy+=(p[1]-mxv)*(p[2]-myv);sxx+=(p[1]-mxv)**2;syy+=(p[2]-myv)**2});const r=sxy/Math.sqrt(sxx*syy||1);
+ const EC={국립:HEX[0],공립:HEX[2],사립:HEX[1],특별법법인:HEX[5]};let g='';
+ for(let i=0;i<=4;i++){const vx=x0+(x1-x0)/4*i,vy=y0+(y1-y0)/4*i;g+=`<line x1="${L}" x2="${W-R}" y1="${Y(vy)}" y2="${Y(vy)}" stroke="currentColor" opacity=".08"/><text x="${L-5}" y="${Y(vy)+4}" text-anchor="end" font-size="10.5" opacity=".6">${fmt(vy,1)}</text><text x="${X(vx)}" y="${H-18}" text-anchor="middle" font-size="10.5" opacity=".6">${fmt(vx,1)}</text>`}
+ g+=`<line x1="${X(mxv)}" x2="${X(mxv)}" y1="${T}" y2="${H-B}" stroke="currentColor" stroke-dasharray="3 3" opacity=".35"/><line x1="${L}" x2="${W-R}" y1="${Y(myv)}" y2="${Y(myv)}" stroke="currentColor" stroke-dasharray="3 3" opacity=".35"/>`;
+ pts.forEach(([j,a,b])=>{const s=SI.S[j];const hl=IA.sel.includes(j);g+=`<circle cx="${X(a)}" cy="${Y(b)}" r="${hl?6:3.6}" fill="${EC[s[3]]||HEX[7]}" fill-opacity="${hl?1:.55}" ${hl?'stroke="#14181f" stroke-width="1.5"':''} data-t="${esc(s[1]+' · '+mx_.n+' '+fmt(a,1)+mx_.u+' / '+my_.n+' '+fmt(b,1)+my_.u)}"/>`;if(hl)g+=`<text x="${X(a)+8}" y="${Y(b)+4}" font-size="11" font-weight="700">${esc(s[1].slice(0,10))}</text>`});
+ g+=`<text x="${(W+L)/2}" y="${H-3}" text-anchor="middle" font-size="11" font-weight="700">${esc(mx_.n)} (${esc(mx_.u)})</text><text x="${L+4}" y="${T+10}" font-size="11" font-weight="700">${esc(my_.n)} (${esc(my_.u)}) · 상관계수 r = ${r.toFixed(2)} · ${n}개교</text>`;
+ el.innerHTML=`<svg viewBox="0 0 ${W} ${H}">${g}</svg>`;bindTip(el)})}
+function iaRankCSV(rows,m,y){return rowsCSV([[`${m.n}(${m.u}) ${y}년 학교별 · 공시항목 ${m.c} · 필터: ${gfText()}`],['순위','학교코드','학교명','본분교','구분','설립','시도','상태',`${y}년`,`${y-1}년`,'증감',...SI.Y.map(String)],...rows.map((p,r)=>{const s=SI.S[p[0]];const pv=siVal(m.k,p[0],y-1);return [r+1,s[0],s[1],s[7]||'',s[2],s[3],s[4],s[5],p[1],pv??'',pv!=null?Math.round((p[1]-pv)*100)/100:'',...SI.Y.map(t=>siVal(m.k,p[0],t)??'')]})])}
+function iaSummaryCSV(js,y){const rows=[[`지표 요약 ${y}년 · 필터: ${gfText()} (${js.length}개교)`],['분야','지표','단위','공시항목','학교 수','평균','중앙값','하위10%','상위10%','전년 평균','증감']];
+ SI.I.forEach(m=>{const st=siStat(m.k,js,y),pv=siStat(m.k,js,y-1);if(!st)return;const p=a=>st.xs[Math.min(st.xs.length-1,Math.round((st.xs.length-1)*a))];rows.push([m.g,m.n,m.u,m.c,st.n,Math.round(st.mean*100)/100,st.med,p(.1),p(.9),pv?Math.round(pv.mean*100)/100:'',pv?Math.round((st.mean-pv.mean)*100)/100:''])});return rowsCSV(rows)}
+async function vIA(){
+ const el=$('#v-ia');if(!SI){el.innerHTML='<div class="card"><p class="note">공시 지표 자료(약 2.7MB)를 불러오는 중…</p></div>';await loadSI()}
+ if(!SI.byK[IA.k])IA.k=SI.I[0].k;if(!SI.byK[IA.k2])IA.k2=SI.I[1].k;
+ IA.y=S.y;if(IA.sortK!==IA.k){IA.sortK=IA.k;IA.sort=SI.byK[IA.k]&&SI.byK[IA.k].b<0?1:-1}const m=SI.byK[IA.k],y=Math.min(IA.y,m.y[1]||IA.y),js=iaSchools(),st=siStat(IA.k,js,y),pv=siStat(IA.k,js,y-1),p5=siStat(IA.k,js,y-5);
+ const grps=iaGroups(js),U=v=>siU(v,m.u);
+ const ranked=js.map(j=>[j,siVal(IA.k,j,y)]).filter(p=>p[1]!=null).sort((a,b)=>IA.sort*(a[1]-b[1])||SI.S[a[0]][1].localeCompare(SI.S[b[0]][1],'ko'));
+ const best=m.b<0?ranked.slice().sort((a,b)=>a[1]-b[1]):ranked.slice().sort((a,b)=>b[1]-a[1]);
+ const pq=a=>st?st.xs[Math.min(st.xs.length-1,Math.round((st.xs.length-1)*a))]:null;
+ const sel=$('#v-ia .ia-sel');
+ const TY=SI.Y.filter(t=>t<=y&&t>y-S.per),yrs=TY,PL=S.per>50?'전체':S.per+'년';
+ const PG=50,pages=Math.max(1,Math.ceil(ranked.length/PG));IA.page=Math.min(IA.page,pages-1);
+ const BODY=`<div class="card"><h2>공시지표 분석 <small>대학알리미 공시데이터 추이 · 학교별지표 ${SI.I.length}개 · 2008~2026</small></h2>
+  <div class="ctrl">
+   <div class="fg" style="min-width:220px"><label>적용 중인 왼쪽 필터</label><div class="note" style="padding:6px 8px">기준 ${S.y}년 · ${esc(gfText())}</div></div>
+  </div>
+  <p class="note">${esc(m.n)} (${esc(m.u)}) · 공시항목 <a href="javascript:itemModal('${m.c}')">${m.c}</a> · ${esc(m.g)} · 자료 ${m.y[0]}~${m.y[1]} · ${m.b>0?'높을수록 좋음':m.b<0?'낮을수록 좋음':'규모·구성 지표(방향 없음)'}${y!==IA.y?` · <b>${IA.y}년 자료가 없어 ${y}년 기준</b>`:''}${!js.length?' · <b>왼쪽 필터에 맞는 학교가 없습니다(대학원대학은 이 지표 자료에 없음)</b>':''}. 평균은 학교 단순평균입니다.</p>
+ </div>
+ <div class="kpis">
+  <div class="kpi"><div class="l">대상 학교</div><div class="v">${fmt(st?st.n:0)}개교</div><div class="d">필터 ${js.length}개교 중 값 보유</div></div>
+  <div class="kpi"><div class="l">${y}년 평균</div><div class="v">${U(st&&st.mean)}<small>${esc(m.u)}</small></div><div class="d">${pv?'전년 '+deltaG(st.mean,pv.mean,m.u,m.b):''}</div></div>
+  <div class="kpi"><div class="l">중앙값</div><div class="v">${U(st&&st.med)}<small>${esc(m.u)}</small></div><div class="d">${p5?'5년 전 평균 '+U(p5.mean):''}</div></div>
+  <div class="kpi"><div class="l">${m.b<0?'상위 10% ~ 하위 10% (낮을수록 좋음)':'하위 10% ~ 상위 10%'}</div><div class="v" style="font-size:17px">${U(pq(.1))} ~ ${U(pq(.9))}</div><div class="d">학교 간 격차 ${st?U(pq(.9)-pq(.1)):'–'}${esc(m.u)}</div></div>
+  <div class="kpi"><div class="l">${m.b<0?'가장 낮은':'가장 높은'} 학교</div><div class="v" style="font-size:15px">${best[0]?esc(SI.S[best[0][0]][1]):'–'}</div><div class="d">${best[0]?U(best[0][1])+m.u:''}</div></div>
+  <div class="kpi"><div class="l">${m.b<0?'가장 높은':'가장 낮은'} 학교</div><div class="v" style="font-size:15px">${best.length?esc(SI.S[best[best.length-1][0]][1]):'–'}</div><div class="d">${best.length?U(best[best.length-1][1])+m.u:''}</div></div>
+ </div>
+ <div class="grid2">
+  <div class="card"><h2>${IA_BY[IA.by][0]}별 평균 추이 <small>${TY[0]}~${TY[TY.length-1]} · 왼쪽 추이 기간 ${PL}</small></h2><div id="ia-lg"></div><div class="fig" id="ia-line"></div></div>
+  <div class="card"><h2>${y}년 학교별 분포 <small>상·하위 2% 절사 · ${st?st.n:0}개교</small></h2><div class="fig" id="ia-dist"></div>
+   <div id="ia-gbar" style="margin-top:8px"></div></div>
+ </div>
+ <div class="card"><h2>${IA_BY[IA.by][0]}별 × 연도 집계표 <small>학교 평균 (괄호: 학교 수) · 이름을 누르면 해당 ${IA_BY[IA.by][0]}로 좁힘</small><button class="btn ghost sm" id="ia-dlp">⬇ CSV</button></h2>
+  ${siEndNote(m,IA.y)}${tableHTML([IA_BY[IA.by][0],...yrs.map(String),'기간 증감'],[...grps.map(([gn,gj])=>{const vs=yrs.map(t=>siStat(IA.k,gj,t));const a=vs.find(v=>v),b=vs[vs.length-1];return `<tr><td><a href="javascript:void(0)" class="ia-g" data-g="${esc(gn)}">${esc(gn)}</a></td>${vs.map(v=>`<td>${v?U(v.mean)+` <small class="note">(${v.n})</small>`:'–'}</td>`).join('')}<td>${a&&b?deltaG(b.mean,a.mean,m.u,m.b):'–'}</td></tr>`}),(()=>{const vs=yrs.map(t=>siStat(IA.k,js,t));const a=vs.find(v=>v),b=vs[vs.length-1];return `<tr class="tot"><td>전체</td>${vs.map(v=>`<td>${v?U(v.mean)+` <small class="note">(${v.n})</small>`:'–'}</td>`).join('')}<td>${a&&b?deltaG(b.mean,a.mean,m.u,m.b):'–'}</td></tr>`})()])}
+ </div>
+ ${outlierCard(IA.k,grps,yrs,IA_BY[IA.by][0],{n:15})}
+ <div class="card"><h2>${y}년 학교별 순위 <small>${ranked.length}개교 · 학교명을 누르면 학교별 지표 탭으로 이동 · ☆ 표시는 산점도 강조</small>
+   <span style="display:flex;gap:6px;align-items:center"><input type="search" id="ia-q" placeholder="대학명 입력" value="${esc(IA.q)}" style="width:150px"><button class="btn ghost sm" id="ia-sort">${IA.sort<0?'높은 순 ▼':'낮은 순 ▲'}${m.b!==0?((IA.sort<0)===(m.b>0)?' (좋은 순)':' (나쁜 순)'):''}</button><button class="btn ghost sm" id="ia-dlr">⬇ 전체 CSV</button></span></h2>
+  ${tableHTML(['순위','','학교','구분','설립','시도',`${y}년`,'전년 대비',PL+' 추이',m.b===0?'집단 내 크기 위치':'집단 내 위치(오른쪽=좋음)'],ranked.slice(IA.page*PG,IA.page*PG+PG).map((p,q)=>{const j=p[0],s=SI.S[j],r=IA.page*PG+q+1,pv1=siVal(IA.k,j,y-1);const pct=st?Math.round(st.xs.filter(x=>m.b<0?x>=p[1]:x<=p[1]).length/st.xs.length*100):0;
+   return `<tr><td>${r}</td><td><a href="javascript:void(0)" class="ia-star" data-j="${j}" title="산점도에서 강조">${IA.sel.includes(j)?'★':'☆'}</a></td><td style="text-align:left"><a href="javascript:void(0)" class="ia-s" data-j="${j}">${esc(s[1])}</a>${s[7]&&s[7]!=='본교'?` <small>(${esc(s[7])})</small>`:''}${s[5]!=='기존'?` <span class="hist close">${esc(s[5])}</span>`:''}</td><td>${s[2]}</td><td>${s[3]}</td><td>${s[4]}</td><td><b>${U(p[1])}</b></td><td>${pv1!=null?deltaG(p[1],pv1,m.u,m.b):'–'}</td><td>${iaSpark(TY.map(t=>siVal(IA.k,j,t)))}</td><td><span style="display:inline-block;width:80px;height:6px;background:#eef0f3;border-radius:3px;vertical-align:middle"><b style="display:block;height:6px;width:${pct}%;background:var(--c1);border-radius:3px"></b></span> <small class="note">${pct}%</small></td></tr>`}))}
+  <div class="pager" style="display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:8px"><button class="btn ghost sm" id="ia-prev" ${IA.page?'':'disabled'}>◀</button><span class="note">${IA.page+1} / ${pages}</span><button class="btn ghost sm" id="ia-next" ${IA.page<pages-1?'':'disabled'}>▶</button></div>
+ </div>
+ <div class="card"><h2>지표 간 관계 (산점도) <small>${y}년 · 점 색: <span style="color:${HEX[0]}">●국립</span> <span style="color:${HEX[2]}">●공립</span> <span style="color:${HEX[1]}">●사립</span> · 점선은 평균</small>
+   <span style="display:flex;gap:6px;align-items:center"><span class="note">Y축</span><select id="ia-k2" style="max-width:260px">${iaOpts(IA.k2)}</select></span></h2>
+  <div class="fig" id="ia-sc" style="height:380px"></div></div>
+ <div class="card"><h2>전체 지표 요약 <small>${y}년 · 현재 필터 ${js.length}개교 · 지표명을 누르면 위 분석이 바뀜</small><button class="btn ghost sm" id="ia-dls">⬇ CSV</button></h2>
+  ${tableHTML(['지표','방향','단위','공시항목','학교 수','평균','중앙값','하위10%','상위10%','전년 대비','5년 전 대비'],[...new Set(SI.I.map(x=>x.g))].flatMap(g=>[`<tr class="tot"><td colspan="11">${esc(g)}</td></tr>`,...SI.I.filter(x=>x.g===g).map(x=>{const s1=siStat(x.k,js,y);if(!s1)return `<tr><td><a href="javascript:void(0)" class="ia-k" data-k="${x.k}">${esc(x.n)}</a></td><td>${DIRL(x.b)}</td><td>${esc(x.u)}</td><td>${x.c}</td><td colspan="7" class="note">${y}년 자료 없음 (${x.y[0]}~${x.y[1]})</td></tr>`;const s0=siStat(x.k,js,y-1),s5=siStat(x.k,js,y-5);const qq=a=>s1.xs[Math.min(s1.xs.length-1,Math.round((s1.xs.length-1)*a))];
+   return `<tr ${x.k===IA.k?'style="background:#fff3ec"':''}><td><a href="javascript:void(0)" class="ia-k" data-k="${x.k}">${esc(x.n)}</a></td><td>${DIRL(x.b)}</td><td>${esc(x.u)}</td><td><a href="javascript:itemModal('${x.c}')">${x.c}</a></td><td>${s1.n}</td><td><b>${siU(s1.mean,x.u)}</b></td><td>${siU(s1.med,x.u)}</td><td>${siU(qq(.1),x.u)}</td><td>${siU(qq(.9),x.u)}</td><td>${s0?deltaG(s1.mean,s0.mean,x.u,x.b):'–'}</td><td>${s5?deltaG(s1.mean,s5.mean,x.u,x.b):'–'}</td></tr>`})]))}
+ </div>`;
+ const GS=[...new Set(SI.I.map(x=>x.g))];
+ const PANEL=`<h2>지표 선택 <small>${SI.I.length}개</small></h2>
+  <input type="search" id="ia-kq" placeholder="지표 검색 (예: 충원, 등록금)" value="${esc(IA.kq||'')}">
+  <p class="note" style="margin:6px 0">값: ${IA.y}년(없으면 최근) 왼쪽 필터 학교 평균 · <span class="dir up">▲</span> 높을수록 좋음 · <span class="dir dn">▼</span> 낮을수록 좋음 · 표시 없음은 규모·구성</p>
+  <div class="pklist" id="ia-klist" style="max-height:560px">${GS.map(g=>`<div class="kgh" style="margin:8px 0 2px">${esc(g)}</div>`+SI.I.filter(x=>x.g===g).map(x=>{const yy=Math.min(IA.y,x.y[1]||IA.y);const z=siStat(x.k,js,yy);return `<div class="pk ia-kr" data-n="${esc(x.n+' '+x.c)}" style="padding:3px 0;border-bottom:1px solid var(--line2)"><a href="javascript:void(0)" class="ia-k" data-k="${x.k}" style="${x.k===IA.k?'font-weight:700;color:var(--accent)':''}">${esc(x.n)}</a> ${x.b>0?'<span class="dir up">▲</span>':x.b<0?'<span class="dir dn">▼</span>':''}<br><small class="note">${z?`<b>${siU(z.mean,x.u)}</b>${esc(x.u)} · ${z.n}개교${yy!==IA.y?' · '+yy+'년':''}`:'자료 없음'}</small></div>`}).join('')).join('')}</div>
+  <div class="fg" style="margin-top:10px"><label>집계 기준</label><select id="ia-by">${Object.entries(IA_BY).map(([k,v])=>`<option value="${k}" ${k===IA.by?'selected':''}>${v[0]}별</option>`).join('')}</select></div>
+  <label class="note" style="display:flex;gap:4px;align-items:center"><input type="checkbox" id="ia-c" ${IA.closed?'checked':''}> 폐교·통합 학교 포함</label>`;
+ el.innerHTML=`<div class="rgrid" style="grid-template-columns:270px minmax(0,1fr)"><div class="card rset">${PANEL}</div><div>${BODY}</div></div>`;
+ { const kq=IA.kq||'';$$('#ia-klist .ia-kr').forEach(r=>r.style.display=!kq||r.dataset.n.includes(kq)?'':'none');
+   $('#ia-kq').oninput=e=>{IA.kq=e.target.value.trim();$$('#ia-klist .ia-kr').forEach(r=>r.style.display=!IA.kq||r.dataset.n.includes(IA.kq)?'':'none')};
+   const cur=$('#ia-klist .ia-k[style*="font-weight"]'),kl=$('#ia-klist');if(cur&&kl&&IA.kscroll==null)kl.scrollTop=Math.max(0,cur.parentElement.offsetTop-kl.offsetTop-120);else if(kl&&IA.kscroll!=null)kl.scrollTop=IA.kscroll;kl&&kl.addEventListener('scroll',()=>IA.kscroll=kl.scrollTop); }
+ const ser=grps.map(([gn,gj],q)=>({n:gn,c:HEX[q%HEX.length],v:TY.map(t=>{const z=siStat(IA.k,gj,t);return z?Math.round(z.mean*100)/100:null})}));
+ ser.push({n:'전체',c:'#14181f',v:TY.map(t=>{const z=siStat(IA.k,js,t);return z?Math.round(z.mean*100)/100:null})});
+ $('#ia-lg').innerHTML=legend(ser);lines($('#ia-line'),TY,ser,m.u);
+ siDist($('#ia-dist'),IA.k,js,IA.sel[0]??-1,y);
+ $('#ia-gbar').innerHTML=hbars(grps.map(([gn,gj])=>{const z=siStat(IA.k,gj,y);return [gn+(z?` (${z.n})`:''),z?Math.round(z.mean*10)/10:0]}),m.u,1);
+ iaScatter($('#ia-sc'),IA.k,IA.k2,js,y);
+ const re=()=>vIA();
+ [['ia-k2','k2'],['ia-by','by']].forEach(([id,key])=>$('#'+id).onchange=e=>{IA[key]=e.target.value;IA.page=0;re()});
+$('#ia-c').onchange=e=>{IA.closed=e.target.checked;IA.page=0;re()};
+ let qt;$('#ia-q').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{IA.q=e.target.value;IA.page=0;re();const n=$('#ia-q');n.focus();n.setSelectionRange(n.value.length,n.value.length)},300)};
+ $('#ia-sort').onclick=()=>{IA.sort*=-1;IA.page=0;re()};$('#ia-prev').onclick=()=>{IA.page--;re()};$('#ia-next').onclick=()=>{IA.page++;re()};
+ $$('#v-ia .ia-g').forEach(a=>a.onclick=()=>{const v=a.dataset.g;if(IA.by==='e'){S.e.clear();S.e.add(v)}else if(IA.by==='r'){S.r.clear();S.r.add(v)}else if(IA.by==='sd')S.s=v;else{S.g.clear();S.g.add(v)}IA.by=IA.by==='g'?'e':IA.by==='e'?'r':IA.by==='r'?'sd':'e';IA.page=0;syncSide();render()});
+ $$('#v-ia .ia-k').forEach(a=>a.onclick=()=>{const fromTable=!a.closest('#ia-klist');IA.k=a.dataset.k;IA.page=0;re();if(fromTable)window.scrollTo({top:0,behavior:'smooth'})});
+ $$('#v-ia .ia-s').forEach(a=>a.onclick=()=>{SIS.sel=+a.dataset.j;SIS.k=IA.k;SIS.y=IA.y;setTab('si')});
+ $$('#v-ia .ia-star').forEach(a=>a.onclick=()=>{const j=+a.dataset.j;IA.sel=IA.sel.includes(j)?IA.sel.filter(x=>x!==j):[...IA.sel,j].slice(-8);re()});
+ $('#ia-dlr').onclick=()=>saveFile(`공시지표_${m.n.replace(/[\\/:*?"<>|]/g,'')}_${y}_학교별.csv`,iaRankCSV(ranked,m,y));
+ $('#ia-dls').onclick=()=>saveFile(`공시지표_요약_${y}.csv`,iaSummaryCSV(js,y));
+ $('#ia-dlp').onclick=()=>saveFile(`공시지표_${m.n.replace(/[\\/:*?"<>|]/g,'')}_${IA_BY[IA.by][0]}별.csv`,rowsCSV([[`${m.n}(${m.u}) ${IA_BY[IA.by][0]}별 학교 평균`],[IA_BY[IA.by][0],...SI.Y.map(String)],...grps.map(([gn,gj])=>[gn,...SI.Y.map(t=>{const z=siStat(IA.k,gj,t);return z?Math.round(z.mean*100)/100:''})]),['전체',...SI.Y.map(t=>{const z=siStat(IA.k,js,t);return z?Math.round(z.mean*100)/100:''})]]));
+}
+
+// ===== 공시 원자료 (분야별 공시항목 전체 학교 표) =====
+let RW=null,RWP=null;const RWC={};const RWS={c:'학생',t:'전문대학',y:2025,i:null,q:'',iq:'',page:0,sc:null,sd:1,school:''};
+const RW_T=['대학','전문대학','대학원대학','대학원'],RW_C=['학생','교원연구','교육여건','대학운영','산학협력','예결산'];
+async function loadRW(){if(RW)return RW;if(!RWP)RWP=fetch('rw.json').then(r=>r.json()).then(j=>{RW=j.map(a=>({i:a[0],y:a[1],t:a[2],c:a[3],code:a[4],n:a[5],ok:!!a[6],r:a[7],h:a[8]}));return RW});return RWP}
+const RW_TC={대학:'u',전문대학:'j',대학원대학:'g',대학원:'s'},RW_CC={학생:'st',교원연구:'fa',교육여건:'ed',대학운영:'op',산학협력:'in',예결산:'bu'};
+async function rwChunk(it){const k=`c${it.y}${RW_TC[it.t]}${RW_CC[it.c]}`;if(!RWC[k]){RWC[k]=fetch(`rwc/${k}.json`).then(r=>{if(!r.ok)throw new Error('파일 없음');return r.json()});RWC[k].catch(()=>delete RWC[k])}return RWC[k]}
+async function rwTable(i){const it=RW.find(x=>x.i===i);const c=await rwChunk(it);const d=c[String(i)];if(!d)throw new Error('표 없음');return d}
+const rwNameCol=h=>{let j=h.findIndex(x=>/^학교(명)?$/.test(x));if(j<0)j=h.findIndex(x=>x.includes('학교')&&!x.includes('종류')&&!x.includes('코드'));return j};
+const rwNum=v=>typeof v==='number';
+const RW_GRP=(t,e)=>/기능/.test(t)?'기능대학':/사이버|방송통신/.test(t)?'원격대학':/각종학교/.test(t)?'기타':/교육대학/.test(t)?'교육대학':/전문/.test(t)?(/특별법/.test(e||'')?'기타':'전문대학'):'대학';
+const RW_T4G={대학:['대학'],교육대학:['대학'],전문대학:['전문대학'],원격대학:['대학','전문대학'],기능대학:['전문대학'],대학원대학:['대학원대학'],기타:['대학','전문대학']};
+function rwGPass(d,it){const H=d.h,stj=H.indexOf('상태'),tj=H.indexOf('학교종류'),ej=H.indexOf('설립구분'),sj=H.indexOf('지역'),nc=rwNameCol(H);
+ return r=>{const g=(it.t==='대학원'||it.t==='대학원대학')?it.t:tj>=0&&r[tj]?RW_GRP(String(r[tj]),ej>=0?String(r[ej]):''):it.t;
+  if(S.g.size&&g!=='대학원'&&!S.g.has(g))return false;
+  const e=ej>=0?String(r[ej]):'';const e2=/특별법/.test(e)?'특별법법인':/국립/.test(e)?'국립':e;
+  if(S.e.size&&ej>=0&&!S.e.has(e2))return false;
+  const sd=sj>=0?String(r[sj]):'';if(S.s&&sj>=0&&!sd.includes(S.s)&&!(S.s.length>2&&sd.includes(S.s.slice(0,2))))return false;
+  if(S.r.size&&sj>=0&&!S.r.has(REGION[sd.slice(0,2)]||'도 지역'))return false;
+  if(S.b.size&&!S.b.has(g==='기능대학'?'직업능력개발법':e2==='특별법법인'?'특별법':'고등교육법'))return false;
+  if(S.st.size&&stj>=0&&!S.st.has(String(r[stj]).replace('학교명변경','학교명 변경')))return false;
+  if(S.q&&!String(nc>=0?r[nc]:r.join(' ')).includes(S.q))return false;return true}}
+const rwHd=s=>{const p=String(s).split(' > ');return `<span title="${esc(s)}">${p.slice(-2).map(esc).join('<br>')}</span>`};
+function rwCodeSort(a,b){const p=s=>s.split('-').map(x=>{const n=parseInt(x);return isNaN(n)?x.charCodeAt(0)+1000:n});const x=p(a),y=p(b);for(let k=0;k<Math.max(x.length,y.length);k++){if((x[k]??-1)!==(y[k]??-1))return (x[k]??-1)-(y[k]??-1)}return 0}
+function rwAllowedT(){if(!S.g.size)return RW_T.slice();const t=[];GORDER.forEach(g=>{if(S.g.has(g))RW_T4G[g].forEach(x=>{if(!t.includes(x))t.push(x)})});if(S.g.has('대학')||S.g.has('교육대학'))t.push('대학원');return t.length?t:RW_T.slice()}
+async function vRW(){
+ const el=$('#v-rw');if(!RW){el.innerHTML='<div class="card"><p class="note">공시 원자료 목록을 불러오는 중…</p></div>';await loadRW()}
+ if(RWS.lastSY!==S.y){RWS.lastSY=S.y;if(S.y>=2024&&S.y<=2026&&RWS.y!==S.y){RWS.y=S.y;RWS.i=null}}
+ const AT=rwAllowedT();if(!AT.includes(RWS.t)){RWS.t=AT[0];RWS.i=null}
+ if(RWS.iq){const pool=RW.filter(x=>x.t===RWS.t&&x.y===RWS.y);const m=pool.find(x=>x.code===RWS.iq)||pool.find(x=>(x.code+' '+x.n).includes(RWS.iq));if(m&&m.c!==RWS.c){RWS.c=m.c;RWS.i=null}if(m&&m.code===RWS.iq&&RWS.i==null)RWS.i=m.i}
+ const tot=RW.length,okn=RW.filter(x=>x.ok).length;
+ const list=RW.filter(x=>x.c===RWS.c&&x.t===RWS.t&&x.y===RWS.y&&(!RWS.iq||(x.code+' '+x.n).includes(RWS.iq))).sort((a,b)=>rwCodeSort(a.code,b.code));
+ if(RWS.i==null||!list.some(x=>x.i===RWS.i)){const f=list.find(x=>x.ok&&x.r)||list.find(x=>x.ok)||list[0];RWS.i=f?f.i:null;RWS.page=0;RWS.sc=null}
+ const it=RW.find(x=>x.i===RWS.i);
+ const cnt=(c,t,y)=>{const a=RW.filter(x=>(c==null||x.c===c)&&(t==null||x.t===t)&&(y==null||x.y===y));return [a.filter(x=>x.ok).length,a.length]};
+ const seg=(id,vals,cur,lab)=>`<div class="fg"><label>${lab}</label><div class="seg" id="${id}" style="flex-wrap:wrap">${vals.map(v=>`<button data-v="${v}" class="${String(v)===String(cur)?'on':''}">${v}</button>`).join('')}</div></div>`;
+ el.innerHTML=`<div class="card" style="padding:10px 14px"><div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;align-items:center"><h2 style="margin:0">공시 원자료 <small>대학알리미 분야별 공시항목 · 항목별 전체 학교 표</small></h2>
+   <span class="note">수집 ${okn}/${tot}표 · ${[2026,2025,2024].map(y=>{const [a,b]=cnt(null,null,y);return `${y}년 ${a}/${b}`}).join(' · ')}</span></div>
+   <p class="note" style="margin:6px 0 0">범위: <b>${RWS.y}년 공시 · ${esc(RWS.t)}</b> · 왼쪽 필터 <b>${esc(gfText())}</b>${S.y<2024||S.y>2026?` · 기준연도 ${S.y}년 원자료는 없어 ${RWS.y}년을 보여줍니다`:''} — 왼쪽 범위(학교구분·기준연도)를 바꾸면 가운데 항목 목록이 자동으로 바뀝니다.</p></div>
+ <div class="rgrid" style="grid-template-columns:290px minmax(0,1fr)">
+  <div class="card rset"><h2>공시항목 필터</h2>
+   ${seg('rw-y',[2026,2025,2024],RWS.y,'공시연도')}
+   ${seg('rw-t',AT,RWS.t,'학교종류'+(S.g.size?' <small class="note">(왼쪽 학교구분 기준)</small>':''))}
+   <div class="fg"><label>분야</label><div class="rw-cl">${RW_C.map(c=>{const [a,b]=cnt(c,RWS.t,RWS.y);return `<a href="javascript:void(0)" class="rw-c" data-c="${c}" style="text-decoration:none;display:flex;justify-content:space-between;padding:5px 8px;border-radius:6px;margin-bottom:2px;${c===RWS.c?'background:var(--accent);color:#fff;font-weight:700':'background:#f3f6fa;color:inherit'}"><span>${c}</span><small>${a}/${b}</small></a>`}).join('')}</div></div>
+   <div class="fg"><label>항목 검색</label><input type="search" id="rw-iq" placeholder="예: 충원, 4-다, 장학금" value="${esc(RWS.iq)}"></div>
+   <div class="fg"><label>${esc(RWS.c)} 항목 <small class="note">${list.length}개 · 오른쪽 숫자는 필터 적용 행</small></label>
+   <div class="pklist" style="max-height:520px">${list.map(x=>`<div class="pk" style="padding:3px 0;border-bottom:1px solid var(--line2)"><a href="javascript:void(0)" class="rw-i" data-i="${x.i}" style="${x.i===RWS.i?'font-weight:700;color:var(--accent)':x.ok?'':'color:var(--muted)'}"><b>${esc(x.code)}</b> ${esc(x.n)}</a><br><small class="note rw-cnt" data-i="${x.i}">${x.ok?(x.r?`${fmt(x.r)}행 · ${x.h}열`:'공시 자료 없음'):'⏳ 미수집'}</small></div>`).join('')||'<p class="note">해당 항목 없음</p>'}</div></div>
+   <div style="margin-top:10px;border-top:1px solid var(--line);padding-top:8px"><b style="font-size:13px">학교 한 곳 모아보기</b>
+    <p class="note" style="margin:4px 0">이 분야 전체 항목에서 한 학교의 행만 모읍니다.</p>
+    <input type="search" id="rw-sch" placeholder="대학명 입력" value="${esc(RWS.school||S.q)}"><button class="btn sm" id="rw-schgo" style="margin-top:6px;width:100%">${esc(RWS.c)} ${RWS.y}년 모아보기</button></div>
+  </div>
+  <div id="rw-main"><div class="card"><p class="note">표를 불러오는 중…</p></div></div>
+ </div>`;
+ $$('#rw-y button').forEach(b=>b.onclick=()=>{RWS.y=+b.dataset.v;RWS.i=null;vRW()});
+ $$('#rw-t button').forEach(b=>b.onclick=()=>{RWS.t=b.dataset.v;RWS.i=null;vRW()});
+ let qt;$('#rw-iq').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{RWS.iq=e.target.value.trim();vRW().then(()=>{const n=$('#rw-iq');n.focus();n.setSelectionRange(n.value.length,n.value.length)})},350)};
+ $$('#v-rw .rw-c').forEach(b=>b.onclick=()=>{RWS.c=b.dataset.c;RWS.i=null;RWS.mode='table';vRW()});
+ $$('#v-rw .rw-i').forEach(a=>a.onclick=()=>{RWS.i=+a.dataset.i;RWS.page=0;RWS.sc=null;RWS.q='';RWS.mode='table';vRW()});
+ $('#rw-schgo').onclick=()=>{RWS.school=$('#rw-sch').value.trim();if(RWS.school)rwSchool();};
+ $('#rw-sch').onkeydown=e=>{if(e.key==='Enter')$('#rw-schgo').click()};
+ if(RWS.mode==='school'&&RWS.school){rwSchool();return}
+ rwShow(it);
+ // 필터 적용 행 수를 목록에 표시 (같은 묶음 파일 하나만 읽음)
+ const first=list.find(x=>x.ok&&x.r);if(first&&gfText()!=='전체'){rwChunk(first).then(c=>{list.forEach(x=>{const d=c[String(x.i)];const n=$(`#v-rw .rw-cnt[data-i="${x.i}"]`);if(!d||!n)return;const gp=rwGPass(d,x);const k=d.r.filter(gp).length;n.innerHTML=`<b style="color:${k?'var(--accent)':'var(--muted)'}">${fmt(k)}</b> / ${fmt(d.r.length)}행`})}).catch(()=>{})}
+}
+async function rwShow(it){
+ const box=$('#rw-main');RWS.mode='table';
+ if(!it){box.innerHTML='<div class="card"><p class="note">항목을 선택하세요.</p></div>';return}
+ const other=RW.filter(x=>x.code===it.code&&x.n===it.n&&x.t===it.t&&x.i!==it.i).sort((a,b)=>b.y-a.y);
+ const head=`<div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start"><div><h2 style="margin:0">${esc(it.code)}. ${esc(it.n)}</h2><p class="note" style="margin:4px 0 0">${it.y}년 공시 · ${esc(it.t)} · ${esc(it.c)} · <a href="javascript:itemModal('${esc(it.code)}')">항목 설명</a>${other.length?' · 다른 연도: '+other.map(o=>`<a href="javascript:void(0)" class="rw-o" data-i="${o.i}" data-y="${o.y}">${o.y}${o.ok?'':'(미수집)'}</a>`).join(' '):''}</p></div>`;
+ if(!it.ok){box.innerHTML=`<div class="card">${head}</div><p class="note">⏳ 아직 수집하지 않은 표입니다. 남은 표를 수집하면 자동으로 채워집니다.</p></div>`;rwOther();return}
+ let d;try{d=await rwTable(it.i)}catch(e){box.innerHTML=`<div class="card">${head}</div><p class="note">표 파일을 불러오지 못했습니다: ${esc(e.message)}</p></div>`;return}
+ if(RWS.i!==it.i||!box.isConnected)return;
+ const nc=rwNameCol(d.h),q=RWS.q.trim();
+ const fcols=['학교종류','설립구분','지역','상태'].map(n=>[n,d.h.indexOf(n)]).filter(p=>p[1]>=0);
+ RWS.f=RWS.f||{};
+ const gp=rwGPass(d,it);let rows=d.r.filter(r=>gp(r)&&(!q||(nc>=0?String(r[nc]):r.join(' ')).includes(q))&&fcols.every(([n,j])=>!RWS.f[n]||r[j]===RWS.f[n]));
+ if(RWS.sc!=null){const j=RWS.sc;rows=rows.slice().sort((a,b)=>{const x=a[j],y=b[j];if(rwNum(x)&&rwNum(y))return RWS.sd*(x-y);return RWS.sd*String(x).localeCompare(String(y),'ko')})}
+ const numCols=d.h.map((h,j)=>j).filter(j=>d.r.some(r=>rwNum(r[j]))&&d.r.filter(r=>r[j]!=='').every(r=>rwNum(r[j])));
+ const PG=100,pages=Math.max(1,Math.ceil(rows.length/PG));RWS.page=Math.min(RWS.page,pages-1);
+ const sums=numCols.length?d.h.map((h,j)=>numCols.includes(j)&&!/(율|비율|%|평균|1인당|경쟁률|코드|연도)/.test(h)?rows.reduce((a,r)=>a+(rwNum(r[j])?r[j]:0),0):null):null;
+ box.innerHTML=`<div class="card">${head}
+   <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"><input type="search" id="rw-q" placeholder="대학명 입력" value="${esc(RWS.q)}" style="width:160px">${fcols.map(([n,j])=>{const vs=[...new Set(d.r.map(r=>r[j]))].filter(Boolean).sort();return vs.length>1?`<select class="rw-f" data-n="${n}" style="width:auto"><option value="">${n} 전체</option>${vs.map(v=>`<option ${RWS.f[n]===v?'selected':''}>${esc(v)}</option>`).join('')}</select>`:''}).join('')}<button class="btn ghost sm" id="rw-dl">⬇ 보이는 행 CSV (${fmt(rows.length)}행)</button><button class="btn ghost sm" id="rw-dlall">⬇ 원본 전체</button></div></div>
+  <p class="note" style="margin:0 0 6px">${esc(d.t)} ${d.u?'· '+esc(d.u):''} · ${fmt(d.r.length)}행 중 ${fmt(rows.length)}행 · 왼쪽 필터: <b>${esc(gfText())}</b> · 열 제목을 누르면 정렬</p>
+  ${d.r.length?`<div class="tw" style="max-height:620px"><table class="t"><thead><tr>${d.h.map((h,j)=>`<th class="rw-h" data-j="${j}" style="cursor:pointer;white-space:normal;min-width:${j===nc?140:70}px;vertical-align:bottom">${rwHd(h)}${RWS.sc===j?(RWS.sd>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead><tbody>
+   ${rows.slice(RWS.page*PG,RWS.page*PG+PG).map(r=>`<tr>${r.map((c,j)=>`<td style="${j===nc?'text-align:left;font-weight:500':''}">${rwNum(c)?fmt(c,Number.isInteger(c)?0:1):esc(c)}</td>`).join('')}</tr>`).join('')}
+   ${sums&&rows.length>1?`<tr class="tot">${sums.map((v,j)=>`<td>${j===0?'합계':v==null?'':fmt(v)}</td>`).join('')}</tr>`:''}</tbody></table></div>
+  <div style="display:flex;gap:8px;justify-content:flex-end;align-items:center;margin-top:8px"><button class="btn ghost sm" id="rw-prev" ${RWS.page?'':'disabled'}>◀</button><span class="note">${RWS.page+1} / ${pages}</span><button class="btn ghost sm" id="rw-next" ${RWS.page<pages-1?'':'disabled'}>▶</button></div>`:'<p class="note">이 연도·학교종류에는 공시된 행이 없습니다.</p>'}
+  ${numCols.length&&rows.length>2?`<div class="ctrl" style="margin-top:12px"><span class="note">숫자 열 빠른 그래프</span><select id="rw-gc" style="width:auto">${numCols.filter(j=>j!==0).map(j=>`<option value="${j}" ${RWS.gc===j?'selected':''}>${esc(d.h[j])}</option>`).join('')}</select><select id="rw-gby" style="width:auto"><option value="top">상위 20개교</option>${fcols.map(([n])=>`<option value="${n}" ${RWS.gby===n?'selected':''}>${n}별 합계·평균</option>`).join('')}</select></div><div id="rw-gr"></div>`:''}
+ </div>`;
+ let qt;$('#rw-q').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{RWS.q=e.target.value;RWS.page=0;rwShow(it).then(()=>{const n=$('#rw-q');if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length)}})},300)};
+ $$('#v-rw .rw-f').forEach(s=>s.onchange=()=>{RWS.f[s.dataset.n]=s.value;RWS.page=0;rwShow(it)});
+ $$('#v-rw .rw-h').forEach(th=>th.onclick=()=>{const j=+th.dataset.j;if(RWS.sc===j)RWS.sd*=-1;else{RWS.sc=j;RWS.sd=numCols.includes(j)?-1:1}rwShow(it)});
+ if($('#rw-prev')){$('#rw-prev').onclick=()=>{RWS.page--;rwShow(it)};$('#rw-next').onclick=()=>{RWS.page++;rwShow(it)}}
+ const fname=`대학정보공시_${it.y}_${it.t}_${it.code}_${it.n.replace(/[\\/:*?"<>|]/g,'').slice(0,40)}`;
+ $('#rw-dl').onclick=()=>saveFile(fname+(q||Object.values(RWS.f).some(Boolean)||gfText()!=='전체'?'_필터':'')+'.csv',rowsCSV([[d.t+(d.u?' '+d.u:'')],d.h,...rows]));
+ $('#rw-dlall').onclick=()=>saveFile(fname+'.csv',rowsCSV([[d.t+(d.u?' '+d.u:'')],d.h,...d.r]));
+ $$('#v-rw .rw-o').forEach(a=>a.onclick=()=>{RWS.y=+a.dataset.y;RWS.i=+a.dataset.i;RWS.page=0;RWS.sc=null;vRW()});
+ const gr=$('#rw-gr');if(gr){const draw=()=>{const j=+$('#rw-gc').value,by=$('#rw-gby').value;RWS.gc=j;RWS.gby=by;
+   const isR=/(율|비율|%|평균|1인당|경쟁률|평점)/.test(d.h[j]);
+   if(by==='top'){const m=new Map();rows.forEach(r=>{if(!rwNum(r[j]))return;const k=String(nc>=0?r[nc]:r[0]);const o=m.get(k)||{s:0,n:0};o.s+=r[j];o.n++;m.set(k,o)});const t=[...m.entries()].map(([k,o])=>[k,isR?Math.round(o.s/o.n*10)/10:o.s]).sort((a,b)=>b[1]-a[1]).slice(0,20);gr.innerHTML=`<p class="note">학교별 ${isR?'평균':'합계'}(여러 행이면 묶음) 상위 20</p>`+hbars(t,'',isR?1:0)}
+   else{const fj=d.h.indexOf(by),m=new Map();rows.forEach(r=>{if(!rwNum(r[j]))return;const k=r[fj]||'(빈칸)';const o=m.get(k)||{s:0,n:0};o.s+=r[j];o.n++;m.set(k,o)});
+    const isRate=/(율|비율|%|평균|1인당|경쟁률)/.test(d.h[j]);gr.innerHTML=`<p class="note">${isRate?'학교 단순평균':'합계'} · ( ) 학교 수</p>`+hbars([...m.entries()].sort((a,b)=>b[1].s-a[1].s).map(([k,o])=>[`${k} (${o.n})`,isRate?Math.round(o.s/o.n*10)/10:o.s]),'',isRate?1:0)}};
+  const outl=()=>{const j=+$('#rw-gc').value;const stj=d.h.indexOf('상태');const pts=rows.filter(r=>rwNum(r[j]));if(pts.length<8)return '';const [lo,hi]=trFence(pts.map(r=>r[j]));const o=pts.filter(r=>r[j]<lo||r[j]>hi).sort((a,b)=>Math.abs(b[j])-Math.abs(a[j]));if(!o.length)return '';
+    const isR=/(율|비율|%|평균|1인당|경쟁률|평점)/.test(d.h[j]);const all=pts.reduce((s,r)=>s+r[j],0),mAll=all/pts.length,mw=(all-o.reduce((s,r)=>s+r[j],0))/Math.max(1,pts.length-o.length);
+    return `<div class="note" style="background:#fdecec;border-left:3px solid #e34948;margin-top:8px"><b>특이값 ${o.length}행</b> (다른 행과 크게 동떨어진 값 · 사분위 범위 3배 밖)${isR?` · 단순평균 ${fmt(mAll,1)} → 특이값 빼면 ${fmt(mw,1)}`:''}<br>${o.slice(0,8).map(r=>`<b>${esc(String(nc>=0?r[nc]:r[0]))}</b>${stj>=0&&r[stj]&&r[stj]!=='기존'?`(${esc(r[stj])})`:''} ${fmt(r[j],Number.isInteger(r[j])?0:1)}`).join(' · ')}${o.length>8?` 외 ${o.length-8}행`:''}</div>`};
+  const draw2=()=>{draw();gr.insertAdjacentHTML('beforeend',outl())};
+  $('#rw-gc').onchange=draw2;$('#rw-gby').onchange=draw2;draw2()}
+}
+async function rwSchool(){
+ RWS.mode='school';const box=$('#rw-main'),nm=RWS.school;
+ const items=RW.filter(x=>x.c===RWS.c&&x.t===RWS.t&&x.y===RWS.y&&x.ok&&x.r).sort((a,b)=>rwCodeSort(a.code,b.code));
+ box.innerHTML=`<div class="card"><p class="note">${esc(RWS.c)} ${items.length}개 항목에서 '${esc(nm)}'을(를) 찾는 중… <span id="rw-prog">0</span>/${items.length}</p></div>`;
+ const out=[];let done=0;
+ await Promise.all(items.map(async it=>{try{const d=await rwTable(it.i);const nc=rwNameCol(d.h);const rs=d.r.filter(r=>String(nc>=0?r[nc]:r.join(' ')).includes(nm));out.push([it,d,rs])}catch(e){}done++;const p=$('#rw-prog');if(p)p.textContent=done}));
+ if(RWS.mode!=='school'||RWS.school!==nm)return;
+ out.sort((a,b)=>rwCodeSort(a[0].code,b[0].code));
+ const hit=out.filter(o=>o[2].length),names=[...new Set(hit.flatMap(o=>{const nc=rwNameCol(o[1].h);return o[2].map(r=>nc>=0?String(r[nc]).split('_')[0].replace(/\s*\(.*\)$/,''):'')}))].filter(Boolean);
+ box.innerHTML=`<div class="card"><div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center"><h2 style="margin:0">'${esc(nm)}' · ${esc(RWS.c)} ${RWS.y}년 공시 <small>${hit.length}/${items.length}개 항목에 자료 있음</small></h2>
+   <span style="display:flex;gap:6px"><button class="btn ghost sm" id="rw-back">← 항목 보기</button><button class="btn ghost sm" id="rw-sdl">⬇ CSV</button></span></div>
+   ${names.length>1?`<p class="note">이름이 겹치는 학교가 있습니다: ${names.map(esc).join(', ')} — 더 정확한 이름으로 검색하세요.</p>`:''}
+   ${!hit.length?'<p class="note">일치하는 학교가 없습니다. 학교종류(현재 '+esc(RWS.t)+')나 연도를 확인하세요.</p>':''}</div>
+  ${hit.map(([it,d,rs])=>{const keep=d.h.map((h,j)=>j).filter(j=>j>4||j===rwNameCol(d.h));return `<div class="card"><h2>${esc(it.code)}. ${esc(it.n)} <small>${esc(d.u||'')} · ${rs.length}행</small><a href="javascript:void(0)" class="rw-goi" data-i="${it.i}" style="font-size:12px;font-weight:400">전체 학교 표 보기 →</a></h2>
+   <div class="tw" style="max-height:320px"><table class="t"><thead><tr>${keep.map(j=>`<th style="white-space:normal;vertical-align:bottom;min-width:70px;max-width:160px">${rwHd(d.h[j])}</th>`).join('')}</tr></thead><tbody>${rs.slice(0,200).map(r=>`<tr>${keep.map(j=>`<td>${rwNum(r[j])?fmt(r[j],Number.isInteger(r[j])?0:1):esc(r[j])}</td>`).join('')}</tr>`).join('')}</tbody></table></div></div>`}).join('')}
+  ${out.filter(o=>!o[2].length).length?`<div class="card"><p class="note">자료가 없는 항목: ${out.filter(o=>!o[2].length).map(o=>esc(o[0].code)).join(', ')}</p></div>`:''}`;
+ $('#rw-back').onclick=()=>{RWS.mode='table';vRW()};
+ $$('#v-rw .rw-goi').forEach(a=>a.onclick=()=>{RWS.mode='table';RWS.i=+a.dataset.i;RWS.q=nm;RWS.page=0;vRW()});
+ $('#rw-sdl').onclick=()=>{const all=[[`${nm} · ${RWS.c} ${RWS.y}년 공시 (${RWS.t})`]];hit.forEach(([it,d,rs])=>{all.push([],[`■ ${it.code}. ${it.n} ${d.u||''}`],d.h,...rs)});saveFile(`대학정보공시_${nm}_${RWS.c}_${RWS.y}.csv`,rowsCSV(all))};
+}
+
+function vAbout(){
+  $('#v-ab').innerHTML=`<div class="card"><h2>자료 설명</h2><table class="t"><tbody>
+  <tr><td>학교개황</td><td class="w">대학알리미 자료실 ‘학교 개황 정보/리스트’ 2015~2026 (2026년은 2026.2.19. 기준). 각 연도 파일의 ‘학교개황(폐교 포함)’ 시트에서 학교상태가 폐교가 아닌 학교를 공시 대상으로 봄. 대학 내 부설 대학원 행은 기관 수에서 뺌</td></tr>
+  <tr><td>기관 정의</td><td class="w">학교명 뒤 ‘(○○캠퍼스)’ 표기는 본교로 묶음. 한국폴리텍은 I~VII·특성화대학 9개 단위로 묶음. 평생교육법상 사내대학·원격대학(학제 ‘기타대학·기타전문대학’)은 공시 대상이 아니어서 제외</td></tr>
+  <tr><td>학교 구분</td><td class="w">대학·전문대학·기능대학·대학원대학. 기능대학(한국폴리텍 I~VII·특성화대학, ICT폴리텍대학)은 교육부 집계에서 전문대학에 포함되지만 여기서는 따로 봅니다. 한국농수산대학교는 특별법(한국농수산대학교 설치법) 국립대학으로 전문대학에 포함됩니다.</td></tr>
+  <tr><td>공식 대상 수와 차이</td><td class="w">교육부 발표 2026년 공시 대상은 403개교(대학 222, 전문대학 137, 대학원대학 44). 학교개황 원자료는 2.19. 기준으로 통합 직후 캠퍼스·각종학교를 포함해 대학 수가 몇 곳 더 많게 나옴</td></tr>
+  <tr><td>변동 판정</td><td class="w">전년 공시 대상에서 빠진 학교를 같은 해 새 학교와 주소로 대조(교명변경), 교육부 보도자료로 통합·폐교 확인. 광양보건대학교 폐교(2026.8.31.)는 2026 학교개황 이후 변동이라 이력에만 반영</td></tr>
+  <tr><td>공시항목</td><td class="w">한국대학교육협의회 「2026년 대학정보공시 지침서」(2026.3.10.) 월별 공시항목 표</td></tr>
+  <tr><td>주요통계</td><td class="w"><b>HEDX 자체 집계(공시 원자료 기준)</b>: 공시 원자료 2024~2026년 표를 「2026년 대학정보공시 지침서」 산식으로 계산(비율 = Σ분자 ÷ Σ분모, 규모 = 합계). 교육부·대교협 「2026년 대학정보공시 분석 결과」 보도자료 값(4년제 192개교·전문대학 125개교)은 '대교협 분석보고서(참고)'에만 표시</td></tr>
+  <tr><td>공시지표 분석</td><td class="w">대학알리미 ‘공시데이터 추이’의 학교별 지표 파일(대학·전문대학 각 42종, 2008~2026)에서 56개 지표를 뽑아 학교코드 기준으로 정리. 평균은 학교 단순평균이며, 같은 학교가 여러 행(본·분교 등)이면 비율은 평균·인원은 합계. 대학원대학은 이 자료에 없어 제외</td></tr>
+  <tr><td>공시 원자료</td><td class="w">대학알리미 ‘분야별 공시항목’의 항목별 공시정보(전체 학교 표)를 2024~2026년·대학/전문대학/대학원대학/대학원별로 내려받아 변환. 다단 머리글은 ‘상위 &gt; 하위’로 이어 붙임. 미수집 표는 수집이 끝나는 대로 채움</td></tr>
+  <tr><td>원문</td><td class="w"><a href="https://www.academyinfo.go.kr/brd/brd0520/selectListLink.do">대학알리미 자료실</a> (academyinfo.go.kr)</td></tr></tbody></table></div>`;
+}
+const VIEWS={ov:vOverview,tr:vTrend,ls:vList,si:vSI,ia:vIA,it:vItems,st:vStats,rp:vReport,ab:vAbout};
+// 요약 문장(.lead)은 문장마다 한 줄로 나눠 보여 줌
+function leadSplit(){document.querySelectorAll('.lead:not([data-sp])').forEach(p=>{p.dataset.sp=1;const parts=p.innerHTML.split(/(?<=(?:다|요|음|함)\.)\s+(?![^<]*>)/).map(s=>s.trim()).filter(Boolean);if(parts.length>1)p.innerHTML=parts.map(s=>`<span class="ln">${s}</span>`).join('')})}
+new MutationObserver(()=>leadSplit()).observe(document.documentElement,{childList:true,subtree:true});
+function render(){chips();VIEWS[TAB]()}
+function setTab(t){if(!VIEWS[t])t='ov';TAB=t;$$('#tabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===t));TABS.forEach(([k])=>$('#v-'+k).classList.toggle('hide',k!==t));render()}
+function initUI(){
+  $('#tabs').innerHTML=TABS.map(([k,l])=>`<button data-t="${k}">${l}</button>`).join('');
+  $$('#tabs button').forEach(b=>b.onclick=()=>{location.hash=b.dataset.t});
+  $('#f-y').innerHTML=[...YEARS].reverse().map(y=>`<option>${y}</option>`).join('');
+  const mk=(id,vals,set)=>{$(id).innerHTML=vals.map(v=>`<label><input type="checkbox" value="${v}">${v}</label>`).join('');$$(id+' input').forEach(c=>c.onchange=()=>{c.checked?set.add(c.value):set.delete(c.value);LPAGE=0;render()})};
+  mk('#f-g',GORDER,S.g);mk('#f-e',EORDER.slice(0,4),S.e);mk('#f-r',RORDER,S.r);mk('#f-b',BORDER,S.b);mk('#f-st',['기존','신설','학교명 변경','폐교'],S.st);
+  const scopeSync=()=>{const v=[...S.g].sort((a,b)=>GORDER.indexOf(a)-GORDER.indexOf(b)).join(',');const o=[...$('#f-scope').options].find(x=>x.value===v);$('#f-scope').value=o?v:''};
+  $('#f-scope').onchange=e=>{S.g.clear();e.target.value.split(',').filter(Boolean).forEach(g=>S.g.add(g));syncSide();LPAGE=0;render()};
+  $$('#f-g input').forEach(c=>c.addEventListener('change',scopeSync));SCOPESYNC=scopeSync;
+  $('#f-s').innerHTML+=[...new Set(REC.map(r=>r.sd))].sort().map(s=>`<option>${s}</option>`).join('');
+  $('#f-y').onchange=e=>{S.y=+e.target.value;render()};$('#f-s').onchange=e=>{S.s=e.target.value;render()};
+  let qt;$('#f-q').oninput=e=>{clearTimeout(qt);qt=setTimeout(()=>{S.q=e.target.value.trim();LPAGE=0;render()},250)};
+  const seg=(id,key,num)=>$$(id+' button').forEach(b=>b.onclick=()=>{$$(id+' button').forEach(x=>x.classList.toggle('on',x===b));S[key]=num?+b.dataset.v:b.dataset.v;render()});
+  seg('#f-per','per',true);seg('#f-unit','unit',false);
+  $('#reset').onclick=()=>{S.g.clear();S.e.clear();S.r.clear();S.b.clear();S.st.clear();S.s='';S.q='';$('#f-scope').value='';$$('.side input[type=checkbox]').forEach(c=>c.checked=false);$('#f-s').value='';$('#f-q').value='';render()};
+  document.addEventListener('click',e=>{const u=e.target.closest('.uname');if(u)profile(u.dataset.u)});
+  addEventListener('hashchange',()=>setTab(location.hash.slice(1)));
+}
+fetch('data.json?v=20261125').then(r=>r.json()).then(raw=>{decode(raw);initUI();setTab(location.hash.slice(1)||'ov')}).catch(e=>{document.querySelector('main').innerHTML='<div class="card">데이터를 불러오지 못했습니다: '+esc(e.message)+'</div>'});
+}
+</script>
+</body>
+</html>

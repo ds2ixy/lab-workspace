@@ -13,6 +13,7 @@ _headers                        캐시 끄기 — 갱신 즉시 반영
 img/og/og-main.jpg              카톡·SNS 공유 썸네일 (1200×630)
 tbp/p0~p6.json                  규정집·학사편람 원문 표 이미지 묶음 (질의응답 화면에서 사용)
 files/handbook*.pdf             학사편람 본문·부록 다운로드용 PDF
+hedx/                           고등교육 공시자료 대시보드(외부 공개용: index.html, data.json, si.json)
 ```
 
 ## 갱신 방법
