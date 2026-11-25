@@ -1113,7 +1113,7 @@ function hcard(o){
 function homeHTML(){
   var ps = state.projects, h = '';
   if(IS_PUBLIC){
-    h += '<section class="hero"><div><h1>연구소 결과물</h1><p>'+lines(["한국고등직업교육연구소의 대시보드와 발간물 모음","항목을 누르면 요약 확인 및 결과물 바로가기"])+'</p></div>'+
+    h += '<section class="hero"><div><h1>HVER 지식 아카이브</h1><p>'+lines(["한국고등직업교육연구소의 대시보드와 발간물 모음","항목을 누르면 요약 확인 및 결과물 바로가기"])+'</p></div>'+
       '<div class="heroStats"><div><b>'+ps.length+'개</b><span>결과물</span></div><div><b>'+Object.keys(REGDOCS).length+'개</b><span>규정 Q&amp;A</span></div></div></section>';
   } else {
     var avg = Math.round(ps.reduce(function(a,p){return a+pct(p);},0)/ps.length);
