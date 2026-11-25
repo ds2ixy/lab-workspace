@@ -727,7 +727,7 @@ function vReport(){
     <div class="chk" style="margin-bottom:8px"><label><input type="checkbox" id="rp-charts" ${RP.charts?"checked":""}>그림 포함</label><label><input type="checkbox" id="rp-chg" ${RP.chg?"checked":""}>증감 열</label><label><input type="checkbox" id="rp-top" ${RP.top?"checked":""}>상위 학교 표</label></div>
     <div class="row2"><div class="fg"><label>상위 표 지표</label><select id="rp-topid">${indOptions(RP.topId,x=>x.t!=="growth"&&x.src!=="C")}</select></div><div class="fg" style="max-width:80px"><label>개수</label><input type="number" id="rp-topn" min="5" max="50" value="${RP.topN}"></div></div>
     <div class="fg"><label>포함할 지표 <button class="lnk" id="rp-def">기본값</button> · <button class="lnk" id="rp-none">해제</button></label><div class="seclist">${list}</div></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="rp-html">HTML 저장 (인쇄·PDF용)</button><button class="btn" id="rp-doc">Word(.doc) 저장</button><button class="btn ghost" id="rp-copy">본문 텍스트 복사</button><button class="btn ghost" id="rp-reset">문장 초기화</button></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px"><button class="btn" id="rp-html">HTML 저장 (인쇄·PDF용)</button><button class="btn" id="rp-doc">Word(.docx) 저장</button><button class="btn ghost" id="rp-copy">본문 텍스트 복사</button><button class="btn ghost" id="rp-reset">문장 초기화</button></div>
     <p class="note">연도·학급·권역·단위·집계 방식은 왼쪽 필터를 따릅니다. 미리보기의 제목·요약·설명 문장·Remark는 바로 고쳐 쓸 수 있고, 저장 시 고친 내용이 반영됩니다(설정을 바꾸면 자동 문장으로 다시 작성됩니다. Remark는 유지).</p></div>
    <div class="rep-wrap"><div id="report">${buildBrief()}</div></div></div>`;
   el.querySelector(".seclist").scrollTop=keep;
@@ -741,7 +741,7 @@ function vReport(){
   $("#rp-reset").onclick=()=>{ RP.remark=null; vReport(); };
   const fname=()=>("결산분석_"+($("#report h1").innerText||"보고서")).replace(/[\\/:*?"<>|]/g,"").slice(0,80);
   $("#rp-html").onclick=()=>saveFile(fname()+".html", reportDoc(false), "text/html");
-  $("#rp-doc").onclick=async()=>{ const html=await reportDocWord(); saveFile(fname()+".doc", html, "application/msword"); };
+  $("#rp-doc").onclick=async()=>{ const b=$("#rp-doc"); b.disabled=true; b.textContent="Word 파일 만드는 중…"; try{ const blob=await DOCX.build($("#report"), fname(), {grp1:true}); await saveFile(fname()+".docx", blob, "application/vnd.openxmlformats-officedocument.wordprocessingml.document"); }catch(e){ console.error(e); toast("Word 파일을 만들지 못했습니다: "+(e.message||e)); } finally{ b.disabled=false; b.textContent="Word(.docx) 저장"; } };
   $("#rp-copy").onclick=()=>copyText($("#report").innerText);
 }
 function reportCss(){ const css=document.querySelector("style").textContent; return css.split("\n").filter(l=>/^#report|^@page|^:root/.test(l)).join("\n"); }
@@ -752,6 +752,167 @@ function reportDoc(){
 async function svgToPng(svg){ return new Promise(res=>{ try{ const xml=new XMLSerializer().serializeToString(svg); const vb=svg.viewBox.baseVal; const w=(vb&&vb.width)||700, h=(vb&&vb.height)||230;
   const img=new Image(); img.onload=()=>{ const c=document.createElement("canvas"); c.width=w*2; c.height=h*2; const x=c.getContext("2d"); x.fillStyle="#fff"; x.fillRect(0,0,c.width,c.height); x.drawImage(img,0,0,c.width,c.height); res({src:c.toDataURL("image/png"),w,h}); };
   img.onerror=()=>res(null); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(xml); }catch(e){ res(null); } }); }
+/* ================= DOCX EXPORT (보고서 → Word) ================= */
+const DOCX = (()=>{
+  const CRC=(()=>{ const t=new Uint32Array(256); for(let n=0;n<256;n++){ let c=n; for(let k=0;k<8;k++) c=c&1?0xEDB88320^(c>>>1):c>>>1; t[n]=c>>>0; } return t; })();
+  const crc32=b=>{ let c=0xFFFFFFFF; for(let i=0;i<b.length;i++) c=CRC[(c^b[i])&255]^(c>>>8); return (c^0xFFFFFFFF)>>>0; };
+  const enc=new TextEncoder();
+  function zip(files){ // [{name, data:Uint8Array}] store-only
+    const parts=[], cen=[]; let off=0;
+    for(const f of files){ const nm=enc.encode(f.name), d=f.data, c=crc32(d);
+      const h=new DataView(new ArrayBuffer(30)); h.setUint32(0,0x04034b50,true); h.setUint16(4,20,true); h.setUint16(6,0x0800,true); h.setUint16(8,0,true); h.setUint32(14,c,true); h.setUint32(18,d.length,true); h.setUint32(22,d.length,true); h.setUint16(26,nm.length,true);
+      parts.push(new Uint8Array(h.buffer),nm,d);
+      const e=new DataView(new ArrayBuffer(46)); e.setUint32(0,0x02014b50,true); e.setUint16(4,20,true); e.setUint16(6,20,true); e.setUint16(8,0x0800,true); e.setUint32(16,c,true); e.setUint32(20,d.length,true); e.setUint32(24,d.length,true); e.setUint16(28,nm.length,true); e.setUint32(42,off,true);
+      cen.push(new Uint8Array(e.buffer),nm); off+=30+nm.length+d.length; }
+    const cs=cen.reduce((s,a)=>s+a.length,0); const z=new DataView(new ArrayBuffer(22)); z.setUint32(0,0x06054b50,true); z.setUint16(8,files.length,true); z.setUint16(10,files.length,true); z.setUint32(12,cs,true); z.setUint32(16,off,true);
+    return new Blob([...parts,...cen,new Uint8Array(z.buffer)]);
+  }
+  const X=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"");
+  const FONT="맑은 고딕";
+  const BLOCK=new Set(["DIV","P","UL","OL","LI","TABLE","H1","H2","H3","H4","H5","SECTION","svg","SVG","BR"]);
+  const hasBlock=el=>[...el.querySelectorAll("*")].some(n=>BLOCK.has(n.tagName)&&n.tagName!=="BR");
+  function runs(el, base={}){ const out=[];
+    (function walk(n,st){ if(n.nodeType===3){ const t=n.textContent.replace(/\s+/g," "); if(t) out.push({t,...st}); return; }
+      if(n.nodeType!==1) return; const tg=n.tagName; if(tg==="BUTTON"||tg==="INPUT"||tg==="SELECT") return;
+      if(tg==="BR"){ out.push({br:1}); return; }
+      const s={...st}; const cs=getComputedStyle(n); if(+cs.fontWeight>=600||tg==="B"||tg==="STRONG") s.b=1; if(tg==="SMALL") s.sz=Math.min(s.sz||20,16);
+      n.childNodes.forEach(c=>walk(c,s)); })(el,base);
+    if(out.length){ if(out[0].t) out[0].t=out[0].t.replace(/^\s+/,""); const l=out[out.length-1]; if(l.t) l.t=l.t.replace(/\s+$/,""); }
+    return out; }
+  const rXML=(r,d={})=>{ if(r.br) return `<w:r><w:br/></w:r>`; const sz=r.sz||d.sz; const col=r.col||d.col;
+    return `<w:r><w:rPr><w:rFonts w:ascii="${FONT}" w:eastAsia="${FONT}" w:hAnsi="${FONT}"/>${(r.b||d.b)?"<w:b/>":""}${col?`<w:color w:val="${col}"/>`:""}${sz?`<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>`:""}</w:rPr><w:t xml:space="preserve">${X(r.t)}</w:t></w:r>`; };
+  function para(rs,o={}){ const ppr=[]; if(o.style) ppr.push(`<w:pStyle w:val="${o.style}"/>`); if(o.pb) ppr.push(`<w:pageBreakBefore/>`); if(o.keep) ppr.push(`<w:keepNext/>`);
+    if(o.ind) ppr.push(`<w:ind w:left="${o.ind}" w:hanging="${o.hang||0}"/>`); if(o.sp) ppr.push(`<w:spacing w:before="${o.sp[0]}" w:after="${o.sp[1]}"/>`); if(o.jc) ppr.push(`<w:jc w:val="${o.jc}"/>`);
+    if(o.shd) ppr.push(`<w:shd w:val="clear" w:color="auto" w:fill="${o.shd}"/>`);
+    return `<w:p><w:pPr>${ppr.join("")}</w:pPr>${rs.map(r=>rXML(r,o)).join("")}</w:p>`; }
+  const twip=px=>Math.round(px*15);
+  function table(t, ctx){
+    const rows=[...t.rows]; if(!rows.length) return "";
+    // grid build
+    const grid=[]; let ncol=0;
+    rows.forEach((tr,ri)=>{ grid[ri]=grid[ri]||[]; let c=0;
+      [...tr.cells].forEach(td=>{ while(grid[ri][c]) c++; const cs=td.colSpan||1, rs=td.rowSpan||1;
+        for(let r=0;r<rs;r++){ grid[ri+r]=grid[ri+r]||[]; for(let k=0;k<cs;k++) grid[ri+r][c+k]= (r===0&&k===0)?{td,cs,rs,start:1}:{td,cs,rs,cont:r>0&&k===0,skip:k>0}; }
+        c+=cs; }); ncol=Math.max(ncol,grid[ri].length); });
+    const hdr0=new Set(t.tHead?[...t.tHead.rows]:[]);
+    const W=9600; // ~16.9cm
+    const ws=[]; const first=rows[rows.length-1]; // estimate col widths from rendered widths
+    const tw=t.getBoundingClientRect().width||1; const cw=new Array(ncol).fill(0);
+    rows.forEach((tr,ri)=>{ for(let c=0;c<ncol;c++){ const g=grid[ri][c]; if(g&&g.start&&g.cs===1&&!cw[c]) cw[c]=g.td.getBoundingClientRect().width; } });
+    const known=cw.reduce((s,v)=>s+v,0); const miss=cw.filter(v=>!v).length; const fill=miss?Math.max(20,(tw-known)/miss):0;
+    for(let c=0;c<ncol;c++) ws.push(Math.max(300,Math.round((cw[c]||fill)/tw*W)));
+    const sum=ws.reduce((s,v)=>s+v,0); for(let c=0;c<ncol;c++) ws[c]=Math.round(ws[c]*W/sum);
+    let TSZ=ctx.tsz||15; rows.forEach((tr,ri)=>{ if(hdr0.has(tr)) return; for(let c=0;c<ncol;c++){ const g=grid[ri][c]; if(!g||!g.start||g.td.tagName==="TH") continue; const L=g.td.textContent.trim().length; if(L<6) continue; const w=ws.slice(c,c+g.cs).reduce((s,v)=>s+v,0); TSZ=Math.min(TSZ,Math.floor((w-110)/(L*6))); } }); TSZ=Math.max(13,TSZ);
+    const hdr=new Set(t.tHead?[...t.tHead.rows]:[]);
+    let x=`<w:tbl><w:tblPr><w:tblW w:w="${W}" w:type="dxa"/><w:jc w:val="center"/><w:tblLayout w:type="fixed"/><w:tblBorders><w:top w:val="single" w:sz="12" w:color="14365F"/><w:bottom w:val="single" w:sz="12" w:color="14365F"/><w:insideH w:val="single" w:sz="4" w:color="C3CDD9"/><w:insideV w:val="single" w:sz="4" w:color="C3CDD9"/><w:left w:val="nil"/><w:right w:val="nil"/></w:tblBorders><w:tblCellMar><w:left w:w="50" w:type="dxa"/><w:right w:w="50" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>${ws.map(w=>`<w:gridCol w:w="${w}"/>`).join("")}</w:tblGrid>`;
+    rows.forEach((tr,ri)=>{ x+=`<w:tr><w:trPr><w:cantSplit/>${hdr.has(tr)?"<w:tblHeader/>":""}</w:trPr>`;
+      for(let c=0;c<ncol;c++){ const g=grid[ri][c];
+        if(!g){ x+=`<w:tc><w:tcPr><w:tcW w:w="${ws[c]}" w:type="dxa"/></w:tcPr><w:p/></w:tc>`; continue; }
+        if(g.skip) continue;
+        const w=ws.slice(c,c+g.cs).reduce((s,v)=>s+v,0); const td=g.td; const isTh=td.tagName==="TH";
+        const bg=getComputedStyle(td).backgroundColor; const m=bg.match(/\d+/g); const fill=isTh?"E8EEF6":(m&&m.length>=3&&!(m[3]==="0")&&!(m[0]==255&&m[1]==255&&m[2]==255)?m.slice(0,3).map(v=>(+v).toString(16).padStart(2,"0")).join("").toUpperCase():"");
+        const pr=`<w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${g.cs>1?`<w:gridSpan w:val="${g.cs}"/>`:""}${g.rs>1?(g.cont?`<w:vMerge/>`:`<w:vMerge w:val="restart"/>`):""}${fill?`<w:shd w:val="clear" w:color="auto" w:fill="${fill}"/>`:""}<w:vAlign w:val="center"/></w:tcPr>`;
+        if(g.cont){ x+=`<w:tc>${pr}<w:p/></w:tc>`; continue; }
+        const al=getComputedStyle(td).textAlign; const jc=isTh?"center":(al==="right"||al==="end"?"right":al==="center"?"center":"left");
+        x+=`<w:tc>${pr}${para(runs(td,isTh?{b:1}:{}),{jc,sz:TSZ,sp:[0,0]})}</w:tc>`; }
+      x+=`</w:tr>`; });
+    return x+`</w:tbl>`+para([],{sp:[0,60],sz:8}); }
+  async function svgPNG(svg){ const r=svg.getBoundingClientRect(); const w=Math.max(10,r.width), h=Math.max(10,r.height);
+    const cl=svg.cloneNode(true); cl.setAttribute("xmlns","http://www.w3.org/2000/svg"); cl.setAttribute("width",w); cl.setAttribute("height",h);
+    // inline computed fills/fonts for text
+    const src=[svg,...svg.querySelectorAll("*")], dst=[cl,...cl.querySelectorAll("*")];
+    src.forEach((n,i)=>{ const cs=getComputedStyle(n); const d=dst[i]; if(!d.style) return; ["fill","stroke","font-size","font-weight","font-family","opacity","stroke-width","text-anchor"].forEach(p=>{ const v=cs.getPropertyValue(p); if(v) d.style.setProperty(p,v); }); });
+    const url="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(new XMLSerializer().serializeToString(cl));
+    const img=new Image(); await new Promise((ok,no)=>{ img.onload=ok; img.onerror=no; img.src=url; });
+    const k=2, cv=document.createElement("canvas"); cv.width=Math.round(w*k); cv.height=Math.round(h*k); const g=cv.getContext("2d"); g.fillStyle="#fff"; g.fillRect(0,0,cv.width,cv.height); g.drawImage(img,0,0,cv.width,cv.height);
+    const blob=await new Promise(ok=>cv.toBlob(ok,"image/png")); return {data:new Uint8Array(await blob.arrayBuffer()), w, h}; }
+  let OPT={};
+  async function build(root, title, opt){ OPT=opt||{};
+    const body=[], media=[]; let pbNext=false;
+    let SHD="";
+    const P=(rs,o={})=>{ if(pbNext){ o.pb=1; pbNext=false; } if(SHD&&!o.shd&&!o.style) o.shd=SHD; body.push(para(rs,o)); };
+    async function img(svg){ try{ const p=await svgPNG(svg); const id=media.length+1; media.push(p.data); let cx=p.w*9525, cy=p.h*9525; const max=6100000; if(cx>max){ cy=Math.round(cy*max/cx); cx=max; }
+      const d=`<w:drawing><wp:inline distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="그림 ${id}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${id}" name="image${id}.png"/><pic:cNvPicPr/></pic:nvPicPr><pic:blipFill><a:blip r:embed="rImg${id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing>`;
+      body.push(`<w:p><w:pPr>${pbNext?"<w:pageBreakBefore/>":""}<w:jc w:val="center"/></w:pPr><w:r>${d}</w:r></w:p>`); pbNext=false; }catch(e){ P([{t:"[차트 이미지 변환 실패]"}]); } }
+    const cls=(el,c)=>el.classList&&el.classList.contains(c);
+    async function walk(el, lvl){
+      if(el.nodeType===3){ const t=el.textContent.trim(); if(t) P([{t}]); return; }
+      if(el.nodeType!==1) return;
+      const tg=el.tagName, cs=getComputedStyle(el);
+      if(cs.display==="none"||tg==="BUTTON"||tg==="STYLE"||tg==="SCRIPT") return;
+      if(cls(el,"rr-run")||cls(el,"rr-hint")) return;
+      if(tg==="TABLE"){ if(pbNext){ P([],{sp:[0,0]}); } body.push(table(el,{tsz:15})); return; }
+      if(tg==="svg"||tg==="SVG"){ await img(el); return; }
+      const bb=cs.breakBefore||cs.pageBreakBefore; const pbBefore = cls(el,"rr-chap")||cls(el,"rr-page")||bb==="page"||bb==="always";
+      if(pbBefore && body.length) pbNext=true;
+      // special blocks
+      // --- FOCUS형 보고서(공시자료·결산) ---
+      if(cls(el,"rcover")){ for(const c of el.children){ const t=c.textContent.trim(); if(!t) continue;
+          if(cls(c,"rctit")) P(runs(c),{style:"Title",jc:"center"}); else P(runs(c),{jc:"center",sz:cls(c,"rcsub")?24:20,col:"14365F",sp:[120,120]}); }
+        pbNext=true; return; }
+      if(cls(el,"rchap")){ const n=el.querySelector(".rcnum"), t=el.querySelector(".rctitle"), sb=el.querySelector(".rcsubs");
+        P([{t:(n?n.textContent.trim()+". ":"")+(t?t.textContent.trim():"")}],{style:"Heading1"});
+        if(sb) sb.innerText.split("\n").map(x=>x.trim()).filter(Boolean).forEach(x=>P([{t:x}],{ind:360,sp:[20,20],col:"444444"}));
+        pbNext=true; return; }
+      if(cls(el,"series")||cls(el,"issue")){ P(runs(el,{b:1}),{sz:16,col:"14365F",sp:[0,20]}); return; }
+      if(cls(el,"lede")){ P(runs(el),{sz:20,col:"333333",sp:[80,160]}); return; }
+      if(cls(el,"hl")||cls(el,"anb")||cls(el,"remark")){ const keep=SHD; SHD=cls(el,"anb")?"F3F7FC":cls(el,"remark")?"F3F6FA":"EEF3F9"; for(const c of el.childNodes) await walk(c,lvl); SHD=keep; return; }
+      if(cls(el,"anh")||cls(el,"rt-title")){ P(runs(el,{b:1}),{sz:18,col:"14365F",sp:[60,20],keep:1}); return; }
+      if(cls(el,"cap")){ P(runs(el),{style:"Caption"}); return; }
+      if(cls(el,"unit")){ P(runs(el),{jc:"right",sz:15,sp:[0,20],keep:1}); return; }
+      if(cls(el,"fn")||cls(el,"foot")){ P(runs(el),{sz:14,col:"444444",sp:[0,80]}); return; }
+      if(tg==="H2"&&cls(el,"grp")&&OPT.grp1){ P(runs(el),{style:"Heading1"}); return; }
+      if(cls(el,"rr-cnum")) return;
+      if(cls(el,"rr-ctitle")){ const n=el.previousElementSibling&&cls(el.previousElementSibling,"rr-cnum")?el.previousElementSibling.textContent.trim()+". ":""; P([{t:n+el.textContent.trim()}],{style:"Heading1"}); return; }
+      if(cls(el,"rr-title")||tg==="H1"){ P(runs(el),{style:"Title"}); return; }
+      if(cls(el,"rr-sec")){ const sp=el.querySelector("span"); const rest=[...el.childNodes].filter(n=>n!==sp).map(n=>n.textContent).join("").trim(); P([{t:(sp?sp.textContent.trim()+". ":"")+rest}],{style:"Heading2"}); return; }
+      if(cls(el,"rr-h2")||(tg==="H2"&&!cls(el,"grp"))){ P(runs(el),{style:"Heading1"}); return; }
+      if(tg==="H2"){ P(runs(el),{style:"Heading2"}); return; }
+      if(cls(el,"rr-sub")){ P([{t:"□ "+el.textContent.trim()}],{style:"Heading3"}); return; }
+      if(tg==="H3"){ P([{t:(cls(el,"sec")?"● ":"")+el.textContent.trim()}],{style:"Heading3"}); return; }
+      if(tg==="H4"){ P(runs(el),{style:"Heading3"}); return; }
+      if(cls(el,"rr-cap")){ P(runs(el),{style:"Caption"}); return; }
+      if(cls(el,"rr-unit")){ P(runs(el),{jc:"right",sz:15,sp:[0,20],keep:1}); return; }
+      if(cls(el,"rr-note")||cls(el,"note")||cls(el,"src")){ P(runs(el),{sz:14,col:"444444",sp:[0,80]}); return; }
+      if(tg==="LI"){ const nested=[...el.children].filter(c=>c.tagName==="UL"||c.tagName==="OL");
+        const tmp=el.cloneNode(true); tmp.querySelectorAll("ul,ol").forEach(n=>n.remove()); document.body.appendChild(tmp); tmp.style.cssText="position:absolute;left:-9999px"; const rs=runs(tmp); tmp.remove();
+        const pfx=el.parentElement&&el.parentElement.tagName==="OL"?`${[...el.parentElement.children].indexOf(el)+1}. `:(lvl>0?"- ":"❍ ");
+        if(rs.length&&rs[0].t!=null) rs[0].t=pfx+rs[0].t; else rs.unshift({t:pfx});
+        P(rs,{ind:360+lvl*300,hang:280,sp:[30,30]}); for(const n of nested) for(const c of n.children) await walk(c,lvl+1); return; }
+      if(tg==="UL"||tg==="OL"){ for(const c of el.children) await walk(c,lvl); return; }
+      if(!hasBlock(el) && el.querySelector('i[style*="background"]')){ const rs=[]; el.querySelectorAll("span").forEach(s=>{ const i=s.querySelector("i"); const m=i?getComputedStyle(i).backgroundColor.match(/\d+/g):null; const hex=m?m.slice(0,3).map(v=>(+v).toString(16).padStart(2,"0")).join("").toUpperCase():"888888"; rs.push({t:"■ ",col:hex,sz:16},{t:s.textContent.trim()+"    ",sz:15}); }); P(rs,{jc:"center",sp:[0,40]}); return; }
+      if(!hasBlock(el)){ const rs=runs(el); if(rs.some(r=>r.t&&r.t.trim())){ const o={}; const al=cs.textAlign; if(al==="center") o.jc="center"; else if(al==="right"||al==="end") o.jc="right";
+          const fs=parseFloat(cs.fontSize); if(fs>=20) o.sz=Math.round(fs*1.2); else if(fs<12) o.sz=16;
+          if(cls(el,"remark")||cls(el.parentElement||el,"remark")) o.shd="F3F6FA";
+          P(rs,o); } return; }
+      for(const c of el.childNodes) await walk(c,lvl);
+      if(cls(el,"rr-cover")||(cls(el,"rr-page")&&!cls(el,"last"))) pbNext=true;
+    }
+    for(const c of root.childNodes) await walk(c,0);
+    const NS=`xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main" xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"`;
+    const doc=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document ${NS}><w:body>${body.join("")}<w:sectPr><w:footerReference w:type="default" r:id="rFtr"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1077" w:bottom="1134" w:left="1077" w:header="567" w:footer="567" w:gutter="0"/></w:sectPr></w:body></w:document>`;
+    const rp=(sz,b,col)=>`<w:rPr><w:rFonts w:ascii="${FONT}" w:eastAsia="${FONT}" w:hAnsi="${FONT}"/>${b?"<w:b/>":""}${col?`<w:color w:val="${col}"/>`:""}<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/></w:rPr>`;
+    const st=(id,name,ppr,rpr,ol)=>`<w:style w:type="paragraph" w:styleId="${id}"><w:name w:val="${name}"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:qFormat/><w:pPr><w:keepNext/>${ppr}${ol!=null?`<w:outlineLvl w:val="${ol}"/>`:""}</w:pPr>${rpr}</w:style>`;
+    const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault>${rp(19)}</w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="60" w:line="300" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+${st("Title","Title",`<w:spacing w:before="600" w:after="300"/>`,rp(44,1,"0D2442"))}
+${st("Heading1","heading 1",`<w:spacing w:before="360" w:after="180"/><w:pBdr><w:bottom w:val="single" w:sz="12" w:space="4" w:color="14365F"/></w:pBdr>`,rp(32,1,"14365F"),0)}
+${st("Heading2","heading 2",`<w:spacing w:before="280" w:after="120"/>`,rp(26,1,"14365F"),1)}
+${st("Heading3","heading 3",`<w:spacing w:before="180" w:after="80"/>`,rp(22,1,"0D2442"),2)}
+${st("Caption","caption",`<w:jc w:val="center"/><w:spacing w:before="200" w:after="0"/>`,rp(19,1))}
+</w:styles>`;
+    const footer=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r>${rp(16)}<w:fldChar w:fldCharType="begin"/></w:r><w:r>${rp(16)}<w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r>${rp(16)}<w:fldChar w:fldCharType="separate"/></w:r><w:r>${rp(16)}<w:t>1</w:t></w:r><w:r>${rp(16)}<w:fldChar w:fldCharType="end"/></w:r></w:p></w:ftr>`;
+    const rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rSty" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rFtr" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>${media.map((_,i)=>`<Relationship Id="rImg${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/image${i+1}.png"/>`).join("")}</Relationships>`;
+    const ct=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Default Extension="png" ContentType="image/png"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/><Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/></Types>`;
+    const root_rels=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/></Relationships>`;
+    const core=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${X(title)}</dc:title><dc:creator>DS2IXY</dc:creator></cp:coreProperties>`;
+    const files=[{name:"[Content_Types].xml",data:enc.encode(ct)},{name:"_rels/.rels",data:enc.encode(root_rels)},{name:"docProps/core.xml",data:enc.encode(core)},{name:"word/document.xml",data:enc.encode(doc)},{name:"word/styles.xml",data:enc.encode(styles)},{name:"word/footer1.xml",data:enc.encode(footer)},{name:"word/_rels/document.xml.rels",data:enc.encode(rels)}];
+    media.forEach((m,i)=>files.push({name:`word/media/image${i+1}.png`,data:m}));
+    return zip(files);
+  }
+  return {build};
+})();
+
 async function reportDocWord(){
   const inner=$("#report").cloneNode(true); inner.querySelectorAll("[contenteditable]").forEach(e=>e.removeAttribute("contenteditable"));
   const live=[...$("#report").querySelectorAll(".fig svg")], cl=[...inner.querySelectorAll(".fig svg")];
@@ -869,6 +1030,68 @@ function vAbout(){
 (function init(){ const h=(location.hash||"").slice(1); if (TABS.some(([k])=>k===h)) S.tab=h; buildSide(); render();
   addEventListener("hashchange",()=>{ const h=location.hash.slice(1); if (TABS.some(([k])=>k===h) && h!==S.tab){ S.tab=h; render(); } }); })();
 
+</script>
+<script>window.__RC_SPEC=[{"n":"lineChart","o":2,"wk":"w","hk":"h","dw":640,"dh":260},{"n":"barChart","o":2,"wk":"w","hk":"h","dw":640,"dh":260},{"n":"hbarChart","o":1,"wk":"w","dw":640}];</script>
+<script>/* HEDX 반응형 차트: 차트를 실제 표시 폭에 맞춰 다시 그려 글씨·간격이 화면 크기와 무관하게 일정하게 보이도록 함 */
+(function(){
+  var SPEC = window.__RC_SPEC || [];
+  var REG = new Map(), SEQ = 0;
+  function baseW(a, sp){ return sp.o!=null ? ((a[sp.o]||{})[sp.wk] || sp.dw) : (a[sp.wi]!=null ? a[sp.wi] : sp.dw); }
+  function baseH(a, sp){ if (sp.hk==null && sp.hi==null) return null; return sp.o!=null ? ((a[sp.o]||{})[sp.hk] || sp.dh) : (a[sp.hi]!=null ? a[sp.hi] : sp.dh); }
+  function wrapFn(sp, orig){
+    return function(){
+      var a = Array.prototype.slice.call(arguments), out = orig.apply(this, a);
+      if (typeof out !== "string" || out.indexOf("<svg") < 0) return out;
+      var id = ++SEQ; REG.set(id, {f:orig, a:a, sp:sp, bw:baseW(a,sp), bh:baseH(a,sp)});
+      if (REG.size > 3000) REG.delete(REG.keys().next().value);
+      return out.replace("<svg", '<svg data-rc="'+id+'"');
+    };
+  }
+  window.__rcWrap = function(name, orig){ var sp = SPEC.filter(function(x){ return x.n===name; })[0]; return (sp && typeof orig==="function") ? wrapFn(sp, orig) : orig; };
+  SPEC.forEach(function(sp){ if (sp.local) return; var orig = window[sp.n]; if (typeof orig === "function") window[sp.n] = wrapFn(sp, orig); });
+  function innerW(el){ var cs=getComputedStyle(el); return el.clientWidth - (parseFloat(cs.paddingLeft)||0) - (parseFloat(cs.paddingRight)||0); }
+  function redraw(svg){
+    var e = REG.get(+svg.getAttribute("data-rc")); if (!e || !svg.isConnected) return;
+    var host = svg.parentElement; if (!host) return;
+    var W = Math.round(innerW(host)); if (!(W > 120)) return;            // 숨김 탭 등은 표시될 때 다시 처리
+    var cur = +svg.getAttribute("data-rw") || e.bw; if (Math.abs(W-cur) < 6) { thin(svg); return; }
+    var a = e.a.slice(), sp = e.sp, H = null;
+    if (e.bh) { var r = W / e.bw; H = Math.round(e.bh * Math.min(1.4, Math.max(0.85, Math.pow(r, 0.4)))); H = Math.min(H, Math.max(e.bh*0.85, W*0.7)); }
+    if (sp.o != null) { var o = Object.assign({}, a[sp.o]||{}); o[sp.wk] = W; if (H && sp.hk) o[sp.hk] = H; a[sp.o] = o; }
+    else { while (a.length <= Math.max(sp.wi, sp.hi==null?0:sp.hi)) a.push(undefined); a[sp.wi] = W; if (H && sp.hi!=null) a[sp.hi] = H; }
+    var html; try { html = e.f.apply(null, a); } catch(err) { return; }
+    var t = document.createElement("template"); t.innerHTML = html; var ns = t.content.querySelector("svg"); if (!ns) return;
+    ns.setAttribute("data-rc", svg.getAttribute("data-rc")); ns.setAttribute("data-rw", W);
+    if (svg.getAttribute("style") && !ns.getAttribute("style")) ns.setAttribute("style", svg.getAttribute("style"));
+    svg.replaceWith(ns); thin(ns);
+  }
+  // 같은 줄(x축·상단 눈금)의 가운데 정렬 라벨이 겹치면 간격을 두고 솎아냄
+  function thin(svg){
+    var rows = {};
+    svg.querySelectorAll('text[text-anchor="middle"]:not([transform])').forEach(function(t){ t.style.display=""; var y=t.getAttribute("y"); (rows[y]=rows[y]||[]).push(t); });
+    Object.keys(rows).forEach(function(y){
+      var ts = rows[y]; if (ts.length < 4) return;
+      ts.sort(function(p,q){ return (+p.getAttribute("x"))-(+q.getAttribute("x")); });
+      var w = ts.map(function(t){ try { return t.getComputedTextLength(); } catch(e){ return 0; } });
+      var n = ts.length;
+      function ok(step){ var shown=[]; for (var i=0;i<n;i++) if (i%step===0) shown.push(i); if (shown[shown.length-1]!==n-1){ if ((n-1)-shown[shown.length-1] < step) shown.pop(); shown.push(n-1); }
+        for (var k=1;k<shown.length;k++){ var i0=shown[k-1], i1=shown[k]; if ((+ts[i1].getAttribute("x"))-(+ts[i0].getAttribute("x")) < (w[i0]+w[i1])/2+6) return null; } return shown; }
+      var step=1, sh=null; while (step<=n && !(sh=ok(step))) step++;
+      if (!sh || step===1) return; var keep = new Set(sh);
+      ts.forEach(function(t,i){ if (!keep.has(i)) t.style.display="none"; });
+    });
+  }
+  var seen = new WeakSet(), q = new Set(), raf = 0;
+  function flush(){ raf = 0; var list = Array.from(q); q.clear(); list.forEach(function(h){ h.querySelectorAll(":scope > svg[data-rc]").forEach(redraw); }); }
+  function want(h){ q.add(h); if (!raf) raf = requestAnimationFrame(flush); }
+  var ro = new ResizeObserver(function(es){ es.forEach(function(x){ want(x.target); }); });
+  function scan(root){ (root.querySelectorAll ? root.querySelectorAll("svg[data-rc]") : []).forEach(function(s){ var h=s.parentElement; if (!h) return; if (!seen.has(h)) { seen.add(h); ro.observe(h); } want(h); }); }
+  new MutationObserver(function(ms){ ms.forEach(function(m){ m.addedNodes.forEach(function(n){ if (n.nodeType!==1) return; if (n.matches && n.matches("svg[data-rc]")) { if (n.getAttribute("data-rw")) return; scan(n.parentElement||n); } else scan(n); }); }); })
+    .observe(document.documentElement, {childList:true, subtree:true});
+  var st = document.createElement("style"); st.textContent = "svg[data-rc]{overflow:visible}"; (document.head||document.documentElement).appendChild(st);
+  try { render(); } catch(e){}
+  scan(document);
+})();
 </script>
 </body>
 </html>
