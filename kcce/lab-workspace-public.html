@@ -483,6 +483,16 @@ a.chip2.lk{text-decoration:none;font-weight:600}a.chip2.lk:hover{background:#e6e
   .botIn input{font-size:16px}
 }
 @media print{#botWrap{display:none}}
+.botNew{font-size:18px!important}
+.botQw{flex:1;position:relative;display:flex}
+.botQw input{flex:1;padding-right:34px!important}
+#botClr{display:none;position:absolute;right:6px;top:50%;transform:translateY(-50%);width:24px;height:24px;border:0;border-radius:50%;background:#e3e8ef;color:#5c6670;font-size:12px;cursor:pointer;align-items:center;justify-content:center}
+.bSum{font-size:14px;line-height:1.65;color:#17201c}.bSum p{margin:0}
+.bSrc{font-size:12px!important;color:#7a8698;margin-top:6px!important}
+.bMore{margin-top:8px;border-top:1px dashed #dfe5ee;padding-top:6px}
+.bMore summary{cursor:pointer;font-size:13px;font-weight:700;color:#1d4f8a;list-style:none;padding:4px 0}
+.bMore summary::-webkit-details-marker{display:none}
+.bMore summary::after{content:" ▾"}.bMore[open] summary::after{content:" ▴"}
 </style>
 </head>
 <body>
@@ -1100,15 +1110,16 @@ function botMount(){
   if(bot.mounted) return; bot.mounted = true;
   var w = document.createElement("div"); w.id = "botWrap";
   w.innerHTML = '<div class="botPanel" id="botPanel" role="dialog" aria-label="KCCE 도우미">'+
-    '<div class="botHd"><img alt="" src="'+BOTIMG+'"><div><b>KCCE 도우미</b><small>'+(IS_PUBLIC?'결과물·규정을 찾아드려요':'작업공간·규정을 찾아드려요')+'</small></div><button class="botX" data-bot="close" aria-label="닫기">✕</button></div>'+
+    '<div class="botHd"><img alt="" src="'+BOTIMG+'"><div><b>KCCE 도우미</b><small>'+(IS_PUBLIC?'결과물·규정을 찾아드려요':'작업공간·규정을 찾아드려요')+'</small></div><button class="botX botNew" data-bot="reset" aria-label="대화 지우기" title="대화 지우기">↺</button><button class="botX" data-bot="close" aria-label="닫기" title="닫으면 대화가 지워져요">✕</button></div>'+
     '<div class="botMsgs" id="botMsgs"></div>'+
-    '<form class="botIn" id="botForm"><input id="botQ" autocomplete="off" placeholder="궁금한 내용을 물어보세요"><button aria-label="보내기">➤</button></form></div>'+
+    '<form class="botIn" id="botForm"><span class="botQw"><input id="botQ" autocomplete="off" placeholder="궁금한 내용을 물어보세요"><button type="button" id="botClr" data-bot="clr" aria-label="입력 지우기">✕</button></span><button aria-label="보내기">➤</button></form></div>'+
     '<div class="botTip" id="botTip">무엇을 도와드릴까요?</div>'+
     '<button class="botBtn" id="botBtn" data-bot="toggle" aria-label="KCCE 도우미 열기"><canvas id="botCv"></canvas><img class="botFb" alt="" src="'+BOTIMG+'"></button>';
   document.body.appendChild(w);
   botGreet();
   var botQ=document.getElementById("botQ"), botComp=false, botPend=false;
-  function botSend(){ var q=botQ.value.trim(); if(!q) return; botQ.blur(); botQ.value=""; setTimeout(function(){ botQ.value=""; if(window.innerWidth>760) botQ.focus(); },60); botAsk(q); }
+  function botSend(){ var q=botQ.value.trim(); if(!q) return; botQ.blur(); botQ.value=""; botClr(); setTimeout(function(){ botQ.value=""; if(window.innerWidth>760) botQ.focus(); },60); botAsk(q); }
+  botQ.addEventListener("input", botClr);
   botQ.addEventListener("compositionstart", function(){ botComp=true; });
   botQ.addEventListener("compositionend", function(){ botComp=false; if(botPend){ botPend=false; setTimeout(botSend,0); } });
   botQ.addEventListener("keydown", function(e){ e.stopPropagation(); if(e.key==="Enter"){ e.preventDefault(); if(e.isComposing||botComp||e.keyCode===229){ botPend=true; return; } botSend(); } });
@@ -1116,7 +1127,9 @@ function botMount(){
   w.addEventListener("click", function(e){
     var t = e.target.closest("[data-bot]"); if(!t) return;
     var a = t.getAttribute("data-bot");
-    if(a==="toggle"||a==="close") botToggle(a==="close"?false:!bot.open);
+    if(a==="toggle"||a==="close"){ var wasOpen=bot.open; botToggle(a==="close"?false:!bot.open); if(wasOpen && !bot.open) setTimeout(botReset,250); }
+    else if(a==="reset") botReset();
+    else if(a==="clr"){ var qi=document.getElementById("botQ"); qi.value=""; botClr(); qi.focus(); }
     else if(a==="ask") botAsk(t.getAttribute("data-q"));
     else if(a==="go"){ location.hash = t.getAttribute("data-h"); if(window.innerWidth<=760) botToggle(false); }
     else if(a==="reg"){ var v=t.getAttribute("data-v"), q=t.getAttribute("data-q"); location.hash = v; setTimeout(function(){ var ta=document.querySelector('form[data-form="reg"] textarea'); if(ta) ta.value=q; var cb=document.querySelector('form[data-form="reg"] input[name="all"]'); if(cb) cb.checked=true; if(typeof regRun==="function") regRun(v,q,true); }, 250); if(window.innerWidth<=760) botToggle(false); }
@@ -1167,6 +1180,15 @@ function botProjCard(p){
   h+='<div class="bActs"><button data-bot="go" data-h="#'+p.id+'">요약 보기</button>'+(k&&!(IS_PUBLIC&&p.id==="lunchboard")?'<a href="'+esc(k.url)+'" target="_blank" rel="noopener">'+esc(S.btn||"바로가기")+' ↗</a>':'')+'</div></div>';
   return h;
 }
+function botSentences(c, q){
+  var g=(typeof regTokens==="function")?regTokens(q):[];
+  var t=c.text.replace(/\s+/g," ").replace(/<[^>]+>/g,"");
+  var ss=t.split(/(?<=다\.|요\.|함\.|음\.|\.)\s+|\s(?=\d+\.\s)|\s(?=[①-⑳])|\s(?=•)/).map(function(x){return x.trim();}).filter(function(x){return x.length>=8;});
+  var sc=ss.map(function(x,k){ var n=0; g.forEach(function(gg){ if(gg.vars.some(function(v){return x.indexOf(v)>=0;})) n++; }); return {k:k,x:x,n:n}; });
+  var top=sc.filter(function(o){return o.n>0;}).sort(function(a,b){return b.n-a.n||a.k-b.k;}).slice(0,2).sort(function(a,b){return a.k-b.k;});
+  if(!top.length) top=sc.slice(0,1);
+  return top.map(function(o){ return o.x.length>150?o.x.slice(0,150)+"…":o.x; });
+}
 async function botAsk(q){
   botMsg("me", esc(q));
   var wait = botMsg("bot", '<p class="bDots"><i></i><i></i><i></i></p>'); bot.talking = 1;
@@ -1174,38 +1196,54 @@ async function botAsk(q){
     if(!IS_PUBLIC && /할\s?일|남은|마감|진행률|현황/.test(q) && !/규정|편람|학칙/.test(q)){
       var rows=[]; state.projects.forEach(function(p){ p.tasks.forEach(function(t){ if(!t.done) rows.push('<li><b style="color:'+p.color+'">'+esc(p.name)+'</b> '+esc(t.text)+'</li>'); }); });
       var dues=state.projects.filter(function(p){return p.due;}).sort(function(a,b){return a.due<b.due?-1:1;}).map(function(p){return '<li>'+esc(p.name)+' · '+esc(p.due)+' ('+dday(p.due)+')</li>';});
-      wait.innerHTML='<p>남은 할 일은 '+rows.length+'건이에요.</p><ul>'+rows.slice(0,8).join("")+'</ul>'+(dues.length?'<p>마감 일정</p><ul>'+dues.join("")+'</ul>':'');
+      wait.innerHTML='<p class="bSum">남은 할 일은 <b>'+rows.length+'건</b>, 가장 가까운 마감은 '+(dues.length?dues[0].replace(/<\/?li>/g,""):'없음')+'이에요.</p><details class="bMore"><summary>자세히 보기</summary><ul>'+rows.join("")+'</ul>'+(dues.length?'<p>마감 일정</p><ul>'+dues.join("")+'</ul>':'')+'</details>';
       return;
     }
     var pm = botMatch(q), regHits=[];
-    var wantReg = !pm.length || pm[0].sc<3 || /규정|편람|학칙|휴학|복학|학점|수업|입학|졸업|등록|교원|강사|위원회|정관|조항/.test(q);
+    var wantReg = !pm.length || pm[0].sc<3 || /규정|편람|학칙|휴학|복학|학점|수업|입학|졸업|등록|교원|강사|위원회|정관|조항|여비|출장/.test(q);
     if(wantReg){ try{ await regLoad(); var r=regSearch(["handbook","rules"], q); regHits=r.hits.slice(0,3); }catch(e){} }
-    var html='';
-    var smp=null; try{ if(typeof regSample!=="undefined" && regSample!==undefined) smp=regSample; else smp=(window.claude&&window.claude.use)?await window.claude.use("sample"):null; regSample=smp; }catch(e){ smp=null; }
-    if(smp && (pm.length||regHits.length)){
-      var ctx=[]; pm.slice(0,2).forEach(function(x){ ctx.push("[항목] "+x.p.name+": "+botProjText(x.p).slice(0,1200)); });
-      regHits.forEach(function(x,i){ ctx.push("[규정"+(i+1)+"] "+regLabel(x.c)+" (p."+x.c.page+")\n"+x.c.text.slice(0,1100)); });
-      var prompt="너는 한국고등직업교육연구소(KCCE HVER) "+(IS_PUBLIC?"공개 결과물 페이지":"작업공간")+"의 안내 도우미다. 아래 [자료]만 근거로 [질문]에 3~5문장 이내로 친절하게 답하라. 규정을 인용하면 문장 끝에 [규정1]처럼 표기. 자료에 없으면 '자료에서 확인되지 않아요'라고 말하라. 마크다운 굵게·제목·표는 쓰지 마라. 한국어 존댓말(~요).\n\n[질문] "+q+"\n\n[자료]\n"+ctx.join("\n\n");
-      var bub=document.createElement("div"); bub.className="bAi"; wait.innerHTML=""; wait.appendChild(bub);
-      var r2 = await smp(prompt,{onText:function(u){ bub.innerHTML=esc(u.text).replace(/\n/g,"<br>"); var b=document.getElementById("botMsgs"); b.scrollTop=b.scrollHeight; }});
-      bub.innerHTML=esc(r2.text).replace(/\n/g,"<br>");
-      html='';
-    } else if(!pm.length && !regHits.length){
+    if(!pm.length && !regHits.length){
       wait.innerHTML='<p>관련 내용을 찾지 못했어요.</p><p>항목 이름(재정분석, 30년사, The Issue 등)이나 규정 낱말(휴학, 학점인정 등)을 넣어 다시 물어봐 주세요.</p>';
       return;
-    } else {
-      html = '<p>'+(pm.length?'관련 결과물을 찾았어요.':'학사편람·규정집에서 찾았어요.')+'</p>';
-      wait.innerHTML = html; html='';
     }
-    if(pm.length) html+=botProjCard(pm[0].p);
-    if(regHits.length){
-      html+='<div class="bReg"><p class="bRegH">학사편람·규정집 관련 조항</p>'+regHits.map(function(x){ return '<div class="bRegI"><b>'+esc(regLabel(x.c))+'</b> <small>p.'+x.c.page+'</small><span>'+esc(botSnip(x.c,q))+'</span></div>'; }).join("")+
-        '<div class="bActs"><button data-bot="reg" data-v="'+(regHits[0].c.doc==="rules"?"reg-rules":"reg-handbook")+'" data-q="'+esc(q)+'">원문에서 자세히 보기</button></div></div>';
+    var useReg = regHits.length && (!pm.length || pm[0].sc<3);
+    var smp=null; try{ if(typeof regSample!=="undefined" && regSample!==undefined) smp=regSample; else smp=(window.claude&&window.claude.use)?await window.claude.use("sample"):null; regSample=smp; }catch(e){ smp=null; }
+    var sumBox=document.createElement("div"); sumBox.className="bSum"; wait.innerHTML=""; wait.appendChild(sumBox);
+    var srcLine='';
+    if(smp){
+      var ctx=[]; pm.slice(0,2).forEach(function(x){ ctx.push("[항목] "+x.p.name+": "+botProjText(x.p).slice(0,1200)); });
+      regHits.forEach(function(x,i){ ctx.push("[규정"+(i+1)+"] "+regLabel(x.c)+" (p."+x.c.page+")\n"+x.c.text.slice(0,1100)); });
+      var prompt="너는 한국고등직업교육연구소(KCCE HVER) "+(IS_PUBLIC?"공개 결과물 페이지":"작업공간")+"의 안내 도우미다. 아래 [자료]만 근거로 [질문]에 대한 답을 2~3문장으로 요약하라. 결론을 첫 문장에 쓰고, 규정을 근거로 하면 문장 끝에 [규정1]처럼 표기. 자료에 없으면 '자료에서 확인되지 않아요'라고 말하라. 마크다운·목록·제목 없이 한국어 존댓말(~요).\n\n[질문] "+q+"\n\n[자료]\n"+ctx.join("\n\n");
+      try{
+        var r2 = await smp(prompt,{onText:function(u){ sumBox.innerHTML=esc(u.text).replace(/\n/g,"<br>"); var b=document.getElementById("botMsgs"); b.scrollTop=b.scrollHeight; }});
+        sumBox.innerHTML=esc(r2.text).replace(/\n/g,"<br>");
+      }catch(e){ smp=null; }
     }
-    if(html){ var d=document.createElement("div"); d.innerHTML=html; while(d.firstChild) wait.appendChild(d.firstChild); }
+    if(!smp){
+      if(useReg){
+        var c0=regHits[0].c, ss=botSentences(c0,q);
+        sumBox.innerHTML='<p>'+ss.map(esc).join(" ")+'</p>';
+        srcLine='<p class="bSrc">출처 · '+esc(regLabel(c0))+' (p.'+c0.page+')</p>';
+      } else {
+        var S=SUM[pm[0].p.id]||{};
+        sumBox.innerHTML='<p><b>'+esc(pm[0].p.name)+'</b>: '+(S.lines||[pm[0].p.desc]).map(esc).join(" ")+'</p>';
+      }
+    }
+    var more='';
+    if(pm.length) more+=botProjCard(pm[0].p);
+    if(regHits.length) more+='<div class="bReg"><p class="bRegH">관련 조항 '+regHits.length+'건</p>'+regHits.map(function(x){ return '<div class="bRegI"><b>'+esc(regLabel(x.c))+'</b> <small>p.'+x.c.page+'</small><span>'+esc(botSnip(x.c,q))+'</span></div>'; }).join("")+'</div>';
+    var acts='<div class="bActs">';
+    if(useReg) acts+='<button data-bot="reg" data-v="'+(regHits[0].c.doc==="rules"?"reg-rules":"reg-handbook")+'" data-q="'+esc(q)+'">원문에서 보기</button>';
+    else if(pm.length) acts+='<button data-bot="go" data-h="#'+pm[0].p.id+'">'+esc(pm[0].p.name)+' 요약 화면</button>';
+    acts+='</div>';
+    var d=document.createElement("div");
+    d.innerHTML=srcLine+'<details class="bMore"><summary>자세히 보기</summary>'+more+'</details>'+acts;
+    while(d.firstChild) wait.appendChild(d.firstChild);
   } catch(e){ wait.innerHTML='<p>답을 만드는 중 문제가 생겼어요. 다시 시도해 주세요.</p>'; }
   finally { bot.talking=0; var b=document.getElementById("botMsgs"); if(b) b.scrollTop=b.scrollHeight; }
 }
+function botReset(){ var b=document.getElementById("botMsgs"); if(b){ b.innerHTML=""; botGreet(); } var i=document.getElementById("botQ"); if(i){ i.value=""; } botClr(); }
+function botClr(){ var i=document.getElementById("botQ"), c=document.getElementById("botClr"); if(c) c.style.display=(i&&i.value)?"flex":"none"; }
 function botThree(){
   var cv=document.getElementById("botCv"), btn=document.getElementById("botBtn");
   if(!window.THREE){ btn.classList.add("nogl"); return; }
