@@ -23,7 +23,8 @@ a{color:inherit}
 #intro .bgblur{position:absolute;inset:-40px;background:center/cover no-repeat;filter:blur(30px) brightness(.45);transform:scale(1.1)}
 #stage{position:relative;width:min(100vw,calc(100vh*16/9));aspect-ratio:16/9;box-shadow:0 30px 80px rgba(0,0,0,.5)}
 #stage video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
-#stage{background:center/cover no-repeat}
+#stage{background:#05070f center/cover no-repeat}
+#stage.skipped{background-image:var(--last)}
 #stage.skipped video{visibility:hidden}
 .hot{position:absolute;border-radius:1.2vmin;opacity:0;pointer-events:none;transition:opacity .6s, transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;outline:none}
 #stage.ready .hot{opacity:1;pointer-events:auto}
@@ -320,9 +321,9 @@ function show(id){ document.querySelectorAll(".view").forEach(v=>v.classList.tog
 /* ── intro ── */
 const vid = $("#introVideo"), stage = $("#stage");
 vid.src = A("assets/intro.mp4");
-vid.poster = A("assets/intro_last.webp");
+
 $("#introBg").style.backgroundImage = `url("${A("assets/intro_last.webp")}")`;
-stage.style.backgroundImage = `url("${A("assets/intro_last.webp")}")`;
+stage.style.setProperty("--last", `url("${A("assets/intro_last.webp")}")`);
 $("#brandEmblem").src = A("assets/emblem.svg");
 function introReady(){ stage.classList.add("ready"); }
 function playIntro(){

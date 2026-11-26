@@ -381,6 +381,7 @@ addEventListener('resize',()=>{ clearTimeout(rz); rz=setTimeout(()=>{ if(Math.ab
 document.addEventListener('fullscreenchange',()=>setTimeout(build,120));
 const _tog=body.classList.toggle.bind(body.classList);
 new MutationObserver(()=>{}).observe(body,{attributes:true});
+{ const hm=/^#p(\d+)/.exec(location.hash||""); if(hm) cur=Math.max(0,Math.min(N-1,+hm[1]-1)); }
 buildToc(); build();
 })();
 </script>
