@@ -105,6 +105,16 @@ a{color:inherit}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#cbd5e1;font-size:14px}
 .rtoc{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 14px;font:inherit;font-size:13.5px}
 .rtoc option{color:#111}
+.rseg{display:flex;background:rgba(255,255,255,.07);border-radius:12px;padding:3px;gap:2px}
+.rseg button{background:none;border:0;color:rgba(255,255,255,.55);font:inherit;font-size:13px;padding:6px 12px;border-radius:9px;cursor:pointer}
+.rseg button.on{background:#f0a83a;color:#1b1406;font-weight:700}
+#segFit button.on{background:#6b5532;color:#f3e3c4}
+.ricon{background:none;border:0;color:#fff;font-size:20px;line-height:1;width:34px;height:34px;border-radius:9px;cursor:pointer}
+.ricon:hover{background:rgba(255,255,255,.1)}
+.ricon:disabled{opacity:.3;cursor:default}
+#rBody{overflow:auto;align-items:safe center;justify-content:safe center}
+#flipWrap{flex:none}
+#reader.html-mode .rseg,#reader.html-mode .ricon{display:none!important}
 .r-chips{display:none;gap:8px;padding:10px 20px;overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.22);border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:none}
 .r-chips::-webkit-scrollbar{display:none}
 .r-chips.on{display:flex}
@@ -213,6 +223,11 @@ a{color:inherit}
     <div style="min-width:0"><div class="ttl" id="rTitle"></div><div class="sub" id="rSub"></div></div>
     <span class="sp"></span>
     <select class="rtoc" id="rToc" aria-label="바로가기"></select>
+    <div class="rseg hide-m" id="segMode"><button data-m="single">한쪽</button><button data-m="double">양쪽</button></div>
+    <div class="rseg hide-m" id="segFit"><button data-f="page">쪽맞춤</button><button data-f="width">폭맞춤</button></div>
+    <button class="ricon" id="btnZoomOut" title="축소" aria-label="축소">−</button>
+    <button class="ricon" id="btnZoomIn" title="확대" aria-label="확대">+</button>
+    <button class="ricon hide-m" id="btnSound" title="넘김 소리" aria-label="넘김 소리">🔈</button>
     <button class="rbtn hide-m" id="btnThumbs">▦ 페이지 목록</button>
     <button class="rbtn" id="btnFull">⛶ 전체화면</button>
   </header>
@@ -393,10 +408,11 @@ function buildFlip(b, c, startAt=0){
       phPage(`<img src="${A("assets/emblem.svg")}" style="width:56px;height:68px;object-fit:contain;background:none"><p style="margin-top:14px"><b>한국전문대학교육협의회 부설<br>한국고등직업교육연구소</b></p>`) ];
   }
   const body = $("#rBody").getBoundingClientRect();
-  const single = window.innerWidth < 760;
+  const single = RV.mode ? RV.mode==="single" : window.innerWidth < 760;
   const availH = body.height - 36, availW = body.width - (single?16:140);
   let h = availH, w = h/1.4142;
-  if((single? w : w*2) > availW){ w = single? availW : availW/2; h = w*1.4142; }
+  if(RV.fit==="width" || (single? w : w*2) > availW){ w = single? availW : availW/2; h = w*1.4142; }
+  w*=RV.zoom; h*=RV.zoom; syncCtl(single);
   box.style.width = (single? w : w*2)+"px"; box.style.height = h+"px";
   pf = new St.PageFlip(box, { width:Math.floor(w), height:Math.floor(h), size:"fixed", showCover:true, usePortrait:single,
     maxShadowOpacity:.45, mobileScrollSupport:false, flippingTime:700, startPage:startAt, autoSize:false, drawShadow:true });
@@ -404,15 +420,15 @@ function buildFlip(b, c, startAt=0){
   const total = nodes.length, toc = b._toc || []; const sel = $("#rToc"); const chipToc = b.chips || null; const RC = $("#rChips"); RC.classList.toggle("on", !!chipToc); RC.innerHTML = chipToc ? chipToc.map(t=>`<button data-p="${t.page}">${t.label}</button>`).join("") : ""; RC.querySelectorAll("button").forEach(x=>x.onclick=()=>pf.flip(+x.dataset.p)); const chipMark = i=>{ if(!chipToc) return; let k=-1; chipToc.forEach((t,j)=>{ if(i>=t.page) k=j; }); RC.querySelectorAll("button").forEach((x,j)=>{ const on=j===k; x.classList.toggle("on",on); if(on) x.scrollIntoView({block:"nearest",inline:"nearest"}); }); }; sel.style.display = (toc.length && !chipToc) ? "" : "none";
   if(toc.length){ sel.innerHTML = `<option value="">바로가기</option>` + toc.map(t=>`<option value="${t.page}">${t.label}</option>`).join("");
     sel.onchange = ()=>{ if(sel.value!=="") pf.flip(+sel.value); }; }
-  const upd = ()=>{ const i = pf.getCurrentPageIndex(); chipMark(i);
-    const isSpread = !single && i>0 && i<total-1;
+  const upd = ()=>{ const i = pf.getCurrentPageIndex();
+    const isSpread = !single && i>0 && i<total-1; chipMark(i+(isSpread?1:0));
     $("#pno").textContent = isSpread ? `${i+1}–${Math.min(i+2,total)} / ${total}` : `${i+1} / ${total}`;
     if(toc.length){ let cur=""; toc.forEach(t=>{ if(t.page<=i+(isSpread?1:0)) cur=String(t.page); }); sel.value=cur; }
     const th = $("#thumbs").children; for(let k=0;k<th.length;k++) th[k].classList.toggle("cur", k===i || (isSpread && k===i+1));
     const cur = $("#thumbs .cur"); if(cur && $("#thumbs").classList.contains("on")) cur.scrollIntoView({block:"nearest",inline:"center"}); };
   const th = $("#thumbs"); th.innerHTML="";
   srcs.forEach((p,k)=>{ const t=new Image(); t.src=A(p); t.loading="lazy"; t.onclick=()=>pf.flip(k); th.appendChild(t); });
-  pf.on("flip", upd); upd();
+  pf.on("flip", ()=>{ upd(); flipSound(); }); upd();
 }
 function openBook(c, b){
   curBook=b; curCatObj=c;
@@ -451,6 +467,22 @@ $("#btnFirst").onclick = ()=> pf && pf.flip(0);
 $("#btnLast").onclick = ()=> pf && pf.flip(pf.getPageCount()-1);
 $("#btnThumbs").onclick = ()=> $("#thumbs").classList.toggle("on");
 $("#btnFull").onclick = ()=>{ try{ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }catch(e){} };
+/* 보기 설정: 한쪽·양쪽 / 쪽맞춤·폭맞춤 / 확대·축소 / 넘김 소리 */
+const RV = {mode:null, fit:"page", zoom:1, sound:false};
+function syncCtl(single){ if(single===undefined) single=RV._single; RV._single=single; document.querySelectorAll("#segMode button").forEach(x=>x.classList.toggle("on", x.dataset.m===(single?"single":"double")));
+  document.querySelectorAll("#segFit button").forEach(x=>x.classList.toggle("on", x.dataset.f===RV.fit));
+  $("#btnZoomOut").disabled = RV.zoom<=0.6; $("#btnZoomIn").disabled = RV.zoom>=2.4; $("#btnSound").textContent = RV.sound?"🔊":"🔈"; }
+function rebuild(){ if(pf && curBook) buildFlip(curBook, curCatObj, pf.getCurrentPageIndex()); }
+document.querySelectorAll("#segMode button").forEach(x=>x.onclick=()=>{ RV.mode=x.dataset.m; rebuild(); });
+document.querySelectorAll("#segFit button").forEach(x=>x.onclick=()=>{ RV.fit=x.dataset.f; RV.zoom=1; rebuild(); });
+$("#btnZoomIn").onclick=()=>{ RV.zoom=Math.min(2.4,+(RV.zoom+0.2).toFixed(1)); rebuild(); };
+$("#btnZoomOut").onclick=()=>{ RV.zoom=Math.max(0.6,+(RV.zoom-0.2).toFixed(1)); rebuild(); };
+$("#btnSound").onclick=()=>{ RV.sound=!RV.sound; syncCtl(); if(RV.sound) flipSound(); };
+let AC=null;
+function flipSound(){ if(!RV.sound) return; try{ AC = AC || new (window.AudioContext||window.webkitAudioContext)(); const n=AC.sampleRate*0.22, buf=AC.createBuffer(1,n,AC.sampleRate), d=buf.getChannelData(0);
+  for(let i=0;i<n;i++){ const t=i/n; d[i]=(Math.random()*2-1)*Math.pow(1-t,2.2)*(t<0.08?t/0.08:1); }
+  const src=AC.createBufferSource(), f=AC.createBiquadFilter(), g=AC.createGain(); f.type="bandpass"; f.frequency.value=2200; f.Q.value=0.7; g.gain.value=0.35;
+  src.buffer=buf; src.connect(f); f.connect(g); g.connect(AC.destination); src.start(); }catch(e){} }
 let rT;
 function relayout(){ if($("#library").classList.contains("on")) renderShelf(); if(pf && curBook && $("#reader").classList.contains("on")) buildFlip(curBook, curCatObj, pf.getCurrentPageIndex()); }
 window.addEventListener("resize", ()=>{ clearTimeout(rT); rT=setTimeout(relayout,200); });
