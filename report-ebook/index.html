@@ -112,7 +112,10 @@ a{color:inherit}
 .ricon{background:none;border:0;color:#fff;font-size:20px;line-height:1;width:34px;height:34px;border-radius:9px;cursor:pointer}
 .ricon:hover{background:rgba(255,255,255,.1)}
 .ricon:disabled{opacity:.3;cursor:default}
-#rBody{overflow:auto;align-items:safe center;justify-content:safe center}
+#rBody{overflow:hidden;align-items:safe center;justify-content:safe center}
+#rBody.scroll{overflow:auto}
+.deep .view{transition:none!important}
+.deep #intro{opacity:0!important;visibility:hidden!important}
 #flipWrap{flex:none}
 #reader.html-mode .rseg,#reader.html-mode .ricon{display:none!important}
 .r-chips{display:none;gap:8px;padding:10px 20px;overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.22);border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:none}
@@ -176,6 +179,7 @@ a{color:inherit}
   .homebtn{position:absolute;right:12px;top:10px;padding:6px 10px;font-size:12px}
 }
 </style>
+<script>if(location.hash.length>1)document.documentElement.classList.add("deep");</script>
 </head>
 <body>
 
@@ -469,7 +473,7 @@ $("#btnThumbs").onclick = ()=> $("#thumbs").classList.toggle("on");
 $("#btnFull").onclick = ()=>{ try{ if(!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }catch(e){} };
 /* 보기 설정: 한쪽·양쪽 / 쪽맞춤·폭맞춤 / 확대·축소 / 넘김 소리 */
 const RV = {mode:null, fit:"page", zoom:1, sound:false};
-function syncCtl(single){ if(single===undefined) single=RV._single; RV._single=single; document.querySelectorAll("#segMode button").forEach(x=>x.classList.toggle("on", x.dataset.m===(single?"single":"double")));
+function syncCtl(single){ $("#rBody").classList.toggle("scroll", RV.zoom>1 || RV.fit==="width"); if(single===undefined) single=RV._single; RV._single=single; document.querySelectorAll("#segMode button").forEach(x=>x.classList.toggle("on", x.dataset.m===(single?"single":"double")));
   document.querySelectorAll("#segFit button").forEach(x=>x.classList.toggle("on", x.dataset.f===RV.fit));
   $("#btnZoomOut").disabled = RV.zoom<=0.6; $("#btnZoomIn").disabled = RV.zoom>=2.4; $("#btnSound").textContent = RV.sound?"🔊":"🔈"; }
 function rebuild(){ if(pf && curBook) buildFlip(curBook, curCatObj, pf.getCurrentPageIndex()); }
@@ -506,7 +510,7 @@ function route(){
   for(const cc of CATS){ const b = cc.books.find(x=>x.id===h); if(b){ openBook(cc,b); return true; } }
   return false;
 }
-if(!route()) playIntro(); else { introReady(); }
+if(!route()) playIntro(); else { introReady(); setTimeout(()=>document.documentElement.classList.remove("deep"), 800); }
 
 /* EXE 실행 시 로컬 서버 유지 신호 */
 if(location.hostname==="127.0.0.1"){ const ping=()=>fetch("/__ping").catch(()=>{}); ping(); setInterval(ping, 4000); }
