@@ -34,7 +34,19 @@ function lbmSlip(D, m) {
     '<div class="sub"><span>점심 ' + lbmWon(p.lunch) + ' · 음료 ' + lbmWon(p.drink) + '</span><span>' + p.days.length + '일</span></div>' +
     '<div class="grand"><span>청구 합계</span><b class="num">' + lbmWon(p.lunch + p.drink) + '<small>원</small></b></div></div>';
 }
+function lbmLive() {
+  if (window.__lbmLive) return; window.__lbmLive = 1;
+  try {
+    fetch("https://hver-lunchboard.pages.dev/data.json?t=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (d) {
+      if (!d || !d.months || !d.members) return;
+      if (LBD && LBD.savedAt && d.savedAt && new Date(d.savedAt) < new Date(LBD.savedAt)) return;
+      LBD = d; LBM.live = 1;
+      var el = document.querySelector(".lbm"); if (!el) return; var w = document.createElement("div"); w.innerHTML = lbMiniHTML(); el.replaceWith(w.firstChild);
+    }).catch(function () {});
+  } catch (e) {}
+}
 function lbMiniHTML() {
+  lbmLive();
   if (!window.__lbmOn) { window.__lbmOn = 1; document.addEventListener("click", function (e) {
     var b = e.target.closest && e.target.closest("[data-lbm]"); if (!b) return;
     var v = b.getAttribute("data-lbm");
@@ -53,7 +65,7 @@ function lbMiniHTML() {
   var sv = LBD.savedAt ? new Date(new Date(LBD.savedAt).getTime() + 9 * 3600 * 1000) : null;
   var svTxt = sv ? (sv.getUTCMonth() + 1) + "/" + sv.getUTCDate() + " " + String(sv.getUTCHours()).padStart(2, "0") + ":" + String(sv.getUTCMinutes()).padStart(2, "0") + " 기준" : "";
   var i = D.yms.indexOf(D.ym), mo = +D.ym.slice(5);
-  var top = '<div class="lbmTop"><div class="lbmMon"><button data-lbm="prev" aria-label="이전 달"' + (i <= 0 ? ' disabled' : '') + '>‹</button><b>' + D.ym.slice(0, 4) + '년 ' + mo + '월</b><button data-lbm="next" aria-label="다음 달"' + (i >= D.yms.length - 1 ? ' disabled' : '') + '>›</button><small>' + esc(svTxt) + '</small></div>' + more + '</div>';
+  var top = '<div class="lbmTop"><div class="lbmMon"><button data-lbm="prev" aria-label="이전 달"' + (i <= 0 ? ' disabled' : '') + '>‹</button><b>' + D.ym.slice(0, 4) + '년 ' + mo + '월</b><button data-lbm="next" aria-label="다음 달"' + (i >= D.yms.length - 1 ? ' disabled' : '') + '>›</button><small>' + esc(svTxt) + (LBM.live ? ' · <span class="lbmLiveTag">● 실시간</span>' : '') + '</small></div>' + more + '</div>';
   var tiles = '<div class="lbmTiles"><div class="tl main"><span>이번 달 청구 합계</span><b class="num">' + lbmWon(all) + '<small>원</small></b></div>' +
     '<div class="tl"><span>점심</span><b class="num">' + lbmWon(lunch) + '<small>원</small></b></div>' +
     '<div class="tl dr"><span>음료</span><b class="num">' + lbmWon(drink) + '<small>원</small></b></div>' +
@@ -101,6 +113,7 @@ LBMINI_CSS = ('/*LBM>*/'
  '.lbmSlip td.dr{color:var(--dr)}.lbmSlip td.t{font-weight:700}'
  '.lbmSlip .sub{display:flex;justify-content:space-between;font-size:12px;color:var(--mu)}'
  '.lbmSlip .grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:8px;font-weight:700}.lbmSlip .grand b{font-size:24px}.lbmSlip .grand small{font-size:13px;margin-left:2px}'
+ '.lbmLiveTag{color:#2f8f5b;font-weight:700}'
  '.lbmNone{color:var(--mu);padding:24px 0;text-align:center}.lbmNote{font-size:12px;color:var(--mu);margin:14px 0 0}'
  '@media (max-width:900px){.lbmBody{grid-template-columns:minmax(0,1fr)}.lbmSide{position:static}.lbmTiles{grid-template-columns:1fr 1fr}}'
  '/*<LBM*/')
