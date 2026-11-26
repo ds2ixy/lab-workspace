@@ -105,6 +105,13 @@ a{color:inherit}
 .loading{position:absolute;inset:0;display:grid;place-items:center;color:#cbd5e1;font-size:14px}
 .rtoc{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:99px;padding:8px 14px;font:inherit;font-size:13.5px}
 .rtoc option{color:#111}
+.r-chips{display:none;gap:8px;padding:10px 20px;overflow-x:auto;white-space:nowrap;background:rgba(0,0,0,.22);border-bottom:1px solid rgba(255,255,255,.06);scrollbar-width:none}
+.r-chips::-webkit-scrollbar{display:none}
+.r-chips.on{display:flex}
+.r-chips button{flex:none;background:rgba(255,255,255,.08);color:#e8ecf5;border:0;border-radius:99px;padding:7px 14px;font:inherit;font-size:13.5px;cursor:pointer;transition:.15s}
+.r-chips button:hover{background:rgba(255,255,255,.16)}
+.r-chips button.on{background:#f0a83a;color:#1b1406;font-weight:700}
+#reader.html-mode .r-chips{display:none!important}
 
 /* ───────── READER ───────── */
 #reader{background:radial-gradient(1000px 600px at 50% 40%,#2b3350,#0b0f1d 70%);color:#fff;display:flex;flex-direction:column;z-index:20}
@@ -209,6 +216,7 @@ a{color:inherit}
     <button class="rbtn hide-m" id="btnThumbs">▦ 페이지 목록</button>
     <button class="rbtn" id="btnFull">⛶ 전체화면</button>
   </header>
+  <nav class="r-chips" id="rChips" aria-label="바로가기"></nav>
   <div class="r-body" id="rBody">
     <div id="flipWrap"></div>
     <iframe id="htmlFrame" title="이북"></iframe>
@@ -258,7 +266,7 @@ const CATS = [
   { id:"pub", name:"발간자료", kicker:"PUBLICATIONS", color:"#2f8a4f", color2:"#d9f99d",
     desc:"정책건의 백서, 이슈브리프, 전략과제 등 연구소가 발간한 정책 자료입니다.",
     books:[
-      {id:"whitepaper", title:"2026 전문대학 정책건의 백서", type:"flip", cover:"assets/covers/whitepaper2026.webp", note:"재정지원 · 규제개선 · 정책공유", parts:[{label:"발간사 · 목차", dir:"assets/whitepaper/front", count:14},{label:"1. 전문대학 재정지원 건의", dir:"assets/whitepaper/part1", count:50},{label:"2. 규제개선 발굴 및 관계기관 건의", dir:"assets/whitepaper/part2", count:164},{label:"3. 전문대학 정책 공유(더 이슈)", dir:"assets/whitepaper/part3", count:113}]},
+      {id:"whitepaper", title:"2026 전문대학 정책건의 백서", type:"flip", cover:"assets/covers/whitepaper2026.webp", note:"재정지원 · 규제개선 · 정책공유", chips:[{label:"표지",page:0},{label:"발간사",page:2},{label:"목차",page:5},{label:"건의 현황",page:10},{label:"1부 재정지원 건의",page:15},{label:"2부 규제개선 발굴 및 관계기관 건의",page:65},{label:"3부 정책 공유(더 이슈)",page:229}], parts:[{label:"발간사 · 목차", dir:"assets/whitepaper/front", count:14},{label:"1. 전문대학 재정지원 건의", dir:"assets/whitepaper/part1", count:50},{label:"2. 규제개선 발굴 및 관계기관 건의", dir:"assets/whitepaper/part2", count:164},{label:"3. 전문대학 정책 공유(더 이슈)", dir:"assets/whitepaper/part3", count:113}]},
       {id:"brief", title:"이슈브리프 제14호", type:"flip", dir:"assets/brief", count:12, note:"미래 고등직업교육 발전 모델과 직업교육법령 정비방안 외"},
       {id:"strategy", title:"2026 전문대학 전략과제", type:"flip", dir:"assets/strategy", count:26, note:"AI를 다루는 기술, K-Skill Up!"},
     ] },
@@ -393,12 +401,10 @@ function buildFlip(b, c, startAt=0){
   pf = new St.PageFlip(box, { width:Math.floor(w), height:Math.floor(h), size:"fixed", showCover:true, usePortrait:single,
     maxShadowOpacity:.45, mobileScrollSupport:false, flippingTime:700, startPage:startAt, autoSize:false, drawShadow:true });
   pf.loadFromHTML(nodes);
-  const total = nodes.length, toc = b._toc || [];
-  const sel = $("#rToc");
-  sel.style.display = toc.length ? "" : "none";
+  const total = nodes.length, toc = b._toc || []; const sel = $("#rToc"); const chipToc = b.chips || null; const RC = $("#rChips"); RC.classList.toggle("on", !!chipToc); RC.innerHTML = chipToc ? chipToc.map(t=>`<button data-p="${t.page}">${t.label}</button>`).join("") : ""; RC.querySelectorAll("button").forEach(x=>x.onclick=()=>pf.flip(+x.dataset.p)); const chipMark = i=>{ if(!chipToc) return; let k=-1; chipToc.forEach((t,j)=>{ if(i>=t.page) k=j; }); RC.querySelectorAll("button").forEach((x,j)=>{ const on=j===k; x.classList.toggle("on",on); if(on) x.scrollIntoView({block:"nearest",inline:"nearest"}); }); }; sel.style.display = (toc.length && !chipToc) ? "" : "none";
   if(toc.length){ sel.innerHTML = `<option value="">바로가기</option>` + toc.map(t=>`<option value="${t.page}">${t.label}</option>`).join("");
     sel.onchange = ()=>{ if(sel.value!=="") pf.flip(+sel.value); }; }
-  const upd = ()=>{ const i = pf.getCurrentPageIndex();
+  const upd = ()=>{ const i = pf.getCurrentPageIndex(); chipMark(i);
     const isSpread = !single && i>0 && i<total-1;
     $("#pno").textContent = isSpread ? `${i+1}–${Math.min(i+2,total)} / ${total}` : `${i+1} / ${total}`;
     if(toc.length){ let cur=""; toc.forEach(t=>{ if(t.page<=i+(isSpread?1:0)) cur=String(t.page); }); sel.value=cur; }
@@ -414,7 +420,7 @@ function openBook(c, b){
   $("#rSub").textContent = c.name + (b.note?` · ${b.note}`:"");
   $("#btnBack").textContent = c.direct ? "‹ 처음으로" : "‹ 책꽂이";
   $("#btnThumbs").style.display = b.type==="cover" ? "none" : "";
-  $("#thumbs").classList.remove("on");
+  $("#thumbs").classList.remove("on"); $("#rChips").classList.toggle("on", !!(b.chips && b.type==="flip"));
   show("reader"); setHash(b.id);
   const R = $("#reader"), F = $("#htmlFrame");
   if(b.type==="html"){
