@@ -448,7 +448,7 @@ function openBook(c, b){
     return;
   }
   R.classList.remove("html-mode");
-  requestAnimationFrame(()=> buildFlip(b, c, 0));
+  const sp = window.__startPage||0; window.__startPage=0; requestAnimationFrame(()=> buildFlip(b, c, sp));
 }
 /* 완성된 HTML 이북 불러오기: 단일 HTML(내장) → 분할 파일(링크판) → 일반 파일 경로 순 */
 function loadHtmlBook(b){
@@ -499,8 +499,9 @@ document.addEventListener("keydown", e=>{
 /* ── hash routing (#report, #pub, #about, #theissue, #brief …) ── */
 function setHash(h){ try{ history.replaceState(null,"", h?("#"+h):location.pathname+location.search); }catch(e){} }
 function route(){
-  const h = (location.hash||"").slice(1);
-  if(!h) return false;
+  const raw = decodeURIComponent((location.hash||"").slice(1));
+  if(!raw) return false;
+  const [h, pg] = raw.split("/"); window.__startPage = pg ? Math.max(0, (+pg||1)-1) : 0;
   if(catOf(h)){ go(h); return true; }
   for(const cc of CATS){ const b = cc.books.find(x=>x.id===h); if(b){ openBook(cc,b); return true; } }
   return false;
